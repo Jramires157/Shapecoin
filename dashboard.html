@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - ShapeCoin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+    
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>💪 ShapeCoin</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active"><span>📊</span> Painel</a>
+            <a href="#" class="nav-item"><span>🏋️</span> Treinos</a>
+            <a href="#" class="nav-item"><span>🛒</span> Loja</a>
+            <a href="#" class="nav-item" onclick="handleLogout()"><span>🚪</span> Sair</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="user-info">
+                <h3>Olá, <span id="userName">Atleta</span>!</h3>
+            </div>
+            <div class="coin-badge">💎 <span id="userCoins">0</span> SC</div>
+        </header>
+
+        <section class="section-card">
+            <h2 style="margin-bottom: 20px;">Registrar Treino de Hoje</h2>
+            <form id="createGoalForm" onsubmit="handleCreateGoal(event)">
+                <div class="form-group">
+                    <label>Modalidade</label>
+                    <select id="goalType" required>
+                        <option value="">Selecione o treino...</option>
+                        <option value="upper">💪 Treino Superior (Peito/Costas)</option>
+                        <option value="lower">🦿 Treino Inferior (Perna/Glúteo)</option>
+                        <option value="cardio">🏃 Cardio / Esteira</option>
+                        <option value="crossfit">🔥 Crossfit / Funcional</option>
+                        <option value="diet">🥗 Dieta 100%</option>
+                        <option value="water">💧 Meta de Água</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Intensidade</label>
+                    <select id="goalDuration" required>
+                        <option value="30">Normal (+50 Moedas)</option>
+                        <option value="60">Pesado (+80 Moedas)</option>
+                        <option value="90">Insano (+120 Moedas)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">CONFIRMAR E RESGATAR PONTOS</button>
+            </form>
+        </section>
+
+        <section class="section-card">
+            <h3>Últimas Atividades</h3>
+            <div id="activeGoalsList" style="margin-top: 15px;">
+                <p style="color: #666;">Carregando histórico...</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="adModal" class="ad-overlay">
+        <div class="ad-box">
+            <h3>Validando Treino...</h3>
+            <p>Assista ao anúncio para liberar suas moedas.</p>
+            
+            <div style="background: #eee; height: 150px; margin: 20px 0; display: flex; align-items: center; justify-content: center; border: 2px dashed #999;">
+                <p style="color: #333; font-weight: bold;">[PUB] SUPLEMENTOS BARATOS<br>CLIQUE AQUI</p>
+            </div>
+
+            <p>Aguarde para fechar:</p>
+            <div class="ad-timer" id="adTimer">5</div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

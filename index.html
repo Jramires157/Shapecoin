@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - ShapeCoin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1 style="color: var(--primary); margin-bottom: 10px;">💪 ShapeCoin</h1>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Transforme suor em dinheiro.</p>
+
+        <form id="authForm">
+            <input type="email" id="email" placeholder="Seu e-mail" required>
+            <input type="password" id="password" placeholder="Sua senha" required>
+            
+            <button type="submit" id="submitBtn">Entrar / Criar Conta</button>
+        </form>
+        <p id="msg" style="margin-top: 15px; font-size: 0.9rem;"></p>
+    </div>
+
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+/* ===== SHAPECOIN - DARK MODE THEME ===== */
+:root {
+    --primary: #00ff88;       /* Verde Neon */
+    --primary-dark: #00cc6a;
+    --secondary: #1a1a1a;     /* Cinza Chumbo */
+    --accent: #ffd700;        /* Dourado */
+    --bg-dark: #0a0a0a;       /* Fundo quase preto */
+    --card-bg: #1e1e1e;       /* Fundo dos cards */
+    --text-main: #ffffff;
+    --text-muted: #a0a0a0;
+    --danger: #ff3333;
+    --success: #00ff88;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 250px;
+    background: var(--card-bg); border-right: 1px solid #333;
+    padding: 20px; display: flex; flex-direction: column;
+}
+.sidebar-header h2 { color: var(--primary); text-transform: uppercase; font-style: italic; margin-bottom: 30px; }
+.nav-item { 
+    display: flex; align-items: center; padding: 12px; margin-bottom: 5px;
+    color: var(--text-muted); text-decoration: none; border-radius: 6px; transition: 0.3s;
+}
+.nav-item:hover, .nav-item.active { background: rgba(0, 255, 136, 0.1); color: var(--primary); }
+.nav-item span { margin-right: 10px; }
+
+/* Main Content */
+.main-content { margin-left: 250px; padding: 30px; }
+
+/* Header */
+.top-bar { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
+.coin-badge { background: #333; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--accent); color: var(--accent); font-weight: bold; }
+
+/* Cards & Forms */
+.section-card { background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 8px; color: var(--text-muted); }
+input, select {
+    width: 100%; background: #2a2a2a; border: 1px solid #444; color: white;
+    padding: 12px; border-radius: 6px; font-size: 16px;
+}
+input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+
+/* Buttons */
+.btn-primary {
+    width: 100%; background: var(--primary); color: #000; font-weight: 800;
+    text-transform: uppercase; border: none; padding: 15px; border-radius: 6px;
+    cursor: pointer; transition: transform 0.2s;
+}
+.btn-primary:hover { transform: scale(1.02); background: var(--primary-dark); }
+
+/* Activity List */
+.activity-item {
+    background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary);
+}
+
+/* Modal de Ads (Simulado) */
+.ad-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95); z-index: 9999; display: none;
+    justify-content: center; align-items: center; flex-direction: column;
+}
+.ad-box {
+    background: #fff; color: #000; padding: 30px; border-radius: 10px;
+    text-align: center; max-width: 90%; width: 400px;
+}
+.ad-timer { font-size: 3rem; font-weight: bold; color: #000; margin: 20px 0; }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); z-index: 1000; transition: 0.3s; }
+    .sidebar.active { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 15px; }
+    .menu-toggle { display: block; background: none; border: none; color: white; font-size: 24px; }
+}

@@ -1,0 +1,18 @@
+// firebase-config.js
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBZYvwYZ2Gbiw_Hud4cBsamL8MpDaH9lmE",
+  authDomain: "digitalzen-197fa.firebaseapp.com",
+  projectId: "digitalzen-197fa",
+  storageBucket: "digitalzen-197fa.firebasestorage.app",
+  messagingSenderId: "776545981882",
+  appId: "1:776545981882:web:7dd41c245e2d401115b983",
+  measurementId: "G-7GSFQM1D5J"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
