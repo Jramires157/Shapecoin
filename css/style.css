@@ -1,87 +1,63 @@
-/* ===== SHAPECOIN - DARK MODE THEME ===== */
+/* style.css - Tema ShapeCoin */
 :root {
     --primary: #00ff88;       /* Verde Neon */
     --primary-dark: #00cc6a;
-    --secondary: #1a1a1a;     /* Cinza Chumbo */
-    --accent: #ffd700;        /* Dourado */
-    --bg-dark: #0a0a0a;       /* Fundo quase preto */
-    --card-bg: #1e1e1e;       /* Fundo dos cards */
-    --text-main: #ffffff;
+    --dark: #0a0a0a;          /* Fundo Preto */
+    --card: #1e1e1e;          /* Fundo Cinza */
+    --text: #ffffff;
     --text-muted: #a0a0a0;
-    --danger: #ff3333;
-    --success: #00ff88;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
 
-body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    line-height: 1.6;
+body { background-color: var(--dark); color: var(--text); padding: 20px; }
+
+/* Telas de Login */
+.auth-container {
+    max-width: 400px; margin: 50px auto; padding: 30px;
+    background: var(--card); border-radius: 12px; text-align: center;
+    border: 1px solid #333;
 }
 
-/* Sidebar */
-.sidebar {
-    position: fixed; left: 0; top: 0; bottom: 0; width: 250px;
-    background: var(--card-bg); border-right: 1px solid #333;
-    padding: 20px; display: flex; flex-direction: column;
+/* Dashboard */
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;
 }
-.sidebar-header h2 { color: var(--primary); text-transform: uppercase; font-style: italic; margin-bottom: 30px; }
-.nav-item { 
-    display: flex; align-items: center; padding: 12px; margin-bottom: 5px;
-    color: var(--text-muted); text-decoration: none; border-radius: 6px; transition: 0.3s;
+.coin-badge {
+    background: #333; padding: 10px 20px; border-radius: 50px;
+    color: #ffd700; font-weight: bold; border: 1px solid #ffd700;
 }
-.nav-item:hover, .nav-item.active { background: rgba(0, 255, 136, 0.1); color: var(--primary); }
-.nav-item span { margin-right: 10px; }
 
-/* Main Content */
-.main-content { margin-left: 250px; padding: 30px; }
-
-/* Header */
-.top-bar { display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center; }
-.coin-badge { background: #333; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--accent); color: var(--accent); font-weight: bold; }
-
-/* Cards & Forms */
-.section-card { background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-.form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 8px; color: var(--text-muted); }
+/* Cards e Forms */
+.card {
+    background: var(--card); padding: 20px; border-radius: 12px;
+    margin-bottom: 20px; border: 1px solid #333;
+}
 input, select {
-    width: 100%; background: #2a2a2a; border: 1px solid #444; color: white;
-    padding: 12px; border-radius: 6px; font-size: 16px;
+    width: 100%; padding: 12px; margin: 10px 0;
+    background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px;
 }
-input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
-
-/* Buttons */
-.btn-primary {
-    width: 100%; background: var(--primary); color: #000; font-weight: 800;
-    text-transform: uppercase; border: none; padding: 15px; border-radius: 6px;
-    cursor: pointer; transition: transform 0.2s;
+button {
+    width: 100%; padding: 15px; background: var(--primary);
+    color: black; font-weight: bold; border: none; border-radius: 6px;
+    cursor: pointer; font-size: 16px; text-transform: uppercase;
+    margin-top: 10px;
 }
-.btn-primary:hover { transform: scale(1.02); background: var(--primary-dark); }
+button:hover { background: var(--primary-dark); }
 
-/* Activity List */
+/* Lista de Atividades */
 .activity-item {
-    background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary);
+    display: flex; justify-content: space-between; padding: 15px;
+    background: #252525; margin-bottom: 10px; border-radius: 8px;
+    border-left: 4px solid var(--primary);
 }
 
-/* Modal de Ads (Simulado) */
+/* Modal do Anúncio */
 .ad-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95); z-index: 9999; display: none;
-    justify-content: center; align-items: center; flex-direction: column;
+    background: rgba(0,0,0,0.95); display: none;
+    justify-content: center; align-items: center; flex-direction: column; z-index: 999;
 }
-.ad-box {
-    background: #fff; color: #000; padding: 30px; border-radius: 10px;
-    text-align: center; max-width: 90%; width: 400px;
-}
-.ad-timer { font-size: 3rem; font-weight: bold; color: #000; margin: 20px 0; }
-
-/* Mobile */
-@media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); z-index: 1000; transition: 0.3s; }
-    .sidebar.active { transform: translateX(0); }
-    .main-content { margin-left: 0; padding: 15px; }
-    .menu-toggle { display: block; background: none; border: none; color: white; font-size: 24px; }
-}
+.ad-box { background: white; color: black; padding: 30px; border-radius: 10px; text-align: center; }
+.timer { font-size: 3rem; font-weight: bold; margin: 20px 0; }
