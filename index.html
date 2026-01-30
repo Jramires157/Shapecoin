@@ -5,40 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShapeCoin - Acesso</title>
     <style>
+        /* Visual Dark Mode */
         body { background-color: #0a0a0a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .box { background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; width: 90%; max-width: 400px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #333; border: 1px solid #555; color: white; border-radius: 5px; box-sizing: border-box;}
-        button { width: 100%; padding: 15px; background: #00ff88; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:active { transform: scale(0.98); }
-        #status { margin-top: 15px; color: #ffd700; min-height: 20px; font-size: 14px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #00ff88; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s; }
+        button:hover { transform: scale(1.02); opacity: 0.9; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        #status { margin-top: 15px; color: #ffd700; min-height: 20px; font-weight: bold; }
     </style>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
     <div class="box">
         <h1 style="color: #00ff88; margin: 0 0 10px 0;">💪 ShapeCoin</h1>
-        <p>Login Simplificado</p>
+        <p>Painel do Atleta</p>
 
-        <input type="email" id="email" placeholder="E-mail" required>
-        <input type="password" id="password" placeholder="Senha" required>
-        <button onclick="fazerLogin()" id="btn">ENTRAR</button>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Seu e-mail" required>
+            <input type="password" id="password" placeholder="Sua senha" required>
+            <button type="submit" id="btnEntrar">ACESSAR SISTEMA</button>
+        </form>
         
         <div id="status"></div>
     </div>
 
-    <script>
-        // 1. Dedo-duro de erros (Se der erro, ele GRITA na tela)
-        window.onerror = function(msg, url, line) {
-            alert("ERRO NO CÓDIGO:\n" + msg);
-            document.getElementById('status').innerText = "Erro Crítico: " + msg;
-            return false;
-        };
+    <script type="module">
+        // 1. Importações Oficiais
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // 2. Configuração (Suas chaves)
+        // 2. Configuração (Suas chaves ShapeCoin)
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -48,34 +46,86 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        // 3. Inicia Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // 3. Inicialização
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Elementos da tela
         const statusDiv = document.getElementById('status');
+        const btn = document.getElementById('btnEntrar');
+        const form = document.getElementById('loginForm');
 
-        console.log("Sistema Pronto.");
+        console.log("SISTEMA INICIADO - AGUARDANDO AÇÃO");
 
-        // 4. Verifica se já está logado
-        auth.onAuthStateChanged((user) => {
+        // 4. Verifica Login Automático
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                statusDiv.innerText = "Logado como: " + user.email;
+                console.log("Usuário já logado:", user.email);
+                statusDiv.innerText = "👋 Bem-vindo de volta!";
                 statusDiv.style.color = "#00ff88";
-                setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
             }
         });
 
-        // 5. Função de Login
-        function fazerLogin() {
+        // 5. O EVENTO DE CLIQUE (Aqui está a mágica)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // IMPEDE A PÁGINA DE RECARREGAR
+            console.log("Botão clicado!");
+
             const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const btn = document.getElementById('btn');
+            const password = document.getElementById('password').value;
 
-            if(!email || !pass) {
-                alert("Preencha e-mail e senha!");
-                return;
-            }
-
-            statusDiv.innerText = "Conectando...";
+            // Bloqueia o botão para não clicar 2x
             btn.disabled = true;
-            btn.innerText = "AGUARDE...";
+            btn.innerText = "PROCESSANDO...";
+            statusDiv.innerText = "Conectando ao servidor...";
+            statusDiv.style.color = "yellow";
+
+            try {
+                // Tenta Logar
+                await signInWithEmailAndPassword(auth, email, password);
+                
+                statusDiv.innerText = "✅ SUCESSO! Entrando...";
+                statusDiv.style.color = "#00ff88";
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+
+            } catch (error) {
+                console.error("Erro no login:", error.code);
+
+                // Se o usuário não existe, CRIA A CONTA AUTOMATICAMENTE
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    statusDiv.innerText = "Criando sua conta...";
+                    
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        
+                        // Cria carteira de moedas zerada
+                        await setDoc(doc(db, "users", userCredential.user.uid), {
+                            email: email,
+                            coins: 0,
+                            joined: new Date()
+                        });
+
+                        statusDiv.innerText = "🎉 CONTA CRIADA! BEM-VINDO!";
+                        statusDiv.style.color = "#00ff88";
+                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+
+                    } catch (createError) {
+                        statusDiv.innerText = "Erro ao criar: " + createError.message;
+                        statusDiv.style.color = "red";
+                        btn.disabled = false;
+                        btn.innerText = "TENTAR NOVAMENTE";
+                    }
+                } else {
+                    // Outros erros (Senha errada, muitos cliques, etc)
+                    statusDiv.innerText = "Erro: " + error.code;
+                    statusDiv.style.color = "red";
+                    btn.disabled = false;
+                    btn.innerText = "ACESSAR SISTEMA";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
