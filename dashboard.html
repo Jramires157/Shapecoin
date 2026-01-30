@@ -1,112 +1,106 @@
-// dashboard.js - Versão Segura
-import { auth, db } from './firebase-config.js';
-import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-let currentUser = null;
-
-// Verifica autenticação
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        // Se não tiver usuário, manda pro login
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    // Se chegou aqui, está logado!
-    currentUser = user;
-    
-    // Mostra o e-mail na tela para confirmar
-    if(document.getElementById('userEmail')) {
-        document.getElementById('userEmail').textContent = user.email.split('@')[0];
-    }
-
-    loadBalance();
-    loadHistory();
-});
-
-// Carregar Saldo
-async function loadBalance() {
-    try {
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - ShapeCoin</title>
+    <style>
+        /* ESTILO DARK MODE (IGUAL AO LOGIN) */
+        :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
+        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; }
         
-        if (docSnap.exists()) {
-            document.getElementById('coins').textContent = docSnap.data().coins || 0;
-        } else {
-            // Cria perfil inicial se não existir
-            await setDoc(docRef, { coins: 0 });
-            document.getElementById('coins').textContent = 0;
-        }
-    } catch (e) {
-        console.error("Erro ao carregar saldo:", e);
-    }
-}
+        /* Cabeçalho */
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .user-info h2 { margin: 0; font-size: 1.2rem; }
+        .coin-badge { background: #333; padding: 10px 20px; border-radius: 50px; color: #ffd700; font-weight: bold; border: 1px solid #ffd700; font-size: 1.2rem; }
 
-// === LÓGICA DO ANÚNCIO E SALVAR TREINO ===
-window.startAdProcess = function() {
-    const modal = document.getElementById('adModal');
-    const timer = document.getElementById('timer');
-    let timeLeft = 5;
-    
-    modal.style.display = 'flex';
-    timer.textContent = timeLeft;
+        /* Cards */
+        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        h3 { color: var(--primary); margin-top: 0; }
 
-    const interval = setInterval(() => {
-        timeLeft--;
-        timer.textContent = timeLeft;
+        /* Formulário */
+        select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; }
+        button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; }
+        button:hover { opacity: 0.9; transform: scale(1.01); }
+        button.logout { background: #333; color: white; margin-top: 30px; }
+
+        /* Lista de Histórico */
+        .history-item { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid var(--primary); }
+        .gain { color: #00ff88; font-weight: bold; }
+
+        /* MODAL DO ANÚNCIO (O Segredo do Dinheiro) */
+        .ad-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 999; }
+        .ad-box { background: white; color: black; padding: 30px; border-radius: 12px; text-align: center; max-width: 90%; width: 400px; }
+        .timer { font-size: 4rem; font-weight: bold; margin: 20px 0; color: #000; }
+        .ad-banner { background: #eee; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px dashed #999; margin: 10px 0; font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info">
+            <span style="color: #888; font-size: 0.9rem;">Bem-vindo,</span>
+            <h2 id="userEmail">Carregando...</h2>
+        </div>
+        <div class="coin-badge">💎 <span id="coinBalance">...</span></div>
+    </div>
+
+    <div class="card">
+        <h3>💪 Registrar Treino</h3>
+        <p style="color:#aaa; font-size: 0.9rem;">Selecione o treino para ganhar moedas.</p>
         
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            modal.style.display = 'none';
-            saveWorkout(); // Salva só depois do tempo
-        }
-    }, 1000);
-}
+        <select id="workoutType">
+            <option value="Superior">🏋️ Treino Superior (Peito/Costas)</option>
+            <option value="Inferior">🦿 Treino Inferior (Pernas)</option>
+            <option value="Cardio">🏃 Cardio / Corrida</option>
+            <option value="Crossfit">🔥 Crossfit / Funcional</option>
+            <option value="Dieta">🥗 Dieta 100%</option>
+        </select>
 
-async function saveWorkout() {
-    const type = document.getElementById('workoutType').value;
-    const value = parseInt(document.getElementById('intensity').value);
+        <select id="intensity">
+            <option value="50">Nível Normal (+50 Moedas)</option>
+            <option value="80">Nível Pesado (+80 Moedas)</option>
+            <option value="120">Nível Atleta (+120 Moedas)</option>
+        </select>
 
-    try {
-        await addDoc(collection(db, "history"), {
-            uid: currentUser.uid,
-            type: type,
-            value: value,
-            date: serverTimestamp()
-        });
+        <button id="btnTreinar">CONFIRMAR TREINO</button>
+    </div>
 
-        await updateDoc(doc(db, "users", currentUser.uid), {
-            coins: increment(value)
-        });
+    <div class="card">
+        <h3>📜 Últimas Atividades</h3>
+        <div id="historyList">
+            <p style="color: #666; text-align: center;">Nenhum treino hoje.</p>
+        </div>
+    </div>
 
-        alert(`Sucesso! Você ganhou ${value} moedas.`);
-        loadBalance(); // Atualiza saldo visual
-        loadHistory(); // Atualiza lista
-    } catch (e) {
-        alert("Erro ao salvar: " + e.message);
-    }
-}
+    <div style="text-align: center;">
+        <button class="logout" id="btnLogout">Sair do App</button>
+    </div>
 
-async function loadHistory() {
-    const list = document.getElementById('historyList');
-    if(!list) return;
+    <div id="adModal" class="ad-overlay">
+        <div class="ad-box">
+            <h3>Validando seu Treino...</h3>
+            <p>Assista ao anúncio para liberar as moedas.</p>
+            
+            <div class="ad-banner">
+                [PUBLICIDADE AQUI]<br>Suplementos com 20% OFF
+            </div>
 
-    const q = query(collection(db, "history"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
-    const querySnapshot = await getDocs(q);
-    
-    list.innerHTML = "";
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        list.innerHTML += `<div class="activity-item">
-            <span>${data.type.toUpperCase()}</span>
-            <span style="color:var(--primary)">+${data.value}</span>
-        </div>`;
-    });
-}
+            <div class="timer" id="adTimer">5</div>
+            <p style="font-size: 0.8rem;">Aguarde o tempo acabar...</p>
+        </div>
+    </div>
 
-window.logout = () => {
-    signOut(auth).then(() => {
-        window.location.href = 'index.html';
-    });
-};
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc, increment, addDoc, collection, query, where, orderBy, limit, getDocs, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // CONFIGURAÇÃO (Suas Chaves)
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc
