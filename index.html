@@ -3,40 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShapeCoin - Acesso</title>
+    <title>ShapeCoin - Acesso Blindado</title>
     <style>
-        /* Visual Dark Mode */
         body { background-color: #0a0a0a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .box { background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; width: 90%; max-width: 400px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #00ff88; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s; }
-        button:hover { transform: scale(1.02); opacity: 0.9; }
-        button:disabled { background: #555; cursor: not-allowed; }
-        #status { margin-top: 15px; color: #ffd700; min-height: 20px; font-weight: bold; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #333; border: 1px solid #555; color: white; border-radius: 5px; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: #00ff88; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { opacity: 0.9; }
+        #status { margin-top: 15px; color: yellow; font-weight: bold; min-height: 20px; }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
     <div class="box">
         <h1 style="color: #00ff88; margin: 0 0 10px 0;">💪 ShapeCoin</h1>
-        <p>Painel do Atleta</p>
+        <p>Login Universal</p>
 
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Seu e-mail" required>
-            <input type="password" id="password" placeholder="Sua senha" required>
-            <button type="submit" id="btnEntrar">ACESSAR SISTEMA</button>
-        </form>
+        <input type="email" id="email" placeholder="Seu e-mail" required>
+        <input type="password" id="password" placeholder="Sua senha" required>
+        <button onclick="tentarLogin()" id="btn">ENTRAR / CRIAR</button>
         
-        <div id="status"></div>
+        <div id="status">Carregando sistema...</div>
     </div>
 
-    <script type="module">
-        // 1. Importações Oficiais
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // 2. Configuração (Suas chaves ShapeCoin)
+    <script>
+        // 1. Configuração (Suas chaves ShapeCoin)
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -46,86 +41,82 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        // 3. Inicialização
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        // Elementos da tela
-        const statusDiv = document.getElementById('status');
-        const btn = document.getElementById('btnEntrar');
-        const form = document.getElementById('loginForm');
+        // 2. Inicialização Segura
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            
+            document.getElementById('status').innerText = "✅ SISTEMA PRONTO";
+            document.getElementById('status').style.color = "#00ff88";
+            console.log("Firebase Iniciado");
 
-        console.log("SISTEMA INICIADO - AGUARDANDO AÇÃO");
-
-        // 4. Verifica Login Automático
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log("Usuário já logado:", user.email);
-                statusDiv.innerText = "👋 Bem-vindo de volta!";
-                statusDiv.style.color = "#00ff88";
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
-            }
-        });
-
-        // 5. O EVENTO DE CLIQUE (Aqui está a mágica)
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // IMPEDE A PÁGINA DE RECARREGAR
-            console.log("Botão clicado!");
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Bloqueia o botão para não clicar 2x
-            btn.disabled = true;
-            btn.innerText = "PROCESSANDO...";
-            statusDiv.innerText = "Conectando ao servidor...";
-            statusDiv.style.color = "yellow";
-
-            try {
-                // Tenta Logar
-                await signInWithEmailAndPassword(auth, email, password);
-                
-                statusDiv.innerText = "✅ SUCESSO! Entrando...";
-                statusDiv.style.color = "#00ff88";
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
-
-            } catch (error) {
-                console.error("Erro no login:", error.code);
-
-                // Se o usuário não existe, CRIA A CONTA AUTOMATICAMENTE
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                    statusDiv.innerText = "Criando sua conta...";
-                    
-                    try {
-                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                        
-                        // Cria carteira de moedas zerada
-                        await setDoc(doc(db, "users", userCredential.user.uid), {
-                            email: email,
-                            coins: 0,
-                            joined: new Date()
-                        });
-
-                        statusDiv.innerText = "🎉 CONTA CRIADA! BEM-VINDO!";
-                        statusDiv.style.color = "#00ff88";
-                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
-
-                    } catch (createError) {
-                        statusDiv.innerText = "Erro ao criar: " + createError.message;
-                        statusDiv.style.color = "red";
-                        btn.disabled = false;
-                        btn.innerText = "TENTAR NOVAMENTE";
-                    }
-                } else {
-                    // Outros erros (Senha errada, muitos cliques, etc)
-                    statusDiv.innerText = "Erro: " + error.code;
-                    statusDiv.style.color = "red";
-                    btn.disabled = false;
-                    btn.innerText = "ACESSAR SISTEMA";
+            // 3. Verifica se já está logado
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    document.getElementById('status').innerText = "👋 Olá " + user.email;
+                    setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
                 }
+            });
+
+        } catch (e) {
+            alert("ERRO AO INICIAR: " + e.message);
+        }
+
+        // 4. Função de Clique
+        function tentarLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const status = document.getElementById('status');
+            const btn = document.getElementById('btn');
+
+            if (!email || !pass) {
+                alert("Por favor, digite e-mail e senha.");
+                return;
             }
-        });
+
+            status.innerText = "⏳ CONECTANDO...";
+            status.style.color = "yellow";
+            btn.disabled = true;
+
+            // Tenta Logar
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    status.innerText = "✅ SUCESSO! ENTRANDO...";
+                    status.style.color = "#00ff88";
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    console.error(error);
+                    
+                    // Se não existe, CRIA
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                        
+                        status.innerText = "🆕 CRIANDO CONTA NOVA...";
+                        
+                        firebase.auth().createUserWithEmailAndPassword(email, pass)
+                            .then((userCredential) => {
+                                // Cria saldo inicial
+                                db.collection("users").doc(userCredential.user.uid).set({
+                                    coins: 0,
+                                    email: email
+                                }).then(() => {
+                                    status.innerText = "🎉 CONTA CRIADA!";
+                                    window.location.href = "dashboard.html";
+                                });
+                            })
+                            .catch((createError) => {
+                                alert("ERRO AO CRIAR: " + createError.message);
+                                status.innerText = "Erro.";
+                                btn.disabled = false;
+                            });
+                    } else {
+                        alert("ERRO: " + error.message);
+                        status.innerText = "Tente novamente.";
+                        btn.disabled = false;
+                    }
+                });
+        }
     </script>
 </body>
 </html>
