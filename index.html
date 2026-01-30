@@ -3,45 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrar - ShapeCoin</title>
+    <title>ShapeCoin - Acesso</title>
     <style>
-        /* CSS direto aqui para garantir que carregue */
-        :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
-        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .auth-container { background: var(--card); padding: 40px; border-radius: 12px; border: 1px solid #333; text-align: center; width: 100%; max-width: 400px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--primary); color: black; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { opacity: 0.9; }
-        .status-msg { margin-top: 15px; font-size: 0.9rem; color: #ffd700; min-height: 20px; }
+        body { background-color: #0a0a0a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; width: 90%; max-width: 400px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #333; border: 1px solid #555; color: white; border-radius: 5px; box-sizing: border-box;}
+        button { width: 100%; padding: 15px; background: #00ff88; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:active { transform: scale(0.98); }
+        #status { margin-top: 15px; color: #ffd700; min-height: 20px; font-size: 14px; }
     </style>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <div class="auth-container">
-        <h1 style="color: var(--primary); margin: 0 0 10px 0;">💪 ShapeCoin</h1>
-        <p style="color: #aaa; margin-bottom: 30px;">Bora ficar monstro e rico?</p>
+    <div class="box">
+        <h1 style="color: #00ff88; margin: 0 0 10px 0;">💪 ShapeCoin</h1>
+        <p>Login Simplificado</p>
 
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Seu e-mail" required>
-            <input type="password" id="password" placeholder="Sua senha" required>
-            <button type="submit" id="btnEntrar">ENTRAR / CRIAR CONTA</button>
-        </form>
-
-        <div id="status" class="status-msg"></div>
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button onclick="fazerLogin()" id="btn">ENTRAR</button>
+        
+        <div id="status"></div>
     </div>
 
-    <script type="module">
-        // 1. Importações
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <script>
+        // 1. Dedo-duro de erros (Se der erro, ele GRITA na tela)
+        window.onerror = function(msg, url, line) {
+            alert("ERRO NO CÓDIGO:\n" + msg);
+            document.getElementById('status').innerText = "Erro Crítico: " + msg;
+            return false;
+        };
 
-        // 2. Configuração (Suas chaves novas)
+        // 2. Configuração (Suas chaves)
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
             projectId: "shapecoin",
             storageBucket: "shapecoin.firebasestorage.app",
             messagingSenderId: "365582210645",
-            appId: "1:365582210645:web:8bf24f3809815340be66dc",
-            measurementId
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        // 3. Inicia Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const statusDiv = document.getElementById('status');
+
+        console.log("Sistema Pronto.");
+
+        // 4. Verifica se já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                statusDiv.innerText = "Logado como: " + user.email;
+                statusDiv.style.color = "#00ff88";
+                setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+            }
+        });
+
+        // 5. Função de Login
+        function fazerLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('btn');
+
+            if(!email || !pass) {
+                alert("Preencha e-mail e senha!");
+                return;
+            }
+
+            statusDiv.innerText = "Conectando...";
+            btn.disabled = true;
+            btn.innerText = "AGUARDE...";
