@@ -3,340 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
-    <title>Painel - ShapeCoin Premium</title>
+    <title>Painel - FOCO Premium</title>
     <style>
-        /* --- TEMA PREMIUM (MANTIDO E EXPANDIDO) --- */
+        /* --- TEMA PREMIUM FOCO --- */
         :root {
-            --primary: #00ff9d;       /* Verde Menta Neon */
-            --gold: #ffd700;          /* Dourado Principal */
-            --gold-dark: #b8860b;     /* Dourado Escuro */
-            --bg-deep: #050505;       /* Preto Quase Puro */
-            --text-light: #ffffff;
-            --text-dim: #a0a0a0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --primary: #00ff9d;
+            --gold: #ffd700;
+            --bg-deep: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             background-color: var(--bg-deep);
-            background-image: radial-gradient(circle at top right, rgba(0, 255, 157, 0.1), transparent 40%),
-                              radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.05), transparent 40%);
-            color: var(--text-light);
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            margin: 0; padding: 20px; padding-bottom: 110px;
+            background-image: radial-gradient(circle at top right, rgba(0, 255, 157, 0.05), transparent 40%);
+            color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; padding-bottom: 110px;
         }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); }
+        .coin-badge { background: linear-gradient(135deg, var(--gold), #b8860b); padding: 10px 20px; border-radius: 50px; color: #000; font-weight: 900; box-shadow: 0 4px 15px rgba(255,215,0,0.2); }
+
+        .card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); padding: 25px; border-radius: 25px; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); }
-        .user-info span { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
-        .user-info h2 { margin: 5px 0 0 0; font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .coin-badge {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            padding: 12px 25px; border-radius: 50px; color: #000; font-weight: 900; font-size: 1.3rem;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); display: flex; align-items: center; gap: 8px;
-        }
+        h3 { color: #fff; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 20px; }
 
-        .card {
-            background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 25px; border-radius: 20px; border: 1px solid var(--glass-border);
-            margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;
-        }
+        input, select, button { width: 100%; padding: 16px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
+        button { background: var(--primary); color: #000; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0,255,157,0.3); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        h3 {
-            color: var(--primary); margin-top: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;
-            border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center;
-        }
-        h3::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px var(--primary); }
-
-        input, select, button { width: 100%; padding: 16px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
-        button { background: linear-gradient(to right, var(--primary), #00cc7a); color: #000; font-weight: 800; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; }
-        button:hover { transform: scale(1.02); }
-        button:disabled { background: #333; color: #666; cursor: not-allowed; }
-
-        .row { display: flex; gap: 15px; }
+        .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
-        /* LISTA SOCIAL */
-        .friend-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .friend-name { font-weight: 600; font-size: 0.9rem; }
-        .friend-coins { color: var(--gold); font-weight: 800; font-size: 0.8rem; }
-        .search-result { border: 1px solid var(--primary); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; background: rgba(0,255,157,0.05); }
+        /* FEED SOCIAL */
+        .feed-post { background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 25px; overflow: hidden; }
+        .post-header { padding: 15px; display: flex; align-items: center; gap: 12px; }
+        .post-avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
+        .post-user { font-weight: 700; font-size: 0.95rem; color: #fff; }
+        .post-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .post-footer { padding: 15px; font-size: 0.85rem; color: #aaa; }
+        .post-badge { background: rgba(0,255,157,0.15); color: var(--primary); padding: 4px 10px; border-radius: 6px; font-weight: bold; }
 
-        .history-item {
-            display: flex; justify-content: space-between; padding: 18px;
-            background: rgba(255,255,255,0.03); margin-bottom: 10px; border-radius: 12px;
-            border-left: 4px solid var(--primary); align-items: center;
-        }
-        .gain-pill { background: rgba(0, 255, 157, 0.15); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
-
-        .sticky-banner {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 500px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); padding: 12px 20px; text-align: center; cursor: pointer; z-index: 100;
-            border-radius: 50px; display: flex; justify-content: space-between; align-items: center;
-        }
+        #photoPreview { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; display: none; margin-bottom: 15px; border: 2px solid var(--primary); }
+        
+        .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; background: rgba(15,15,15,0.95); border: 1px solid var(--glass-border); border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
     <div class="header">
-        <div class="user-info">
-            <span>Atleta Ativo</span>
-            <h2 id="userEmail">...</h2>
+        <div>
+            <span style="color:#666; font-size: 0.8rem; letter-spacing: 1px;">MODO ATLETA</span>
+            <h2 id="displayUsername">Configurar Perfil</h2>
         </div>
-        <div class="coin-badge">💎 <span id="coinBalance">...</span></div>
+        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
     </div>
 
     <div class="card">
-        <h3>Comunidade</h3>
-        <p style="color:var(--text-dim); font-size: 0.8rem; margin-bottom: 15px;">Adicione amigos para comparar moedas.</p>
+        <h3>Meus Dados</h3>
+        <input type="text" id="username" placeholder="Nome de Usuário (ex: @atleta_foco)">
         
-        <div class="row">
-            <input type="email" id="searchEmail" placeholder="E-mail do amigo" style="width: 70%;">
-            <button onclick="buscarAtleta()" id="btnBuscar" style="width: 30%; margin: 10px 0;">🔍</button>
-        </div>
-
-        <div id="searchResult" class="search-result">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span id="resName" style="font-weight: bold; display: block;"></span>
-                    <span id="resCoins" style="color: var(--gold); font-size: 0.8rem;"></span>
-                </div>
-                <button id="btnAddFriend" style="width: auto; padding: 8px 15px; font-size: 0.7rem;">ADICIONAR</button>
-            </div>
-        </div>
-
-        <div id="friendsList">
-            <p style="color: #444; text-align: center; font-size: 0.8rem;">Sua lista de amigos está vazia.</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>Dados Corporais</h3>
         <div class="row">
             <input type="text" id="weight" placeholder="Peso (kg)">
             <input type="tel" id="height" placeholder="Altura (cm)">
         </div>
-        <button onclick="salvarPerfil()" id="btnSalvarPerfil" style="background: transparent; border: 2px solid var(--primary); color: var(--primary);">Salvar e Calcular IMC</button>
-        <div id="imcBox" style="text-align: center; margin-top: 15px; display: none;">
-            <span id="imcValue" style="font-size: 2rem; font-weight: 900; color: var(--primary); display: block;"></span>
-            <span id="imcStatus" style="color: var(--text-dim); font-size: 0.8rem;"></span>
-        </div>
-    </div>
+        <button onclick="salvarPerfil()" id="btnSalvar">Atualizar Identidade</button>
 
-    <div class="card" style="background: rgba(255,215,0,0.02); border-color: rgba(255,215,0,0.2);">
-        <h3 style="color: var(--gold);">Recompensas</h3>
-        <p style="color:var(--text-dim); font-size: 0.8rem; margin-bottom: 20px;">Assista e ganhe. Limite: <span id="bonusCount">0</span>/10.</p>
-        <button onclick="assistirBonus()" id="btnBonus" style="background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;">RESGATAR +20 SC</button>
-    </div>
-
-    <div class="card">
-        <h3>Registrar Atividade</h3>
-        <select id="workoutType">
-            <option value="Superior">Treino Superior</option>
-            <option value="Inferior">Treino Inferior</option>
-            <option value="Cardio">Cardio / Corrida</option>
-            <option value="Crossfit">Crossfit</option>
-        </select>
-        <select id="intensity">
-            <option value="50">Nível Normal (+50 SC)</option>
-            <option value="80">Nível Pesado (+80 SC)</option>
-        </select>
-        <button onclick="salvarTreino()" id="btnTreinar">VALIDAR TREINO</button>
-    </div>
-
-    <div style="text-align: center; margin-bottom: 40px;">
-        <button onclick="sair()" style="background: transparent; color: #555; width: auto; font-size: 0.8rem;">Sair da Conta</button>
-    </div>
-
-    <div class="sticky-banner" onclick="abrirLinkAds()">
-        <span style="color: #fff; font-weight: 600; font-size: 0.8rem;">OFERTA: Suplementos com 30% OFF</span>
-        <div style="background: var(--primary); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;">VER</div>
-    </div>
-
-    <script>
-        const LINK_ADS = "https://google.com"; 
-        const firebaseConfig = {
-            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
-            authDomain: "shapecoin.firebaseapp.com",
-            projectId: "shapecoin",
-            storageBucket: "shapecoin.firebasestorage.app",
-            messagingSenderId: "365582210645",
-            appId: "1:365582210645:web:8bf24f3809815340be66dc"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
-        let foundUser = null; // Usuário da busca
-
-        auth.onAuthStateChanged((user) => {
-            if (!user) window.location.href = "index.html";
-            else {
-                currentUser = user;
-                document.getElementById('userEmail').innerText = user.email.split('@')[0];
-                carregarDashboard();
-            }
-        });
-
-        // --- SISTEMA SOCIAL (COMUNIDADE) ---
-
-        async function buscarAtleta() {
-            const email = document.getElementById('searchEmail').value.trim().toLowerCase();
-            const btn = document.getElementById('btnBuscar');
-            const resBox = document.getElementById('searchResult');
-
-            if (email === currentUser.email) { alert("Você já é seu melhor amigo!"); return; }
-
-            btn.disabled = true;
-            
-            try {
-                const snap = await db.collection("users").where("email", "==", email).get();
-                
-                if (snap.empty) {
-                    alert("Atleta não encontrado. Verifique o e-mail.");
-                    resBox.style.display = 'none';
-                } else {
-                    const u = snap.docs[0];
-                    foundUser = { id: u.id, ...u.data() };
-                    
-                    resBox.style.display = 'block';
-                    document.getElementById('resName').innerText = foundUser.email.split('@')[0];
-                    document.getElementById('resCoins').innerText = (foundUser.coins || 0) + " ShapeCoins";
-                    
-                    document.getElementById('btnAddFriend').onclick = () => adicionarAmigo(foundUser);
-                }
-            } catch (e) { console.error(e); }
-            btn.disabled = false;
-        }
-
-        async function adicionarAmigo(friend) {
-            try {
-                // Adiciona na sub-coleção 'friends' do usuário atual
-                await db.collection("users").doc(currentUser.uid).collection("friends").doc(friend.id).set({
-                    email: friend.email,
-                    addedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert("Amigo adicionado!");
-                document.getElementById('searchResult').style.display = 'none';
-                document.getElementById('searchEmail').value = "";
-            } catch (e) { alert("Erro ao adicionar."); }
-        }
-
-        function carregarAmigos() {
-            db.collection("users").doc(currentUser.uid).collection("friends").onSnapshot(async (snap) => {
-                const list = document.getElementById('friendsList');
-                if (snap.empty) return;
-
-                list.innerHTML = "";
-                for (const d of snap.docs) {
-                    // Busca os dados atualizados de cada amigo (saldo de moedas)
-                    const friendDoc = await db.collection("users").doc(d.id).get();
-                    if (friendDoc.exists) {
-                        const fdata = friendDoc.data();
-                        list.innerHTML += `
-                            <div class="friend-item">
-                                <span class="friend-name">${fdata.email.split('@')[0]}</span>
-                                <span class="friend-coins">💎 ${fdata.coins || 0}</span>
-                            </div>
-                        `;
-                    }
-                }
-            });
-        }
-
-        // --- LÓGICA DE TREINO E DADOS (MANTIDA) ---
-
-        function carregarDashboard() {
-            db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('coinBalance').innerText = (data.coins || 0).toLocaleString();
-                    if(data.weight) document.getElementById('weight').value = data.weight;
-                    if(data.height) document.getElementById('height').value = data.height;
-                    if(data.weight && data.height) calcularIMC(data.weight, data.height);
-                    
-                    const hoje = new Date().toDateString();
-                    const lastBonusDate = data.lastBonusDate ? data.lastBonusDate.toDate().toDateString() : "";
-                    document.getElementById('bonusCount').innerText = (lastBonusDate === hoje) ? (data.dailyBonusCount || 0) : 0;
-                }
-            });
-            carregarHistorico();
-            carregarAmigos();
-        }
-
-        async function salvarTreino() {
-            const btn = document.getElementById('btnTreinar');
-            const type = document.getElementById('workoutType').value;
-            const value = parseInt(document.getElementById('intensity').value);
-            btn.disabled = true;
-            try {
-                const userRef = db.collection("users").doc(currentUser.uid);
-                const doc = await userRef.get();
-                const data = doc.data() || {};
-                const hoje = new Date().toDateString();
-                const lastTrainDate = data.lastTrainDate ? data.lastTrainDate.toDate() : null;
-                const dailyTrainCount = (lastTrainDate && lastTrainDate.toDateString() === hoje) ? (data.dailyTrainCount || 0) : 0;
-
-                if (dailyTrainCount >= 2) { alert("Limite de 2 treinos atingido."); btn.disabled = false; return; }
-                if (lastTrainDate && (new Date() - lastTrainDate < 7200000)) { 
-                    alert("Aguarde o intervalo de 2h entre treinos."); btn.disabled = false; return; 
-                }
-
-                await userRef.set({
-                    coins: firebase.firestore.FieldValue.increment(value),
-                    lastTrainDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    dailyTrainCount: dailyTrainCount + 1
-                }, { merge: true });
-                await db.collection("history").add({ userId: currentUser.uid, type: type, value: value, date: firebase.firestore.FieldValue.serverTimestamp() });
-                alert(`✅ +${value} SC!`);
-            } catch (e) { console.error(e); }
-            btn.disabled = false;
-        }
-
-        async function assistirBonus() {
-            const btn = document.getElementById('btnBonus');
-            btn.disabled = true;
-            window.open(LINK_ADS, '_blank');
-            setTimeout(async () => {
-                await db.collection("users").doc(currentUser.uid).set({
-                    coins: firebase.firestore.FieldValue.increment(20),
-                    lastBonusDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    dailyBonusCount: firebase.firestore.FieldValue.increment(1)
-                }, { merge: true });
-                btn.disabled = false;
-                alert("💰 +20 SC!");
-            }, 5000);
-        }
-
-        function calcularIMC(peso, alturaCm) {
-            const imc = peso / ((alturaCm / 100) ** 2);
-            document.getElementById('imcBox').style.display = 'block';
-            document.getElementById('imcValue').innerText = imc.toFixed(2);
-            document.getElementById('imcStatus').innerText = imc < 24.9 ? "Peso Ideal" : "Acima do Peso";
-        }
-
-        function carregarHistorico() {
-            db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(3).onSnapshot((snap) => {
-                const list = document.getElementById('historyList');
-                list.innerHTML = "";
-                snap.forEach((doc) => {
-                    list.innerHTML += `<div class="history-item"><span>${doc.data().type}</span><span class="gain-pill">+${doc.data().value} SC</span></div>`;
-                });
-            });
-        }
-        
-        function abrirLinkAds() { window.open(LINK_ADS, '_blank'); }
-        function sair() { auth.signOut().then(() => window.location.href = "index.html"); }
-    </script>
-</body>
-</html>
+        <div id="imcBox
