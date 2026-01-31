@@ -3,110 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
-    <title>FOCO - Painel Atleta</title>
+    <title>FOCO - Painel</title>
     
     <meta name="theme-color" content="#00ff9d">
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* --- TEMA PREMIUM FOCO --- */
-        :root { 
-            --primary: #00ff9d; 
-            --gold: #ffd700; 
-            --bg: #050505; 
-            --glass: rgba(255, 255, 255, 0.05); 
-            --border: rgba(255, 255, 255, 0.1); 
-        }
-
-        body { 
-            background-color: var(--bg); 
-            background-image: radial-gradient(circle at top right, rgba(0, 255, 157, 0.05), transparent 40%);
-            color: white; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            padding-bottom: 110px; /* Espaço para o banner */
-        }
+        /* TEMA FOCO PREMIUM */
+        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; padding-bottom: 110px; }
         
-        /* CABEÇALHO */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); text-transform: lowercase; }
-        .coin-badge { 
-            background: linear-gradient(135deg, var(--gold), #b8860b); 
-            padding: 8px 20px; 
-            border-radius: 50px; 
-            color: #000; 
-            font-weight: 900; 
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-        }
+        .coin-badge { background: linear-gradient(135deg, var(--gold), #b8860b); padding: 8px 20px; border-radius: 50px; color: #000; font-weight: 900; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
 
-        /* CARTÕES (GLASSMORPHISM) */
-        .card { 
-            background: var(--glass); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border); 
-            padding: 25px; 
-            border-radius: 25px; 
-            margin-bottom: 25px; 
-            max-width: 600px; 
-            margin-left: auto; 
-            margin-right: auto; 
-        }
+        .card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 25px; border-radius: 25px; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        h3 { color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
 
-        h3 { 
-            color: #fff; 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            letter-spacing: 2px; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 12px; 
-            margin-bottom: 20px; 
+        input, button { width: 100%; padding: 16px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
+        
+        /* BOTÃO CHECK-IN (DESTAQUE) */
+        #btnTreinar {
+            background: linear-gradient(to right, var(--primary), #00cc7a);
+            color: #000; font-weight: 900; font-size: 1.2rem;
+            padding: 25px; border: none; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+            animation: pulse 2s infinite;
         }
-
-        /* FORMULÁRIOS */
-        input, select, button { 
-            width: 100%; 
-            padding: 16px; 
-            margin: 10px 0; 
-            background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--border); 
-            color: white; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            box-sizing: border-box; 
-        }
-
-        /* BOTÕES */
-        button { 
-            background: var(--primary); 
-            color: #000; 
-            font-weight: 800; 
-            border: none; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-        }
-        button:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 255, 157, 0.2); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        
+        #btnSalvar { background: #333; color: white; border: 1px solid #555; }
 
         .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
-        /* MURAL SOCIAL (FEED) */
-        .feed-post { 
-            background: var(--glass); 
-            border-radius: 15px; 
-            border: 1px solid var(--border); 
-            margin-bottom: 15px; 
-            padding: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
+        /* MURAL */
+        .feed-post { background: var(--glass); border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .post-left { display: flex; align-items: center; gap: 12px; }
-        .post-avatar { 
-            width: 40px; height: 40px; 
-            background: var(--primary); 
-            border-radius: 50%;
+        .post-avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 1.2rem; }
+        .post-user { font-weight: 700; font-size: 1rem; color: #fff; display: block; }
+        .post-type { font-size: 0.8rem; color: #aaa; }
+        .post-value { color: var(--gold); font-weight: bold; font-size: 0.9rem; }
+
+        .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(15,15,15,0.95); border: 1px solid var(--border); border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info">
+            <span style="color:#666; font-size: 0.8rem; letter-spacing: 1px;">ATLETA FOCO</span>
+            <h2 id="displayUsername">...</h2>
+        </div>
+        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
+    </div>
+
+    <div class="card" style="text-align: center; border-color: var(--primary);">
+        <h3 style="color: var(--primary); border-color: rgba(0,255,157,0.3);">Check-in Diário</h3>
+        <p style="color:#aaa; font-size: 0.9rem; margin-bottom: 20px;">Está pagando o preço hoje?</p>
+        
+        <button id="btnTreinar">CONFIRMAR PRESENÇA (+50 FC)</button>
+    </div>
+
+    <div class="card">
+        <h3>Identidade</h3>
+        <input type="text" id="username" placeholder="Crie seu @usuario">
+        <div class="row">
+            <input type="text" id="weight" placeholder="Peso (kg)">
+            <input type="tel" id="height" placeholder="Altura (cm)">
+        </div>
+        <button id="btnSalvar">Salvar Dados</button>
+    </div>
+
+    <div id="focoFeed">
+        <h3 style="margin-left: 10px; border:none;">Mural da Tribo</h3>
+        <p style="text-align: center; color: #666;">Carregando...</p>
+    </div>
+
+    <div class="sticky-banner" onclick="window.open('https://google.com', '_blank')">
+        <span style="color: #fff; font-weight: 600; font-size: 0.8rem;">🔥 OFERTA: Creatina 20% OFF</span>
+        <div style="background: var(--primary); color: #000; padding: 6px 15px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;">VER</div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentUser = null;
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) window.location.href = "index.html";
+            else {
+                currentUser = user;
+                carregarDados();
+            }
+        });
+
+        // 1. CHECK-IN SIMPLIFICADO
+        document.getElementById('btnTreinar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnTreinar');
+            const displayUser = document.getElementById('displayUsername').innerText;
+
+            if(displayUser === "..." || displayUser === "Configurar Perfil") {
+                return alert("Crie seu @usuario na aba Identidade abaixo!");
+            }
+
+            btn.disabled = true;
+            btn.innerText = "VALIDANDO...";
+
+            try {
+                // Checagem de Limite Diário (Opcional, mas bom pra evitar spam)
+                const userRef = db.collection("users").doc(currentUser.uid);
+                const doc = await userRef.get();
+                const data = doc.data();
+                const hoje = new Date().toDateString();
+                const lastDate = data.lastTrainDate ? data.lastTrainDate.toDate().toDateString() : "";
+                
+                // Se quiser limitar a 1 por dia, descomente abaixo:
+                // if(lastDate === hoje) { alert("Você já fez check-in hoje! Volte amanhã."); btn.disabled=false; btn.innerText="JÁ FEZ CHECK-IN HOJE"; return; }
+
+                // Registra
+                await db.collection("history").add({
+                    userId: currentUser.uid,
+                    username: data.username || "Atleta",
+                    type: "Treino Realizado", // Texto fixo
+                    value: 50,
+                    date: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Paga
+                await userRef.update({
+                    coins: firebase.firestore.FieldValue.increment(50),
+                    lastTrainDate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("CHECK-IN REALIZADO! +50 FC");
+                btn.innerText = "CONFIRMAR PRESENÇA (+50 FC)";
+
+            } catch (e) {
+                alert("Erro: " + e.message);
+            }
+            btn.disabled = false;
+        });
+
+        // 2. SALVAR PERFIL
+        document.getElementById('btnSalvar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnSalvar');
+            const userField = document.getElementById('username').value.trim();
+            const weight = document.getElementById('weight').value.replace(',', '.');
+            const height = document.getElementById('height').value.replace(',', '.');
+
+            if(!userField) return alert("Crie um nome!");
+
+            btn.disabled = true; btn.innerText = "SALVANDO...";
+
+            try {
+                await db.collection("users").doc(currentUser.uid).set({
+                    username: userField.replace('@', ''),
+                    weight: parseFloat(weight) || 0,
+                    height: parseFloat(height) || 0
+                }, { merge: true });
+                alert("Salvo!");
+                btn.innerText = "DADOS SALVOS";
+                setTimeout(() => btn.innerText = "Salvar Dados", 2000);
+            } catch (e) { alert("Erro."); }
+            btn.disabled = false;
+        });
+
+        // 3. CARREGAR DADOS
+        function carregarDados() {
+            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('coinBalance').innerText = (data.coins || 0).toLocaleString();
+                    document.getElementById('displayUsername').innerText = data.username ? "@" + data.username : "Configurar Perfil";
+                    if(data.username) document.getElementById('username').value = data.username;
+                    if(data.weight) document.getElementById('weight').value = data.weight;
+                    if(data.height) document.getElementById('height').value = data.height;
+                }
+            });
+            carregarFeed();
+        }
+
+        // 4. MURAL SOCIAL
+        function carregarFeed() {
+            db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                const feed = document.getElementById('focoFeed');
+                feed.innerHTML = "<h3 style='margin-left:10px; border:none;'>Mural da Tribo</h3>";
+                
+                if(snap.empty) { feed.innerHTML += "<p style='text-align:center;color:#555'>Nenhum check-in hoje.</p>"; return; }
+
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const nome = data.username || "Atleta";
+                    const inicial = nome.charAt(0).toUpperCase();
+                    
+                    feed.innerHTML += `
+                        <div class="feed-post">
+                            <div class="post-left">
+                                <div class="post-avatar">${inicial}</div>
+                                <div>
+                                    <span class="post-user">@${nome}</span>
+                                    <span class="post-type">Fez Check-in</span>
+                                </div>
+                            </div>
+                            <span class="post-value">+${data.value} FC</span>
+                        </div>
+                    `;
+                });
+            });
+        }
+    </script>
+</body>
+</html>: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(15,15,15,0.95); border: 1px solid var(--border); border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(15px); box-shadow: 0
