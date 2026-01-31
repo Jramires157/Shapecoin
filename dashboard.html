@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCO - Painel Atleta</title>
+    <title>FOCO - Painel</title>
     
+    <meta name="theme-color" content="#00ff9d">
+    <link rel="manifest" href="manifest.json">
+
     <style>
-        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --card-bg: #111111; --border: #222; }
+        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --card-bg: #111111; --border: #333; }
         
-        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 120px; }
+        body { 
+            background-color: var(--bg); color: white; font-family: sans-serif; 
+            margin: 0; padding: 20px; padding-bottom: 120px; 
+        }
         
         /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -16,9 +22,9 @@
         .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); }
         .coin-badge { background: var(--gold); color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
 
-        /* SISTEMA DE NÍVEL (NOVO) */
+        /* NÍVEL */
         .level-section { margin-bottom: 30px; text-align: center; }
-        .level-badge { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 5px; display: block; }
+        .level-badge { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; display: block; margin-bottom: 5px;}
         .level-number { font-size: 2.5rem; font-weight: 900; margin: 0; line-height: 1; }
         .progress-container { width: 100%; background: #222; height: 8px; border-radius: 10px; margin-top: 15px; overflow: hidden; border: 1px solid #333; }
         .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease-in-out; box-shadow: 0 0 10px var(--primary); }
@@ -27,19 +33,23 @@
         .card { background-color: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
         h3 { color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top: 0; }
 
-        /* BOTÕES */
+        /* BOTÕES & INPUTS */
         button { width: 100%; background: var(--primary); color: #000; font-weight: 800; border: none; padding: 18px; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         button:disabled { opacity: 0.5; }
-
         input { width: 100%; padding: 16px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; }
 
-        /* MURAL */
-        .feed-post { background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .post-avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
+        /* MURAL (NOVO ESTILO LOG) */
+        .feed-post { 
+            background: #111; border-bottom: 1px solid #222; 
+            padding: 15px 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .feed-post:last-child { border-bottom: none; }
+        .post-date { color: #888; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .post-value { color: var(--gold); font-weight: bold; font-size: 1rem; }
 
-        /* ÁREA DE ADS */
-        .ad-container { margin: 20px 0; text-align: center; min-height: 50px; background: rgba(255,255,255,0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #444; }
-
+        /* ADS */
+        .ad-container { margin: 20px 0; text-align: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 10px; color: #444; border: 1px dashed #333; }
         .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; }
     </style>
 
@@ -51,43 +61,45 @@
 
     <div class="header">
         <div class="user-info" onclick="toggleMenu()">
-            <h2 id="displayUsername">Carregando... ⚙️</h2>
+            <h2 id="displayUsername">... ⚙️</h2>
         </div>
         <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
     </div>
 
     <div class="level-section">
-        <span class="level-badge" id="levelTitle">Calculando Nível...</span>
-        <h1 class="level-number" id="levelNum">1</h1>
+        <span class="level-badge" id="levelTitle">Carregando...</span>
+        <h1 class="level-number" id="levelNum">-</h1>
         <div class="progress-container">
             <div class="progress-bar" id="levelProgress"></div>
         </div>
-        <p style="font-size: 0.7rem; color: #555; margin-top: 8px;">Próximo nível em <span id="pointsToNext">0</span> FC</p>
+        <p style="font-size: 0.7rem; color: #555; margin-top: 8px;">Faltam <span id="pointsToNext">0</span> FC para evoluir</p>
     </div>
 
     <div class="ad-container">
-        ANÚNCIO PATROCINADO
+        PUBLICIDADE AQUI
     </div>
 
     <div class="card" id="cardIdentity" style="display: none;">
-        <h3>Perfil do Atleta</h3>
+        <h3>Configurações</h3>
         <input type="text" id="username" placeholder="Seu @usuario">
         <div style="display: flex; gap: 10px;">
             <input type="text" id="weight" placeholder="Peso (kg)">
             <input type="text" id="height" placeholder="Altura (cm)">
         </div>
-        <button id="btnSalvar">Salvar Identidade</button>
+        <button id="btnSalvar">Salvar Dados</button>
         <p style="text-align: center; color: red; cursor: pointer; margin-top: 20px;" onclick="auth.signOut().then(()=>location.reload())">Sair da Conta</p>
     </div>
 
     <div class="card" style="border-color: var(--primary);">
         <h3 style="color: var(--primary);">Check-in Diário</h3>
-        <button id="btnTreinar">REGISTRAR TREINO (+50 FC)</button>
+        <button id="btnTreinar">CONFIRMAR PRESENÇA (+50 FC)</button>
     </div>
 
-    <div id="focoFeed">
-        <h3>Mural da Tribo</h3>
-        <p style="text-align: center; color: #444;">Carregando...</p>
+    <div class="card" style="padding: 10px;">
+        <h3 style="margin: 15px;">Histórico da Tribo</h3>
+        <div id="focoFeed">
+            <p style="text-align: center; color: #444;">Carregando...</p>
+        </div>
     </div>
 
     <div class="sticky-banner" onclick="window.open('https://google.com', '_blank')">
@@ -105,106 +117,139 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
 
-        auth.onAuthStateChanged((user) => {
-            if (!user) window.location.href = "index.html";
-            else { currentUser = user; carregarDados(); }
-        });
-
-        // --- LÓGICA DE NÍVEL (PROGRESSÃO) ---
-        function atualizarNivel(coins) {
-            // Cada nível exige 1000 pontos a mais que o anterior
-            // Nível 1: 0-1000 | Nível 2: 1000-2000...
-            const pontosPorNivel = 1000; 
-            const level = Math.floor(coins / pontosPorNivel) + 1;
-            const progress = ((coins % pontosPorNivel) / pontosPorNivel) * 100;
-            const faltam = pontosPorNivel - (coins % pontosPorNivel);
-
-            document.getElementById('levelNum').innerText = level;
-            document.getElementById('levelProgress').style.width = progress + "%";
-            document.getElementById('pointsToNext').innerText = faltam;
-
-            // Nomes de Patentes
-            const patentes = ["Iniciante", "Focado", "Atleta", "Brabo", "Elite", "Mestre", "Lenda"];
-            document.getElementById('levelTitle').innerText = patentes[Math.min(level - 1, patentes.length - 1)];
-        }
-
-        // --- BOTÕES ---
-        document.getElementById('btnSalvar').addEventListener('click', async () => {
-            const btn = document.getElementById('btnSalvar');
-            const user = document.getElementById('username').value.trim();
-            if(!user) return alert("Nome vazio!");
-            
-            btn.disabled = true;
-            await db.collection("users").doc(currentUser.uid).set({
-                username: user.replace('@', ''),
-                weight: document.getElementById('weight').value,
-                height: document.getElementById('height').value
-            }, { merge: true });
-            
-            alert("Salvo!");
-            btn.disabled = false;
-            toggleMenu();
-        });
-
-        document.getElementById('btnTreinar').addEventListener('click', async () => {
-            const btn = document.getElementById('btnTreinar');
-            btn.disabled = true;
-
-            const doc = await db.collection("users").doc(currentUser.uid).get();
-            const nome = doc.data().username || "Atleta";
-
-            await db.collection("history").add({
-                username: nome,
-                type: "Check-in",
-                value: 50,
-                date: firebase.firestore.FieldValue.serverTimestamp()
+            auth.onAuthStateChanged((user) => {
+                if (!user) window.location.href = "index.html";
+                else { currentUser = user; carregarDados(); }
             });
 
-            await db.collection("users").doc(currentUser.uid).update({
-                coins: firebase.firestore.FieldValue.increment(50)
+            // --- LÓGICA DE NÍVEL ---
+            function atualizarNivel(coins) {
+                const pontosPorNivel = 1000; 
+                const level = Math.floor(coins / pontosPorNivel) + 1;
+                const progress = ((coins % pontosPorNivel) / pontosPorNivel) * 100;
+                
+                document.getElementById('levelNum').innerText = level;
+                document.getElementById('levelProgress').style.width = progress + "%";
+                document.getElementById('pointsToNext').innerText = pontosPorNivel - (coins % pontosPorNivel);
+                
+                const patentes = ["Iniciante", "Focado", "Atleta", "Brabo", "Elite", "Mestre", "Lenda"];
+                document.getElementById('levelTitle').innerText = patentes[Math.min(level - 1, patentes.length - 1)];
+            }
+
+            // --- BOTÕES ---
+            document.getElementById('btnSalvar').addEventListener('click', async () => {
+                const btn = document.getElementById('btnSalvar');
+                const user = document.getElementById('username').value.trim();
+                if(!user) return alert("Preencha o nome!");
+                
+                btn.disabled = true;
+                await db.collection("users").doc(currentUser.uid).set({
+                    username: user.replace('@', ''),
+                    weight: document.getElementById('weight').value,
+                    height: document.getElementById('height').value
+                }, { merge: true });
+                
+                alert("Salvo!");
+                btn.disabled = false;
+                toggleMenu();
             });
 
-            alert("CONCLUÍDO!");
-            btn.disabled = false;
-        });
-
-        function carregarDados() {
-            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    const d = doc.data();
-                    const coins = d.coins || 0;
-                    document.getElementById('coinBalance').innerText = coins.toLocaleString();
-                    document.getElementById('displayUsername').innerText = d.username ? "@" + d.username + " ⚙️" : "Configurar Perfil ⚙️";
-                    
-                    atualizarNivel(coins); // Roda a lógica de nível
+            document.getElementById('btnTreinar').addEventListener('click', async () => {
+                const btn = document.getElementById('btnTreinar');
+                
+                // Verifica se tem nome configurado antes de deixar treinar
+                const displayUser = document.getElementById('displayUsername').innerText;
+                if(displayUser.includes("Configurar")) {
+                    toggleMenu();
+                    return alert("Configure seu @usuario antes de fazer Check-in!");
                 }
-            });
 
-            db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
-                const div = document.getElementById('focoFeed');
-                div.innerHTML = "<h3>Mural da Tribo</h3>";
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    div.innerHTML += `
-                        <div class="feed-post">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div class="post-avatar">${(d.username || 'A')[0]}</div>
-                                <span>@${d.username || 'Atleta'}</span>
-                            </div>
-                            <span style="color:var(--gold)">+${d.value} FC</span>
-                        </div>`;
+                btn.disabled = true;
+                btn.innerText = "REGISTRANDO...";
+
+                // Pega nome atual do usuário
+                const docUser = await db.collection("users").doc(currentUser.uid).get();
+                const myName = docUser.data().username || "Atleta";
+
+                await db.collection("history").add({
+                    username: myName, // Mantemos gravando o nome no banco para segurança, mas não mostramos no front
+                    type: "Check-in",
+                    value: 50,
+                    date: firebase.firestore.FieldValue.serverTimestamp()
                 });
-            });
-        }
 
-        window.toggleMenu = function() {
-            const m = document.getElementById('cardIdentity');
-            m.style.display = (m.style.display === "none") ? "block" : "none";
+                await db.collection("users").doc(currentUser.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(50)
+                });
+
+                alert("CHECK-IN FEITO!");
+                btn.disabled = false;
+                btn.innerText = "CONFIRMAR PRESENÇA (+50 FC)";
+            });
+
+            // --- CARREGAR DADOS ---
+            function carregarDados() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        const coins = d.coins || 0;
+                        document.getElementById('coinBalance').innerText = coins.toLocaleString();
+                        document.getElementById('displayUsername').innerText = d.username ? "@" + d.username + " ⚙️" : "Configurar Perfil ⚙️";
+                        
+                        if(d.username) document.getElementById('username').value = d.username;
+                        if(d.weight) document.getElementById('weight').value = d.weight;
+                        if(d.height) document.getElementById('height').value = d.height;
+
+                        atualizarNivel(coins);
+                    }
+                });
+
+                // CARREGAR MURAL (SÓ DATA E MOEDA)
+                db.collection("history").orderBy("date", "desc").limit(15).onSnapshot(snap => {
+                    const div = document.getElementById('focoFeed');
+                    div.innerHTML = "";
+                    
+                    if(snap.empty) { div.innerHTML = "<p style='text-align:center; color:#555;'>Mural vazio.</p>"; return; }
+
+                    snap.forEach(doc => {
+                        const d = doc.data();
+                        
+                        // Formatar Data (DD/MM - HH:MM)
+                        let dataStr = "...";
+                        if(d.date) {
+                            const dateObj = d.date.toDate();
+                            const dia = dateObj.getDate().toString().padStart(2, '0');
+                            const mes = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                            const hora = dateObj.getHours().toString().padStart(2, '0');
+                            const min = dateObj.getMinutes().toString().padStart(2, '0');
+                            dataStr = `${dia}/${mes} - ${hora}:${min}`;
+                        }
+
+                        div.innerHTML += `
+                            <div class="feed-post">
+                                <div class="post-date">
+                                    <span>📅</span>
+                                    <span>${dataStr}</span>
+                                </div>
+                                <span class="post-value">+${d.value} FC</span>
+                            </div>`;
+                    });
+                });
+            }
+
+            window.toggleMenu = function() {
+                const m = document.getElementById('cardIdentity');
+                m.style.display = (m.style.display === "none") ? "block" : "none";
+            }
+
+        } catch (e) {
+            alert("Erro: " + e.message);
         }
     </script>
 </body>
