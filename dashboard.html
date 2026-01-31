@@ -6,7 +6,7 @@
     <title>Painel - ShapeCoin</title>
     <style>
         /* --- ESTILO DARK MODE --- */
-        :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
+        :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; --error: #ff4444; }
         body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 100px; }
         
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
@@ -14,23 +14,21 @@
         .coin-badge { background: #333; padding: 10px 20px; border-radius: 50px; color: #ffd700; font-weight: bold; border: 1px solid #ffd700; font-size: 1.2rem; }
 
         .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; display: block; }
-
         h3 { color: var(--primary); margin-top: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
 
         input, select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        
         .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
         button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         button:hover { opacity: 0.9; transform: scale(1.01); }
-        
+        button:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
+
         .btn-bonus { background: linear-gradient(45deg, #ffd700, #ffaa00); color: black; animation: pulse 2s infinite; border: 2px solid #fff; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
         .imc-result { text-align: center; margin-top: 15px; padding: 15px; background: #252525; border-radius: 6px; border: 1px dashed #555; display: none; }
         .imc-value { font-size: 2rem; font-weight: bold; color: var(--primary); display: block; }
-        .imc-status { color: #aaa; font-size: 1rem; margin-top: 5px; }
 
         .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; z-index: 100; }
         .banner-content { background: #00ff88; color: black; padding: 5px 15px; border-radius: 4px; font-weight: bold; display: inline-block; }
@@ -46,7 +44,7 @@
 
     <div class="header">
         <div class="user-info">
-            <span style="color: #888; font-size: 0.9rem;">Olá,</span>
+            <span style="color: #888; font-size: 0.9rem;">Atleta:</span>
             <h2 id="userEmail">Carregando...</h2>
         </div>
         <div class="coin-badge">💎 <span id="coinBalance">...</span></div>
@@ -54,15 +52,12 @@
 
     <div class="card">
         <h3>Meus Dados</h3>
-        
         <label style="color: #aaa; font-size: 0.8rem;">Data de Nascimento</label>
         <input type="date" id="birthDate">
-
         <div class="row">
             <input type="text" id="weight" placeholder="Peso (kg) ex: 70.5">
             <input type="tel" id="height" placeholder="Altura (cm) ex: 175">
         </div>
-
         <button onclick="salvarPerfil()" id="btnSalvarPerfil" style="background: #333; color: white; border: 1px solid #555;">Calcular IMC & Salvar</button>
 
         <div id="imcBox" class="imc-result">
@@ -72,13 +67,15 @@
     </div>
 
     <div class="card" style="border-color: #ffd700;">
-        <h3 style="color: #ffd700;">Área de Recompensas</h3>
-        <p style="color:#aaa; font-size: 0.9rem;">Ganhe moedas assistindo vídeos.</p>
-        <button onclick="assistirBonus()" class="btn-bonus">ASSISTIR VÍDEO (+20 MOEDAS)</button>
+        <h3 style="color: #ffd700;">Bônus Diário</h3>
+        <p style="color:#aaa; font-size: 0.9rem;">Limite: <span id="bonusCount">0</span>/10 vídeos hoje.</p>
+        <button onclick="assistirBonus()" id="btnBonus" class="btn-bonus">ASSISTIR VÍDEO (+20 MOEDAS)</button>
     </div>
 
     <div class="card">
         <h3>Registrar Treino</h3>
+        <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 10px;">Regra: Máx 2 treinos/dia com intervalo de 2h.</p>
+        
         <select id="workoutType">
             <option value="Superior">Treino Superior</option>
             <option value="Inferior">Treino Inferior</option>
@@ -89,7 +86,7 @@
             <option value="50">Nível Normal (+50 SC)</option>
             <option value="80">Nível Pesado (+80 SC)</option>
         </select>
-        <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR</button>
+        <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR TREINO</button>
     </div>
 
     <div class="card">
@@ -108,7 +105,7 @@
 
     <script>
         // --- SEU LINK AQUI ---
-        const LINK_ADS = "https://google.com";
+        const LINK_ADS = "https://google.com"; // Troque pelo link da Monetag
         // ---------------------
 
         const firebaseConfig = {
@@ -127,129 +124,187 @@
             let currentUser = null;
 
             auth.onAuthStateChanged((user) => {
-                if (!user) {
-                    window.location.href = "index.html";
-                } else {
+                if (!user) window.location.href = "index.html";
+                else {
                     currentUser = user;
                     document.getElementById('userEmail').innerText = user.email.split('@')[0];
-                    carregarDadosUsuario();
-                    carregarHistorico();
+                    carregarDadosIniciais();
                 }
             });
 
-            function carregarDadosUsuario() {
+            function carregarDadosIniciais() {
                 db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
                         document.getElementById('coinBalance').innerText = data.coins || 0;
                         
+                        // Contadores do Dia (Reseta visualmente se o dia virou, mas o controle real é no banco)
+                        const hoje = new Date().toDateString();
+                        const lastBonusDate = data.lastBonusDate ? data.lastBonusDate.toDate().toDateString() : "";
+                        
+                        if(lastBonusDate === hoje) {
+                            document.getElementById('bonusCount').innerText = data.dailyBonusCount || 0;
+                        } else {
+                            document.getElementById('bonusCount').innerText = 0;
+                        }
+
+                        // Perfil
                         if(data.weight) document.getElementById('weight').value = data.weight;
                         if(data.height) document.getElementById('height').value = data.height;
                         if(data.birthDate) document.getElementById('birthDate').value = data.birthDate;
-
-                        if(data.weight && data.height) {
-                            calcularIMC(data.weight, data.height);
-                        }
+                        if(data.weight && data.height) calcularIMC(data.weight, data.height);
                     }
                 });
+                carregarHistorico();
             }
 
-            // --- CORREÇÃO PRINCIPAL AQUI ---
-            window.salvarPerfil = function() {
-                const btn = document.getElementById('btnSalvarPerfil');
-                
-                // 1. Pega os valores como texto
-                let weightStr = document.getElementById('weight').value;
-                let heightStr = document.getElementById('height').value;
-                const birthDate = document.getElementById('birthDate').value;
+            // --- SISTEMA ECONÔMICO SEGURO ---
 
-                // 2. Troca vírgula por ponto (Correção Brasil)
-                weightStr = weightStr.replace(',', '.');
-                heightStr = heightStr.replace(',', '.');
-
-                // 3. Converte para número
-                const weight = parseFloat(weightStr);
-                const height = parseFloat(heightStr);
-
-                // 4. Validação
-                if(isNaN(weight) || isNaN(height) || !weight || !height) {
-                    alert("Por favor, digite números válidos para Peso e Altura.");
-                    return;
-                }
-
-                btn.innerText = "SALVANDO...";
-                btn.disabled = true;
-
-                // 5. Salva no Banco
-                db.collection("users").doc(currentUser.uid).set({
-                    weight: weight,
-                    height: height,
-                    birthDate: birthDate
-                }, { merge: true }) // Mantém as moedas, não apaga
-                .then(() => {
-                    calcularIMC(weight, height);
-                    btn.innerText = "DADOS SALVOS!";
-                    setTimeout(() => { btn.innerText = "CALCULAR IMC & SALVAR"; btn.disabled = false; }, 2000);
-                })
-                .catch((error) => {
-                    alert("Erro ao salvar: " + error.message);
-                    btn.disabled = false;
-                });
-            };
-
-            function calcularIMC(peso, alturaCm) {
-                const alturaMetros = alturaCm / 100;
-                const imc = peso / (alturaMetros * alturaMetros);
-                const box = document.getElementById('imcBox');
-                const val = document.getElementById('imcValue');
-                const stat = document.getElementById('imcStatus');
-
-                box.style.display = 'block';
-                val.innerText = imc.toFixed(2);
-
-                if(imc < 18.5) { stat.innerText = "Abaixo do peso"; stat.style.color = "yellow"; }
-                else if(imc < 24.9) { stat.innerText = "Peso Normal ✅"; stat.style.color = "#00ff88"; }
-                else if(imc < 29.9) { stat.innerText = "Sobrepeso"; stat.style.color = "orange"; }
-                else { stat.innerText = "Obesidade"; stat.style.color = "red"; }
-            }
-
-            window.abrirLinkAds = function() { window.open(LINK_ADS, '_blank'); };
-
-            window.assistirBonus = function() {
-                window.open(LINK_ADS, '_blank');
-                setTimeout(() => {
-                    pagarMoedas(20, "🎁 Bônus Diário");
-                    alert("Bônus de +20 Moedas recebido!");
-                }, 5000);
-            };
-
-            window.salvarTreino = function() {
+            async function salvarTreino() {
                 const btn = document.getElementById('btnTreinar');
                 const type = document.getElementById('workoutType').value;
                 const value = parseInt(document.getElementById('intensity').value);
 
                 btn.disabled = true;
-                btn.innerText = "SALVANDO...";
+                btn.innerText = "VERIFICANDO...";
 
-                pagarMoedas(value, type);
-                
-                setTimeout(() => {
+                try {
+                    // 1. Busca dados do usuário para checar limites
+                    const userRef = db.collection("users").doc(currentUser.uid);
+                    const doc = await userRef.get();
+                    const data = doc.data() || {};
+
+                    const hoje = new Date().toDateString();
+                    const lastTrainDate = data.lastTrainDate ? data.lastTrainDate.toDate() : null;
+                    const lastTrainDayStr = lastTrainDate ? lastTrainDate.toDateString() : "";
+                    
+                    // Verifica quantos treinos já fez hoje
+                    let dailyTrainCount = (lastTrainDayStr === hoje) ? (data.dailyTrainCount || 0) : 0;
+
+                    // REGRA 1: Limite Diário (Máx 2)
+                    if (dailyTrainCount >= 2) {
+                        alert("⚠️ Limite diário atingido! Você só pode registrar 2 treinos por dia. Volte amanhã!");
+                        btn.disabled = false; btn.innerText = "CONFIRMAR TREINO";
+                        return;
+                    }
+
+                    // REGRA 2: Cooldown (Intervalo de 2 horas = 7200000 ms)
+                    if (lastTrainDate) {
+                        const diffTime = new Date() - lastTrainDate;
+                        if (diffTime < 7200000) { 
+                            const faltaMin = Math.ceil((7200000 - diffTime) / 60000);
+                            alert(`⏳ Descanso obrigatório! Espere mais ${faltaMin} minutos para registrar outro treino.`);
+                            btn.disabled = false; btn.innerText = "CONFIRMAR TREINO";
+                            return;
+                        }
+                    }
+
+                    // Se passou nas regras, Salva!
+                    btn.innerText = "SALVANDO...";
+                    
+                    // Atualiza contadores e saldo
+                    await userRef.set({
+                        coins: firebase.firestore.FieldValue.increment(value),
+                        lastTrainDate: firebase.firestore.FieldValue.serverTimestamp(),
+                        dailyTrainCount: (lastTrainDayStr === hoje) ? dailyTrainCount + 1 : 1
+                    }, { merge: true });
+
+                    // Salva histórico
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: type, value: value,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    alert(`✅ Treino Validado! +${value} SC na conta.`);
+                    btn.innerText = "CONFIRMAR TREINO";
                     btn.disabled = false;
-                    btn.innerText = "CONFIRMAR";
-                    alert("Treino Registrado!");
-                }, 1000);
+
+                } catch (error) {
+                    alert("Erro: " + error.message);
+                    btn.disabled = false;
+                }
+            }
+
+            async function assistirBonus() {
+                const btn = document.getElementById('btnBonus');
+                btn.disabled = true;
+
+                try {
+                    const userRef = db.collection("users").doc(currentUser.uid);
+                    const doc = await userRef.get();
+                    const data = doc.data() || {};
+                    
+                    const hoje = new Date().toDateString();
+                    const lastBonusDayStr = data.lastBonusDate ? data.lastBonusDate.toDate().toDateString() : "";
+                    let dailyBonusCount = (lastBonusDayStr === hoje) ? (data.dailyBonusCount || 0) : 0;
+
+                    // REGRA 3: Limite de Bônus (Máx 10)
+                    if (dailyBonusCount >= 10) {
+                        alert("⚠️ Você atingiu o limite de vídeos por hoje. Volte amanhã!");
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    // Abre o anúncio
+                    window.open(LINK_ADS, '_blank');
+                    
+                    // Simula tempo e paga
+                    setTimeout(async () => {
+                        const bonus = 20;
+                        
+                        await userRef.set({
+                            coins: firebase.firestore.FieldValue.increment(bonus),
+                            lastBonusDate: firebase.firestore.FieldValue.serverTimestamp(),
+                            dailyBonusCount: (lastBonusDayStr === hoje) ? dailyBonusCount + 1 : 1
+                        }, { merge: true });
+
+                        await db.collection("history").add({
+                            userId: currentUser.uid, type: "🎁 Bônus Vídeo", value: bonus,
+                            date: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        alert(`💰 Bônus Recebido! +${bonus} SC`);
+                        btn.disabled = false;
+                    }, 5000);
+
+                } catch (e) {
+                    console.error(e);
+                    btn.disabled = false;
+                }
+            }
+
+            // --- FUNÇÕES DE PERFIL (Igual Anterior) ---
+            window.salvarPerfil = function() {
+                const btn = document.getElementById('btnSalvarPerfil');
+                let weightStr = document.getElementById('weight').value.replace(',', '.');
+                let heightStr = document.getElementById('height').value.replace(',', '.');
+                const weight = parseFloat(weightStr);
+                const height = parseFloat(heightStr);
+                const birthDate = document.getElementById('birthDate').value;
+
+                if(isNaN(weight) || isNaN(height)) { alert("Dados inválidos"); return; }
+
+                btn.innerText = "SALVANDO...";
+                db.collection("users").doc(currentUser.uid).set({
+                    weight: weight, height: height, birthDate: birthDate
+                }, { merge: true }).then(() => {
+                    calcularIMC(weight, height);
+                    btn.innerText = "SALVO!";
+                    setTimeout(() => btn.innerText = "Calcular IMC & Salvar", 2000);
+                });
             };
 
-            function pagarMoedas(valor, tipo) {
-                db.collection("history").add({
-                    userId: currentUser.uid,
-                    type: tipo,
-                    value: valor,
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                db.collection("users").doc(currentUser.uid).update({
-                    coins: firebase.firestore.FieldValue.increment(valor)
-                });
+            function calcularIMC(peso, alturaCm) {
+                const imc = peso / ((alturaCm / 100) ** 2);
+                const el = document.getElementById('imcBox');
+                const stat = document.getElementById('imcStatus');
+                el.style.display = 'block';
+                document.getElementById('imcValue').innerText = imc.toFixed(2);
+                
+                if(imc < 18.5) { stat.innerText = "Abaixo do peso"; stat.style.color = "yellow"; }
+                else if(imc < 24.9) { stat.innerText = "Peso Normal ✅"; stat.style.color = "#00ff88"; }
+                else if(imc < 29.9) { stat.innerText = "Sobrepeso"; stat.style.color = "orange"; }
+                else { stat.innerText = "Obesidade"; stat.style.color = "#ff4444"; }
             }
 
             function carregarHistorico() {
@@ -262,12 +317,11 @@
                     });
                 });
             }
-
+            
+            window.abrirLinkAds = function() { window.open(LINK_ADS, '_blank'); };
             window.sair = function() { auth.signOut().then(() => window.location.href = "index.html"); };
 
-        } catch (e) {
-            alert("Erro no Código: " + e.message);
-        }
+        } catch (e) { alert("Erro Crítico: " + e.message); }
     </script>
 </body>
 </html>
