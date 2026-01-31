@@ -7,7 +7,7 @@
     <style>
         /* ESTILO DARK MODE */
         :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
-        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 80px; /* Espaço pro banner */ }
+        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 80px; }
         
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
@@ -16,30 +16,36 @@
 
         /* Cards */
         .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 10px; }
-
-        /* Inputs */
-        select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; }
         
+        /* Títulos sem Emojis */
+        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
+
+        /* Inputs e Botões */
+        input, select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        
+        /* Layout de Colunas para o Perfil */
+        .row { display: flex; gap: 10px; }
+        .row input { width: 50%; }
+
         /* Botão Principal */
         button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         button:hover { opacity: 0.9; transform: scale(1.01); }
         
-        /* Botão Bônus (Ouro) */
+        /* Botão Bônus */
         .btn-bonus { background: linear-gradient(45deg, #ffd700, #ffaa00); color: black; animation: pulse 2s infinite; border: 2px solid #fff; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* Resultado IMC */
+        .imc-result { text-align: center; margin-top: 15px; padding: 10px; background: #252525; border-radius: 6px; display: none; }
+        .imc-value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .imc-status { color: #aaa; font-size: 0.9rem; }
 
         /* Lista Histórico */
         .history-item { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid var(--primary); }
         .gain { color: #00ff88; font-weight: bold; }
 
-        /* BANNER FIXO (Rodapé) */
-        .sticky-banner {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #222; border-top: 1px solid #444;
-            padding: 10px; text-align: center; cursor: pointer;
-            z-index: 100; display: flex; justify-content: center; align-items: center;
-        }
+        /* BANNER FIXO */
+        .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 10px; text-align: center; cursor: pointer; z-index: 100; display: flex; justify-content: center; align-items: center; }
         .banner-content { background: #00ff88; color: black; padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
         .banner-text { margin-right: 10px; color: #aaa; font-size: 0.8rem; }
 
@@ -60,166 +66,3 @@
             <span style="color: #888; font-size: 0.9rem;">Atleta:</span>
             <h2 id="userEmail">...</h2>
         </div>
-        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
-    </div>
-
-    <div class="card" style="border-color: #ffd700;">
-        <h3 style="color: #ffd700;">🎁 Moedas Grátis</h3>
-        <p style="color:#aaa; font-size: 0.9rem;">Assista a um vídeo curto e ganhe moedas na hora.</p>
-        <button onclick="assistirBonus()" class="btn-bonus">📺 ASSISTIR VÍDEO (+20 MOEDAS)</button>
-    </div>
-
-    <div class="card">
-        <h3>💪 Registrar Treino</h3>
-        
-        <select id="workoutType">
-            <option value="Superior">🏋️ Treino Superior</option>
-            <option value="Inferior">🦿 Treino Inferior</option>
-            <option value="Cardio">🏃 Cardio / Corrida</option>
-            <option value="Crossfit">🔥 Crossfit / Funcional</option>
-        </select>
-
-        <select id="intensity">
-            <option value="50">Nível Normal (+50 SC)</option>
-            <option value="80">Nível Pesado (+80 SC)</option>
-        </select>
-
-        <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR TREINO</button>
-    </div>
-
-    <div class="card">
-        <h3>📜 Histórico</h3>
-        <div id="historyList">Carregando...</div>
-    </div>
-
-    <div style="text-align: center; margin-bottom: 20px;">
-        <button class="logout" onclick="sair()" style="background:#333; width: auto; padding: 10px 30px;">Sair</button>
-    </div>
-
-    <div class="sticky-banner" onclick="abrirLinkAds()">
-        <span class="banner-text">Patrocinado:</span>
-        <div class="banner-content">👉 <b>PROMOÇÃO:</b> Clique para ver ofertas de Suplementos</div>
-    </div>
-
-    <div id="loadingModal" class="ad-overlay">
-        <div class="spinner"></div>
-        <p style="color: white; font-weight: bold;">Carregando Anúncio...</p>
-    </div>
-
-    <script>
-        // ==========================================
-        // ⚠️ SEU LINK DA MONETAG/ADSTERRA AQUI:
-        const LINK_ADS = "https://google.com"; 
-        // ==========================================
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
-            authDomain: "shapecoin.firebaseapp.com",
-            projectId: "shapecoin",
-            storageBucket: "shapecoin.firebasestorage.app",
-            messagingSenderId: "365582210645",
-            appId: "1:365582210645:web:8bf24f3809815340be66dc"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
-
-        auth.onAuthStateChanged((user) => {
-            if (!user) { window.location.href = "index.html"; } 
-            else {
-                currentUser = user;
-                document.getElementById('userEmail').innerText = user.email.split('@')[0];
-                carregarSaldo();
-                carregarHistorico();
-            }
-        });
-
-        function carregarSaldo() {
-            db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
-                if (doc.exists) document.getElementById('coinBalance').innerText = doc.data().coins || 0;
-            });
-        }
-
-        // --- FUNÇÃO 1: BANNER DO RODAPÉ (Só abre o link) ---
-        function abrirLinkAds() {
-            window.open(LINK_ADS, '_blank');
-        }
-
-        // --- FUNÇÃO 2: TREINO NORMAL (Direto, sem ad) ---
-        function salvarTreino() {
-            const btn = document.getElementById('btnTreinar');
-            btn.disabled = true;
-            btn.innerText = "SALVANDO...";
-
-            const type = document.getElementById('workoutType').value;
-            const value = parseInt(document.getElementById('intensity').value);
-
-            // Salva histórico
-            db.collection("history").add({
-                userId: currentUser.uid,
-                type: type,
-                value: value,
-                date: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            // Dá moedas
-            db.collection("users").doc(currentUser.uid).update({
-                coins: firebase.firestore.FieldValue.increment(value)
-            }).then(() => {
-                btn.disabled = false;
-                btn.innerText = "CONFIRMAR TREINO";
-                // Feedback visual simples
-                alert(`Treino registrado! +${value} SC na conta.`);
-            });
-        }
-
-        // --- FUNÇÃO 3: BÔNUS EXTRA (Obrigatório assistir) ---
-        function assistirBonus() {
-            const modal = document.getElementById('loadingModal');
-            modal.style.display = 'flex'; // Mostra loading
-
-            // Abre o Ad em nova aba
-            window.open(LINK_ADS, '_blank');
-
-            // Simula tempo de verificação (5 segundos)
-            setTimeout(() => {
-                modal.style.display = 'none'; // Fecha loading
-                
-                // Credita o Bônus
-                const bonusValue = 20;
-                
-                db.collection("users").doc(currentUser.uid).update({
-                    coins: firebase.firestore.FieldValue.increment(bonusValue)
-                }).then(() => {
-                    alert(`💰 BÔNUS RESGATADO! +${bonusValue} Moedas.`);
-                });
-
-                // Registra no histórico como "Bônus"
-                db.collection("history").add({
-                    userId: currentUser.uid,
-                    type: "🎁 Bônus Diário",
-                    value: bonusValue,
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-            }, 5000); // 5 segundos de espera
-        }
-
-        function carregarHistorico() {
-            db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(5).onSnapshot((snap) => {
-                const list = document.getElementById('historyList');
-                list.innerHTML = "";
-                snap.forEach((doc) => {
-                    list.innerHTML += `<div class="history-item"><span>${doc.data().type}</span><span class="gain">+${doc.data().value}</span></div>`;
-                });
-            });
-        }
-
-        function sair() {
-            auth.signOut().then(() => window.location.href = "index.html");
-        }
-    </script>
-</body>
-</html>
