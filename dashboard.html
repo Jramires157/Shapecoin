@@ -3,200 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
-    <title>FOCO - Painel Premium</title>
+    <title>FOCO - Painel Atleta</title>
+    
+    <meta name="theme-color" content="#00ff9d">
+    <link rel="manifest" href="manifest.json">
+
     <style>
-        /* TEMA FOCO PREMIUM */
-        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
-        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; padding-bottom: 110px; }
+        /* --- TEMA PREMIUM FOCO --- */
+        :root { 
+            --primary: #00ff9d; 
+            --gold: #ffd700; 
+            --bg: #050505; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --border: rgba(255, 255, 255, 0.1); 
+        }
+
+        body { 
+            background-color: var(--bg); 
+            background-image: radial-gradient(circle at top right, rgba(0, 255, 157, 0.05), transparent 40%);
+            color: white; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            padding-bottom: 110px; /* Espaço para o banner */
+        }
         
+        /* CABEÇALHO */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); }
-        .coin-badge { background: linear-gradient(135deg, var(--gold), #b8860b); padding: 10px 20px; border-radius: 50px; color: #000; font-weight: 900; }
+        .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); text-transform: lowercase; }
+        .coin-badge { 
+            background: linear-gradient(135deg, var(--gold), #b8860b); 
+            padding: 8px 20px; 
+            border-radius: 50px; 
+            color: #000; 
+            font-weight: 900; 
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
 
-        .card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 25px; border-radius: 25px; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        h3 { color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+        /* CARTÕES (GLASSMORPHISM) */
+        .card { 
+            background: var(--glass); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border); 
+            padding: 25px; 
+            border-radius: 25px; 
+            margin-bottom: 25px; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
 
-        input, select, button { width: 100%; padding: 16px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
-        button { background: var(--primary); color: #000; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        button:hover { transform: scale(1.02); }
+        h3 { 
+            color: #fff; 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            letter-spacing: 2px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 12px; 
+            margin-bottom: 20px; 
+        }
+
+        /* FORMULÁRIOS */
+        input, select, button { 
+            width: 100%; 
+            padding: 16px; 
+            margin: 10px 0; 
+            background: rgba(0,0,0,0.5); 
+            border: 1px solid var(--border); 
+            color: white; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            box-sizing: border-box; 
+        }
+
+        /* BOTÕES */
+        button { 
+            background: var(--primary); 
+            color: #000; 
+            font-weight: 800; 
+            border: none; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        button:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 255, 157, 0.2); }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
-        .feed-post { background: var(--glass); border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; overflow: hidden; }
-        .post-header { padding: 15px; display: flex; align-items: center; gap: 12px; }
-        .post-avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
-        .post-user { font-weight: 700; font-size: 0.95rem; }
-        .post-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        
-        #preview { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; display: none; margin-bottom: 15px; border: 2px solid var(--primary); }
-    </style>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-</head>
-<body>
-
-    <div class="header">
-        <div class="user-info">
-            <span style="color:#666; font-size: 0.8rem;">ATLETA FOCO</span>
-            <h2 id="displayUsername">Carregando...</h2>
-        </div>
-        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
-    </div>
-
-    <div class="card">
-        <h3>Meus Dados</h3>
-        <input type="text" id="username" placeholder="Nome de Usuário (ex: @atleta)">
-        <div class="row">
-            <input type="text" id="weight" placeholder="Peso (kg)">
-            <input type="tel" id="height" placeholder="Altura (cm)">
-        </div>
-        <button id="btnSalvar">Atualizar Identidade</button> </div>
-
-    <div class="card">
-        <h3>Prova de Treino</h3>
-        <img id="preview">
-        <label for="fileInput" style="display: block; background: #111; padding: 18px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px dashed #333; margin-bottom: 10px;">
-            📸 Capturar Treino
-        </label>
-        <input type="file" id="fileInput" accept="image/*" capture="camera" style="display: none;">
-        <select id="workoutType">
-            <option value="Superior">Treino Superior</option>
-            <option value="Inferior">Treino Inferior</option>
-            <option value="Cardio">Cardio / HIT</option>
-        </select>
-        <button id="btnTreinar">Publicar e Ganhar +50 FC</button>
-    </div>
-
-    <div id="focoFeed">
-        <h3 style="margin-left: 10px;">Mural de FOCO</h3>
-    </div>
-
-    <script>
-        // CONFIGURAÇÃO
-        const firebaseConfig = {
-            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
-            authDomain: "shapecoin.firebaseapp.com",
-            projectId: "shapecoin",
-            storageBucket: "shapecoin.firebasestorage.app",
-            messagingSenderId: "365582210645",
-            appId: "1:365582210645:web:8bf24f3809815340be66dc"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-        let currentUser = null;
-
-        // VERIFICA LOGIN
-        auth.onAuthStateChanged((user) => {
-            if (!user) window.location.href = "index.html";
-            else {
-                currentUser = user;
-                carregarDados();
-            }
-        });
-
-        // --- CONSERTO DO BOTÃO: Amarrando o clique via código ---
-        document.getElementById('btnSalvar').addEventListener('click', async () => {
-            const btn = document.getElementById('btnSalvar');
-            const userField = document.getElementById('username').value.trim();
-            const weight = document.getElementById('weight').value.replace(',', '.');
-            const height = document.getElementById('height').value.replace(',', '.');
-
-            if(!userField) return alert("Escolha um nome!");
-
-            btn.disabled = true;
-            btn.innerText = "SALVANDO...";
-
-            try {
-                await db.collection("users").doc(currentUser.uid).set({
-                    username: userField.replace('@', ''),
-                    weight: parseFloat(weight) || 0,
-                    height: parseFloat(height) || 0
-                }, { merge: true });
-                alert("Identidade Atualizada!");
-            } catch (e) { alert("Erro ao salvar."); }
-            
-            btn.disabled = false;
-            btn.innerText = "Atualizar Identidade";
-        });
-
-        // CARREGAR DADOS
-        function carregarDados() {
-            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('coinBalance').innerText = data.coins || 0;
-                    document.getElementById('displayUsername').innerText = data.username ? "@" + data.username : "Configurar Perfil";
-                    if(data.username) document.getElementById('username').value = data.username;
-                    if(data.weight) document.getElementById('weight').value = data.weight;
-                    if(data.height) document.getElementById('height').value = data.height;
-                }
-            });
-            carregarFeed();
+        /* MURAL SOCIAL (FEED) */
+        .feed-post { 
+            background: var(--glass); 
+            border-radius: 15px; 
+            border: 1px solid var(--border); 
+            margin-bottom: 15px; 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
         }
-
-        // CARREGAR FEED
-        function carregarFeed() {
-            db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
-                const feed = document.getElementById('focoFeed');
-                feed.innerHTML = "<h3>Mural de FOCO</h3>";
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    if(!data.photo) return;
-                    feed.innerHTML += `
-                        <div class="feed-post">
-                            <div class="post-header">
-                                <div class="post-avatar">${data.username ? data.username[0].toUpperCase() : 'F'}</div>
-                                <span class="post-user">@${data.username || 'atleta'}</span>
-                            </div>
-                            <img src="${data.photo}" class="post-img">
-                        </div>
-                    `;
-                });
-            });
-        }
-
-        // PREVIEW FOTO
-        document.getElementById('fileInput').onchange = (e) => {
-            const preview = document.getElementById('preview');
-            const reader = new FileReader();
-            reader.onload = () => { preview.src = reader.result; preview.style.display = 'block'; };
-            reader.readAsDataURL(e.target.files[0]);
-        };
-
-        // POSTAR TREINO
-        document.getElementById('btnTreinar').onclick = async () => {
-            const btn = document.getElementById('btnTreinar');
-            const file = document.getElementById('fileInput').files[0];
-            if(!file) return alert("Tire uma foto!");
-            
-            btn.disabled = true; btn.innerText = "SUBINDO...";
-            
-            try {
-                const ref = storage.ref(`treinos/${currentUser.uid}_${Date.now()}.jpg`);
-                await ref.put(file);
-                const url = await ref.getDownloadURL();
-                
-                const dataUser = await db.collection("users").doc(currentUser.uid).get();
-                
-                await db.collection("history").add({
-                    userId: currentUser.uid,
-                    username: dataUser.data().username || "atleta",
-                    photo: url,
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(50) });
-                alert("Treino Validado!");
-                location.reload();
-            } catch (e) { alert("Erro."); btn.disabled = false; }
-        };
-    </script>
-</body>
-</html>
+        .post-left { display: flex; align-items: center; gap: 12px; }
+        .post-avatar { 
+            width: 40px; height: 40px; 
+            background: var(--primary); 
+            border-radius: 50%;
