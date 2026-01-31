@@ -1,44 +1,156 @@
-function fazerLogin() {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    const status = document.getElementById('status');
-    const btn = document.getElementById('btnAcessar');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCO - Entrar</title>
+    
+    <meta name="theme-color" content="#00ff9d">
+    <link rel="manifest" href="manifest.json">
 
-    if(!email || !pass) { alert("Preencha e-mail e senha!"); return; }
-    if(pass.length < 6) { alert("A senha deve ter no mínimo 6 dígitos!"); return; }
+    <style>
+        :root { --primary: #00ff9d; --bg: #050505; }
+        body { 
+            background-color: var(--bg); color: white; font-family: sans-serif; 
+            margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; 
+        }
 
-    status.innerText = "VERIFICANDO...";
-    btn.disabled = true;
+        .login-card {
+            background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333;
+            width: 85%; max-width: 350px; text-align: center;
+        }
 
-    // Tenta Logar
-    auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-            // Se o usuário não existe, tenta Criar
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                status.innerText = "CRIANDO SUA CONTA FOCO...";
-                
-                auth.createUserWithEmailAndPassword(email, pass)
-                    .then((res) => {
-                        // Cria o perfil inicial no banco
-                        db.collection("users").doc(res.user.uid).set({
-                            email: email,
-                            coins: 0,
-                            username: "",
-                            created: firebase.firestore.FieldValue.serverTimestamp()
-                        }).then(() => {
-                            window.location.href = "dashboard.html";
-                        });
+        h1 { margin: 0; color: var(--primary); font-size: 3rem; letter-spacing: -2px; }
+        p { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
+
+        input {
+            width: 100%; padding: 15px; margin: 10px 0; background: #222; 
+            border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box;
+        }
+
+        button {
+            width: 100%; padding: 15px; margin-top: 20px; background: var(--primary); 
+            color: #000; font-weight: bold; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer;
+        }
+        
+        #status { margin-top: 20px; color: yellow; font-size: 0.8rem; min-height: 20px; }
+        #debug-box { margin-top: 20px; color: red; font-size: 0.7rem; display: none; border: 1px solid red; padding: 10px; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>FOCO</h1>
+        <p>Onde seu suor vira moeda</p>
+
+        <input type="email" id="email" placeholder="Seu E-mail">
+        <input type="password" id="password" placeholder="Sua Senha (mín 6 dígitos)">
+        
+        <button id="btnLogin">ENTRAR / CRIAR</button>
+
+        <div id="status">Aguardando...</div>
+        <div id="debug-box"></div>
+    </div>
+
+    <script>
+        // 1. CAPTURADOR DE ERROS (Mostra na tela se o código quebrar)
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById('debug-box').style.display = 'block';
+            document.getElementById('debug-box').innerText = "ERRO: " + message;
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        try {
+            // Inicializa Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+
+            document.getElementById('status').innerText = "Sistema Pronto.";
+
+            // Verifica se já está logado
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    document.getElementById('status').innerText = "Redirecionando...";
+                    window.location.href = "dashboard.html";
+                }
+            });
+
+            // 2. AÇÃO DO BOTÃO (Usando Listener para garantir)
+            document.getElementById('btnLogin').addEventListener('click', function() {
+                const email = document.getElementById('email').value.trim();
+                const pass = document.getElementById('password').value;
+                const status = document.getElementById('status');
+                const btn = document.getElementById('btnLogin');
+
+                // Validações Básicas
+                if(!email) { alert("Digite o e-mail!"); return; }
+                if(!pass) { alert("Digite a senha!"); return; }
+                if(pass.length < 6) { alert("A senha precisa ter 6 números/letras!"); return; }
+
+                status.innerText = "PROCESSANDO...";
+                status.style.color = "#00ff9d";
+                btn.disabled = true;
+                btn.innerText = "AGUARDE...";
+
+                // Tenta Logar
+                auth.signInWithEmailAndPassword(email, pass)
+                    .then(() => {
+                        status.innerText = "SUCESSO! ENTRANDO...";
+                        window.location.href = "dashboard.html";
                     })
-                    .catch((err) => {
-                        status.innerText = "ERRO AO CRIAR: " + err.message;
-                        btn.disabled = false;
+                    .catch((error) => {
+                        // Se erro for "Usuário não encontrado", cria a conta
+                        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                            
+                            // Tenta criar conta nova
+                            status.innerText = "CRIANDO CONTA NOVA...";
+                            
+                            auth.createUserWithEmailAndPassword(email, pass)
+                                .then((res) => {
+                                    // Cria documento no banco
+                                    db.collection("users").doc(res.user.uid).set({
+                                        email: email,
+                                        coins: 0,
+                                        created: firebase.firestore.FieldValue.serverTimestamp()
+                                    }).then(() => {
+                                        window.location.href = "dashboard.html";
+                                    });
+                                })
+                                .catch((createErr) => {
+                                    // Erro real na criação (Ex: email já existe, senha fraca)
+                                    alert("Erro ao criar: " + createErr.message);
+                                    status.innerText = "ERRO: " + createErr.code;
+                                    status.style.color = "red";
+                                    btn.disabled = false;
+                                    btn.innerText = "ENTRAR / CRIAR";
+                                });
+
+                        } else {
+                            // Outro erro qualquer
+                            alert("Erro no Login: " + error.message);
+                            status.innerText = "ERRO DE CONEXÃO";
+                            btn.disabled = false;
+                            btn.innerText = "ENTRAR / CRIAR";
+                        }
                     });
-            } else {
-                status.innerText = "ERRO: " + error.message;
-                btn.disabled = false;
-            }
-        });
-}
+            });
+
+        } catch (e) {
+            alert("Erro Fatal: " + e.message);
+        }
+    </script>
+</body>
+</html>
