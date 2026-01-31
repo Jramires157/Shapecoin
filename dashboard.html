@@ -2,98 +2,73 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
-    <title>FOCO - Painel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCO - Modo Seguro</title>
     
-    <meta name="theme-color" content="#00ff9d">
-    <link rel="manifest" href="manifest.json">
-
     <style>
-        /* TEMA FOCO (ESTÁVEL) */
-        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --card-bg: #111111; --border: #333; }
-        
+        /* TEMA ESTÁVEL (Sem efeitos pesados) */
         body { 
-            background-color: var(--bg); 
+            background-color: #000000; 
             color: white; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
+            font-family: sans-serif; 
             margin: 0; 
             padding: 20px; 
-            padding-bottom: 120px; 
-        }
-        
-        /* CABEÇALHO CLICÁVEL */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        
-        .user-info { cursor: pointer; padding: 5px; }
-        .user-info span { color: #888; font-size: 0.8rem; letter-spacing: 1px; display: block; margin-bottom: 2px; }
-        .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        .config-icon { font-size: 1rem; color: #555; }
-
-        .coin-badge { 
-            background: linear-gradient(135deg, var(--gold), #b8860b); 
-            padding: 8px 16px; border-radius: 50px; color: #000; font-weight: 900; font-size: 1rem;
+            padding-bottom: 100px;
         }
 
-        /* CARTÕES */
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-info h2 { margin: 0; font-size: 1.2rem; color: #00ff9d; }
+        .coin-badge { background: #ffd700; color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+
+        /* CARTÕES SÓLIDOS (Para não dar tela preta) */
         .card { 
-            background-color: var(--card-bg); 
-            border: 1px solid var(--border); 
-            padding: 25px; border-radius: 20px; margin-bottom: 20px; 
-            max-width: 600px; margin-left: auto; margin-right: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background-color: #1a1a1a; /* Cinza Sólido */
+            border: 1px solid #333; 
+            padding: 20px; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
         }
 
-        h3 { 
-            color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; 
-            border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; margin-top: 0;
-        }
+        h3 { color: #888; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; }
 
-        input { 
-            width: 100%; padding: 16px; margin: 10px 0; background: #222; border: 1px solid #444; 
-            color: white; border-radius: 10px; font-size: 15px; box-sizing: border-box; 
-        }
-        
-        button { 
-            width: 100%; background: var(--primary); color: #000; font-weight: 800; border: none; 
-            padding: 18px; border-radius: 10px; cursor: pointer; text-transform: uppercase; font-size: 1rem; margin-top: 10px;
-        }
-        button:disabled { opacity: 0.5; }
-
-        /* CHECK-IN */
+        /* BOTÃO TREINO */
         #btnTreinar {
-            background: linear-gradient(to right, var(--primary), #00cc7a);
-            font-size: 1.1rem; padding: 25px; box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
+            width: 100%;
+            padding: 20px;
+            background-color: #00ff9d;
+            color: black;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .row { display: flex; gap: 10px; }
-        .row input { width: 50%; }
+        /* INPUTS */
+        input { 
+            width: 100%; padding: 15px; margin: 5px 0 15px 0; 
+            background: #333; border: 1px solid #555; color: white; border-radius: 8px; box-sizing: border-box; 
+        }
 
-        /* MURAL */
+        /* MURAL SIMPLES */
         .feed-post { 
-            background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: 12px; 
-            padding: 15px; display: flex; justify-content: space-between; align-items: center; 
-        }
-        .post-left { display: flex; align-items: center; gap: 12px; }
-        .post-avatar { 
-            width: 40px; height: 40px; background: var(--primary); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 1.2rem; 
-        }
-        .post-user { font-weight: bold; font-size: 1rem; color: #fff; display: block; }
-        .post-type { font-size: 0.8rem; color: #888; }
-        .post-value { color: var(--gold); font-weight: bold; }
-
-        /* BANNER */
-        .sticky-banner { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            width: 90%; max-width: 450px; background: #222; border: 1px solid #444; 
-            border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; cursor: pointer;
+            background: #111; border: 1px solid #222; 
+            padding: 10px; margin-bottom: 10px; border-radius: 8px; 
+            display: flex; justify-content: space-between;
         }
 
-        /* DEBUG LOG (Pra gente ver o erro) */
-        #debug-log {
-            font-size: 10px; color: #555; text-align: center; margin-top: 20px;
-            font-family: monospace; border-top: 1px solid #222; padding-top: 10px;
+        /* CAIXA DE ERRO (Só aparece se der ruim) */
+        #error-box {
+            display: none;
+            background: #ff0000;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 9999;
+            font-weight: bold;
         }
     </style>
 
@@ -103,20 +78,169 @@
 </head>
 <body>
 
+    <div id="error-box">Erro detectado: <span id="error-msg"></span></div>
+
     <div class="header">
-        <div class="user-info" onclick="toggleSettings()">
-            <span>ATLETA FOCO</span>
-            <h2 id="displayUsername">... <span class="config-icon">⚙️</span></h2>
+        <div class="user-info" onclick="toggleMenu()">
+            <span style="color:#666; font-size: 12px;">ATLETA</span>
+            <h2 id="displayUsername">Carregando... ⚙️</h2>
         </div>
         <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
     </div>
 
-    <div class="card" id="cardIdentity" style="display: none; border-color: #333;">
-        <h3 style="color: #888;">Configurar Perfil</h3>
-        <input type="text" id="username" placeholder="Crie seu @usuario">
-        <div class="row">
-            <input type="text" id="weight" placeholder="Peso (kg)">
-            <input type="tel" id="height" placeholder="Altura (cm)">
-        </div>
-        <button id="btnSalvar" style="background: #333; color: white;">Salvar Dados</button>
-        <p style="text-align: center; font-size: 0.9rem; color: #ff4444; margin-top: 20px;
+    <div class="card" id="cardIdentity" style="display: none;">
+        <h3>Editar Perfil</h3>
+        <label>Seu @usuario</label>
+        <input type="text" id="username" placeholder="Ex: @joao">
+        
+        <label>Peso (kg)</label>
+        <input type="text" id="weight">
+        
+        <label>Altura (cm)</label>
+        <input type="text" id="height">
+        
+        <button onclick="salvarPerfil()" style="width:100%; padding:15px; background:#333; color:white; border:none; border-radius:8px;">SALVAR</button>
+        <br><br>
+        <button onclick="sair()" style="width:100%; padding:10px; background:red; color:white; border:none; border-radius:8px;">SAIR DA CONTA</button>
+    </div>
+
+    <div class="card">
+        <h3 style="color:#00ff9d;">Check-in Hoje</h3>
+        <p style="color:#aaa;">Foco no processo.</p>
+        <button id="btnTreinar">CONFIRMAR (+50 FC)</button>
+    </div>
+
+    <div id="focoFeed">
+        <h3>Mural</h3>
+        <p style="color:#666; text-align:center;">Carregando...</p>
+    </div>
+
+    <script>
+        // 1. CAPTURADOR DE ERROS GLOBAL
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById('error-box').style.display = 'block';
+            document.getElementById('error-msg').innerText = message;
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        // INICIANDO
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
+
+            auth.onAuthStateChanged((user) => {
+                if (!user) window.location.href = "index.html";
+                else {
+                    currentUser = user;
+                    carregarDados();
+                }
+            });
+
+            // FUNÇÕES
+            window.toggleMenu = function() {
+                const x = document.getElementById("cardIdentity");
+                x.style.display = (x.style.display === "none") ? "block" : "none";
+            }
+
+            window.sair = function() {
+                auth.signOut().then(() => window.location.href = "index.html");
+            }
+
+            window.salvarPerfil = function() {
+                const nome = document.getElementById('username').value;
+                const peso = document.getElementById('weight').value;
+                const altura = document.getElementById('height').value;
+
+                if(!nome) return alert("Coloque um nome!");
+
+                db.collection("users").doc(currentUser.uid).set({
+                    username: nome.replace('@', ''),
+                    weight: parseFloat(peso) || 0,
+                    height: parseFloat(altura) || 0
+                }, { merge: true }).then(() => {
+                    alert("Salvo!");
+                    toggleMenu();
+                }).catch(e => alert("Erro: " + e.message));
+            }
+
+            // BOTÃO TREINAR (CHECK-IN)
+            document.getElementById('btnTreinar').addEventListener('click', function() {
+                const btn = document.getElementById('btnTreinar');
+                const userText = document.getElementById('displayUsername').innerText;
+
+                if(userText.includes("Carregando") || userText.includes("Configurar")) {
+                    toggleMenu();
+                    return alert("Configure seu perfil primeiro!");
+                }
+
+                btn.disabled = true;
+                btn.innerText = "REGISTRANDO...";
+
+                // Pega nome atualizado
+                db.collection("users").doc(currentUser.uid).get().then(doc => {
+                    const myName = doc.data().username || "Atleta";
+                    
+                    // Salva histórico
+                    db.collection("history").add({
+                        userId: currentUser.uid,
+                        username: myName,
+                        type: "Check-in",
+                        value: 50,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Paga
+                    db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(50)
+                    }).then(() => {
+                        alert("CHECK-IN FEITO!");
+                        btn.disabled = false;
+                        btn.innerText = "CONFIRMAR (+50 FC)";
+                    });
+                });
+            });
+
+            function carregarDados() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        document.getElementById('coinBalance').innerText = d.coins || 0;
+                        
+                        if(d.username) {
+                            document.getElementById('displayUsername').innerText = "@" + d.username + " ⚙️";
+                            document.getElementById('username').value = d.username;
+                        } else {
+                            document.getElementById('displayUsername').innerText = "Configurar Perfil ⚙️";
+                        }
+                        
+                        if(d.weight) document.getElementById('weight').value = d.weight;
+                        if(d.height) document.getElementById('height').value = d.height;
+                    }
+                });
+
+                db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                    const div = document.getElementById('focoFeed');
+                    div.innerHTML = "<h3>Mural</h3>";
+                    snap.forEach(doc => {
+                        const d = doc.data();
+                        div.innerHTML += `<div class="feed-post"><span>@${d.username || 'Atleta'}</span> <span style="color:#ffd700">+${d.value}</span></div>`;
+                    });
+                });
+            }
+
+        } catch (e) {
+            alert("Erro crítico: " + e.message);
+        }
+    </script>
+</body>
+</html>
