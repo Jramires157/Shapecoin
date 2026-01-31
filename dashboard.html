@@ -38,7 +38,7 @@
         button:disabled { opacity: 0.5; }
         input { width: 100%; padding: 16px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; }
 
-        /* MURAL (NOVO ESTILO LOG) */
+        /* HISTÓRICO (PRIVADO) */
         .feed-post { 
             background: #111; border-bottom: 1px solid #222; 
             padding: 15px 10px; 
@@ -50,6 +50,7 @@
 
         /* ADS */
         .ad-container { margin: 20px 0; text-align: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 10px; color: #444; border: 1px dashed #333; }
+        
         .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; }
     </style>
 
@@ -76,7 +77,7 @@
     </div>
 
     <div class="ad-container">
-        PUBLICIDADE AQUI
+        PUBLICIDADE
     </div>
 
     <div class="card" id="cardIdentity" style="display: none;">
@@ -96,7 +97,7 @@
     </div>
 
     <div class="card" style="padding: 10px;">
-        <h3 style="margin: 15px;">Histórico da Tribo</h3>
+        <h3 style="margin: 15px;">Meu Histórico</h3>
         <div id="focoFeed">
             <p style="text-align: center; color: #444;">Carregando...</p>
         </div>
@@ -128,7 +129,7 @@
                 else { currentUser = user; carregarDados(); }
             });
 
-            // --- LÓGICA DE NÍVEL ---
+            // --- NÍVEL ---
             function atualizarNivel(coins) {
                 const pontosPorNivel = 1000; 
                 const level = Math.floor(coins / pontosPorNivel) + 1;
@@ -142,7 +143,7 @@
                 document.getElementById('levelTitle').innerText = patentes[Math.min(level - 1, patentes.length - 1)];
             }
 
-            // --- BOTÕES ---
+            // --- SALVAR DADOS ---
             document.getElementById('btnSalvar').addEventListener('click', async () => {
                 const btn = document.getElementById('btnSalvar');
                 const user = document.getElementById('username').value.trim();
@@ -160,25 +161,26 @@
                 toggleMenu();
             });
 
+            // --- CHECK-IN (COM ID DO USUÁRIO) ---
             document.getElementById('btnTreinar').addEventListener('click', async () => {
                 const btn = document.getElementById('btnTreinar');
                 
-                // Verifica se tem nome configurado antes de deixar treinar
                 const displayUser = document.getElementById('displayUsername').innerText;
                 if(displayUser.includes("Configurar")) {
                     toggleMenu();
-                    return alert("Configure seu @usuario antes de fazer Check-in!");
+                    return alert("Configure seu @usuario antes!");
                 }
 
                 btn.disabled = true;
                 btn.innerText = "REGISTRANDO...";
 
-                // Pega nome atual do usuário
                 const docUser = await db.collection("users").doc(currentUser.uid).get();
                 const myName = docUser.data().username || "Atleta";
 
+                // GRAVA O userId PARA FILTRAR DEPOIS
                 await db.collection("history").add({
-                    username: myName, // Mantemos gravando o nome no banco para segurança, mas não mostramos no front
+                    userId: currentUser.uid,  // IMPORTANTE: Isso permite filtrar só os seus
+                    username: myName,
                     type: "Check-in",
                     value: 50,
                     date: firebase.firestore.FieldValue.serverTimestamp()
@@ -193,8 +195,9 @@
                 btn.innerText = "CONFIRMAR PRESENÇA (+50 FC)";
             });
 
-            // --- CARREGAR DADOS ---
+            // --- CARREGAR (COM FILTRO) ---
             function carregarDados() {
+                // Carrega Saldo e Nome
                 db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
                     if (doc.exists) {
                         const d = doc.data();
@@ -210,17 +213,26 @@
                     }
                 });
 
-                // CARREGAR MURAL (SÓ DATA E MOEDA)
-                db.collection("history").orderBy("date", "desc").limit(15).onSnapshot(snap => {
+                // CARREGAR HISTÓRICO (FILTRADO POR MIM)
+                // Usamos o .where para pegar só o meu userId
+                db.collection("history")
+                  .where("userId", "==", currentUser.uid)
+                  .limit(20)
+                  .onSnapshot(snap => {
                     const div = document.getElementById('focoFeed');
                     div.innerHTML = "";
                     
-                    if(snap.empty) { div.innerHTML = "<p style='text-align:center; color:#555;'>Mural vazio.</p>"; return; }
+                    if(snap.empty) { 
+                        div.innerHTML = "<p style='text-align:center; color:#555;'>Nenhum histórico seu ainda.</p>"; 
+                        return; 
+                    }
 
-                    snap.forEach(doc => {
-                        const d = doc.data();
-                        
-                        // Formatar Data (DD/MM - HH:MM)
+                    // Ordenação Manual (Javascript) para evitar erro de índice no Firebase
+                    let docs = [];
+                    snap.forEach(doc => docs.push(doc.data()));
+                    docs.sort((a, b) => (b.date ? b.date.toMillis() : 0) - (a.date ? a.date.toMillis() : 0));
+
+                    docs.forEach(d => {
                         let dataStr = "...";
                         if(d.date) {
                             const dateObj = d.date.toDate();
