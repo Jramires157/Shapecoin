@@ -7,61 +7,34 @@
     <style>
         /* --- ESTILO DARK MODE --- */
         :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
-        body { 
-            background-color: var(--dark); 
-            color: var(--text); 
-            font-family: sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            padding-bottom: 100px; /* Espaço extra pro banner */
-        }
+        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 100px; }
         
-        /* Cabeçalho */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
         .user-info h2 { margin: 0; font-size: 1.2rem; color: #fff; }
         .coin-badge { background: #333; padding: 10px 20px; border-radius: 50px; color: #ffd700; font-weight: bold; border: 1px solid #ffd700; font-size: 1.2rem; }
 
-        /* Cards (Caixas) */
-        .card { 
-            background: var(--card); 
-            padding: 20px; 
-            border-radius: 12px; 
-            border: 1px solid #333; 
-            margin-bottom: 20px; 
-            max-width: 600px; 
-            margin-left: auto; 
-            margin-right: auto; 
-            display: block; /* Garante que apareça */
-        }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; display: block; }
 
-        /* Títulos LIMPOS (Sem Emojis) */
         h3 { color: var(--primary); margin-top: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
 
-        /* Formulários */
         input, select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
         
-        /* Layout de Colunas (Peso/Altura) */
         .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
-        /* Botões */
         button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         button:hover { opacity: 0.9; transform: scale(1.01); }
         
-        /* Botão Dourado (Bônus) */
         .btn-bonus { background: linear-gradient(45deg, #ffd700, #ffaa00); color: black; animation: pulse 2s infinite; border: 2px solid #fff; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* Resultado IMC */
         .imc-result { text-align: center; margin-top: 15px; padding: 15px; background: #252525; border-radius: 6px; border: 1px dashed #555; display: none; }
         .imc-value { font-size: 2rem; font-weight: bold; color: var(--primary); display: block; }
         .imc-status { color: #aaa; font-size: 1rem; margin-top: 5px; }
 
-        /* Banner Fixo */
         .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; z-index: 100; }
         .banner-content { background: #00ff88; color: black; padding: 5px 15px; border-radius: 4px; font-weight: bold; display: inline-block; }
 
-        /* Lista Histórico */
         .history-item { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid var(--primary); }
     </style>
 
@@ -86,11 +59,11 @@
         <input type="date" id="birthDate">
 
         <div class="row">
-            <input type="number" id="weight" placeholder="Peso (kg)">
-            <input type="number" id="height" placeholder="Altura (cm)">
+            <input type="text" id="weight" placeholder="Peso (kg) ex: 70.5">
+            <input type="tel" id="height" placeholder="Altura (cm) ex: 175">
         </div>
 
-        <button onclick="salvarPerfil()" style="background: #333; color: white; border: 1px solid #555;">Calcular IMC & Salvar</button>
+        <button onclick="salvarPerfil()" id="btnSalvarPerfil" style="background: #333; color: white; border: 1px solid #555;">Calcular IMC & Salvar</button>
 
         <div id="imcBox" class="imc-result">
             <span id="imcValue" class="imc-value">0.0</span>
@@ -106,19 +79,16 @@
 
     <div class="card">
         <h3>Registrar Treino</h3>
-        
         <select id="workoutType">
             <option value="Superior">Treino Superior</option>
             <option value="Inferior">Treino Inferior</option>
             <option value="Cardio">Cardio / Corrida</option>
             <option value="Crossfit">Crossfit</option>
         </select>
-
         <select id="intensity">
             <option value="50">Nível Normal (+50 SC)</option>
             <option value="80">Nível Pesado (+80 SC)</option>
         </select>
-
         <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR</button>
     </div>
 
@@ -137,11 +107,10 @@
     </div>
 
     <script>
-        // --- SEU LINK DA MONETAG ---
-        const LINK_ADS = "https://google.com"; // Troque pelo seu link real
-        // ---------------------------
+        // --- SEU LINK AQUI ---
+        const LINK_ADS = "https://google.com";
+        // ---------------------
 
-        // 1. Configuração Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -151,44 +120,154 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        // 2. Inicialização
         try {
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.firestore();
             let currentUser = null;
 
-            console.log("Sistema Iniciado.");
-
-            // 3. Login Check
             auth.onAuthStateChanged((user) => {
                 if (!user) {
                     window.location.href = "index.html";
                 } else {
                     currentUser = user;
-                    // Mostra parte do email como nome
                     document.getElementById('userEmail').innerText = user.email.split('@')[0];
                     carregarDadosUsuario();
                     carregarHistorico();
                 }
             });
 
-            // 4. Carregar Perfil e Moedas
             function carregarDadosUsuario() {
                 db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
                         document.getElementById('coinBalance').innerText = data.coins || 0;
                         
-                        // Carrega dados do perfil nos inputs
                         if(data.weight) document.getElementById('weight').value = data.weight;
                         if(data.height) document.getElementById('height').value = data.height;
                         if(data.birthDate) document.getElementById('birthDate').value = data.birthDate;
 
-                        // Se já tiver dados, mostra o IMC
                         if(data.weight && data.height) {
                             calcularIMC(data.weight, data.height);
                         }
                     }
                 });
             }
+
+            // --- CORREÇÃO PRINCIPAL AQUI ---
+            window.salvarPerfil = function() {
+                const btn = document.getElementById('btnSalvarPerfil');
+                
+                // 1. Pega os valores como texto
+                let weightStr = document.getElementById('weight').value;
+                let heightStr = document.getElementById('height').value;
+                const birthDate = document.getElementById('birthDate').value;
+
+                // 2. Troca vírgula por ponto (Correção Brasil)
+                weightStr = weightStr.replace(',', '.');
+                heightStr = heightStr.replace(',', '.');
+
+                // 3. Converte para número
+                const weight = parseFloat(weightStr);
+                const height = parseFloat(heightStr);
+
+                // 4. Validação
+                if(isNaN(weight) || isNaN(height) || !weight || !height) {
+                    alert("Por favor, digite números válidos para Peso e Altura.");
+                    return;
+                }
+
+                btn.innerText = "SALVANDO...";
+                btn.disabled = true;
+
+                // 5. Salva no Banco
+                db.collection("users").doc(currentUser.uid).set({
+                    weight: weight,
+                    height: height,
+                    birthDate: birthDate
+                }, { merge: true }) // Mantém as moedas, não apaga
+                .then(() => {
+                    calcularIMC(weight, height);
+                    btn.innerText = "DADOS SALVOS!";
+                    setTimeout(() => { btn.innerText = "CALCULAR IMC & SALVAR"; btn.disabled = false; }, 2000);
+                })
+                .catch((error) => {
+                    alert("Erro ao salvar: " + error.message);
+                    btn.disabled = false;
+                });
+            };
+
+            function calcularIMC(peso, alturaCm) {
+                const alturaMetros = alturaCm / 100;
+                const imc = peso / (alturaMetros * alturaMetros);
+                const box = document.getElementById('imcBox');
+                const val = document.getElementById('imcValue');
+                const stat = document.getElementById('imcStatus');
+
+                box.style.display = 'block';
+                val.innerText = imc.toFixed(2);
+
+                if(imc < 18.5) { stat.innerText = "Abaixo do peso"; stat.style.color = "yellow"; }
+                else if(imc < 24.9) { stat.innerText = "Peso Normal ✅"; stat.style.color = "#00ff88"; }
+                else if(imc < 29.9) { stat.innerText = "Sobrepeso"; stat.style.color = "orange"; }
+                else { stat.innerText = "Obesidade"; stat.style.color = "red"; }
+            }
+
+            window.abrirLinkAds = function() { window.open(LINK_ADS, '_blank'); };
+
+            window.assistirBonus = function() {
+                window.open(LINK_ADS, '_blank');
+                setTimeout(() => {
+                    pagarMoedas(20, "🎁 Bônus Diário");
+                    alert("Bônus de +20 Moedas recebido!");
+                }, 5000);
+            };
+
+            window.salvarTreino = function() {
+                const btn = document.getElementById('btnTreinar');
+                const type = document.getElementById('workoutType').value;
+                const value = parseInt(document.getElementById('intensity').value);
+
+                btn.disabled = true;
+                btn.innerText = "SALVANDO...";
+
+                pagarMoedas(value, type);
+                
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "CONFIRMAR";
+                    alert("Treino Registrado!");
+                }, 1000);
+            };
+
+            function pagarMoedas(valor, tipo) {
+                db.collection("history").add({
+                    userId: currentUser.uid,
+                    type: tipo,
+                    value: valor,
+                    date: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                db.collection("users").doc(currentUser.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(valor)
+                });
+            }
+
+            function carregarHistorico() {
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(5).onSnapshot((snap) => {
+                    const list = document.getElementById('historyList');
+                    list.innerHTML = "";
+                    snap.forEach((doc) => {
+                        const d = doc.data();
+                        list.innerHTML += `<div class="history-item"><span>${d.type}</span><span style="color:#00ff88">+${d.value}</span></div>`;
+                    });
+                });
+            }
+
+            window.sair = function() { auth.signOut().then(() => window.location.href = "index.html"); };
+
+        } catch (e) {
+            alert("Erro no Código: " + e.message);
+        }
+    </script>
+</body>
+</html>
