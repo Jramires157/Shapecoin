@@ -3,73 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCO - Modo Seguro</title>
+    <title>FOCO - Painel Atleta</title>
     
     <style>
-        /* TEMA ESTÁVEL (Sem efeitos pesados) */
-        body { 
-            background-color: #000000; 
-            color: white; 
-            font-family: sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            padding-bottom: 100px;
-        }
-
+        :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --card-bg: #111111; --border: #222; }
+        
+        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 120px; }
+        
         /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .user-info h2 { margin: 0; font-size: 1.2rem; color: #00ff9d; }
-        .coin-badge { background: #ffd700; color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .user-info { cursor: pointer; }
+        .user-info h2 { margin: 0; font-size: 1.4rem; color: var(--primary); }
+        .coin-badge { background: var(--gold); color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
 
-        /* CARTÕES SÓLIDOS (Para não dar tela preta) */
-        .card { 
-            background-color: #1a1a1a; /* Cinza Sólido */
-            border: 1px solid #333; 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin-bottom: 20px; 
-        }
+        /* SISTEMA DE NÍVEL (NOVO) */
+        .level-section { margin-bottom: 30px; text-align: center; }
+        .level-badge { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 5px; display: block; }
+        .level-number { font-size: 2.5rem; font-weight: 900; margin: 0; line-height: 1; }
+        .progress-container { width: 100%; background: #222; height: 8px; border-radius: 10px; margin-top: 15px; overflow: hidden; border: 1px solid #333; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease-in-out; box-shadow: 0 0 10px var(--primary); }
 
-        h3 { color: #888; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; }
+        /* CARTÕES */
+        .card { background-color: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        h3 { color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top: 0; }
 
-        /* BOTÃO TREINO */
-        #btnTreinar {
-            width: 100%;
-            padding: 20px;
-            background-color: #00ff9d;
-            color: black;
-            border: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+        /* BOTÕES */
+        button { width: 100%; background: var(--primary); color: #000; font-weight: 800; border: none; padding: 18px; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        button:disabled { opacity: 0.5; }
 
-        /* INPUTS */
-        input { 
-            width: 100%; padding: 15px; margin: 5px 0 15px 0; 
-            background: #333; border: 1px solid #555; color: white; border-radius: 8px; box-sizing: border-box; 
-        }
+        input { width: 100%; padding: 16px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; }
 
-        /* MURAL SIMPLES */
-        .feed-post { 
-            background: #111; border: 1px solid #222; 
-            padding: 10px; margin-bottom: 10px; border-radius: 8px; 
-            display: flex; justify-content: space-between;
-        }
+        /* MURAL */
+        .feed-post { background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .post-avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
 
-        /* CAIXA DE ERRO (Só aparece se der ruim) */
-        #error-box {
-            display: none;
-            background: #ff0000;
-            color: white;
-            padding: 20px;
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            z-index: 9999;
-            font-weight: bold;
-        }
+        /* ÁREA DE ADS */
+        .ad-container { margin: 20px 0; text-align: center; min-height: 50px; background: rgba(255,255,255,0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #444; }
+
+        .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -78,50 +49,53 @@
 </head>
 <body>
 
-    <div id="error-box">Erro detectado: <span id="error-msg"></span></div>
-
     <div class="header">
         <div class="user-info" onclick="toggleMenu()">
-            <span style="color:#666; font-size: 12px;">ATLETA</span>
             <h2 id="displayUsername">Carregando... ⚙️</h2>
         </div>
         <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
     </div>
 
-    <div class="card" id="cardIdentity" style="display: none;">
-        <h3>Editar Perfil</h3>
-        <label>Seu @usuario</label>
-        <input type="text" id="username" placeholder="Ex: @joao">
-        
-        <label>Peso (kg)</label>
-        <input type="text" id="weight">
-        
-        <label>Altura (cm)</label>
-        <input type="text" id="height">
-        
-        <button onclick="salvarPerfil()" style="width:100%; padding:15px; background:#333; color:white; border:none; border-radius:8px;">SALVAR</button>
-        <br><br>
-        <button onclick="sair()" style="width:100%; padding:10px; background:red; color:white; border:none; border-radius:8px;">SAIR DA CONTA</button>
+    <div class="level-section">
+        <span class="level-badge" id="levelTitle">Calculando Nível...</span>
+        <h1 class="level-number" id="levelNum">1</h1>
+        <div class="progress-container">
+            <div class="progress-bar" id="levelProgress"></div>
+        </div>
+        <p style="font-size: 0.7rem; color: #555; margin-top: 8px;">Próximo nível em <span id="pointsToNext">0</span> FC</p>
     </div>
 
-    <div class="card">
-        <h3 style="color:#00ff9d;">Check-in Hoje</h3>
-        <p style="color:#aaa;">Foco no processo.</p>
-        <button id="btnTreinar">CONFIRMAR (+50 FC)</button>
+    <div class="ad-container">
+        ANÚNCIO PATROCINADO
+    </div>
+
+    <div class="card" id="cardIdentity" style="display: none;">
+        <h3>Perfil do Atleta</h3>
+        <input type="text" id="username" placeholder="Seu @usuario">
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="weight" placeholder="Peso (kg)">
+            <input type="text" id="height" placeholder="Altura (cm)">
+        </div>
+        <button id="btnSalvar">Salvar Identidade</button>
+        <p style="text-align: center; color: red; cursor: pointer; margin-top: 20px;" onclick="auth.signOut().then(()=>location.reload())">Sair da Conta</p>
+    </div>
+
+    <div class="card" style="border-color: var(--primary);">
+        <h3 style="color: var(--primary);">Check-in Diário</h3>
+        <button id="btnTreinar">REGISTRAR TREINO (+50 FC)</button>
     </div>
 
     <div id="focoFeed">
-        <h3>Mural</h3>
-        <p style="color:#666; text-align:center;">Carregando...</p>
+        <h3>Mural da Tribo</h3>
+        <p style="text-align: center; color: #444;">Carregando...</p>
+    </div>
+
+    <div class="sticky-banner" onclick="window.open('https://google.com', '_blank')">
+        <span style="color: #fff; font-size: 0.8rem; font-weight: bold;">🔥 Creatina em Promoção</span>
+        <div style="background: var(--primary); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;">VER</div>
     </div>
 
     <script>
-        // 1. CAPTURADOR DE ERROS GLOBAL
-        window.onerror = function(message, source, lineno, colno, error) {
-            document.getElementById('error-box').style.display = 'block';
-            document.getElementById('error-msg').innerText = message;
-        };
-
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -131,115 +105,106 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        // INICIANDO
-        try {
-            firebase.initializeApp(firebaseConfig);
-            const auth = firebase.auth();
-            const db = firebase.firestore();
-            let currentUser = null;
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentUser = null;
 
-            auth.onAuthStateChanged((user) => {
-                if (!user) window.location.href = "index.html";
-                else {
-                    currentUser = user;
-                    carregarDados();
-                }
+        auth.onAuthStateChanged((user) => {
+            if (!user) window.location.href = "index.html";
+            else { currentUser = user; carregarDados(); }
+        });
+
+        // --- LÓGICA DE NÍVEL (PROGRESSÃO) ---
+        function atualizarNivel(coins) {
+            // Cada nível exige 1000 pontos a mais que o anterior
+            // Nível 1: 0-1000 | Nível 2: 1000-2000...
+            const pontosPorNivel = 1000; 
+            const level = Math.floor(coins / pontosPorNivel) + 1;
+            const progress = ((coins % pontosPorNivel) / pontosPorNivel) * 100;
+            const faltam = pontosPorNivel - (coins % pontosPorNivel);
+
+            document.getElementById('levelNum').innerText = level;
+            document.getElementById('levelProgress').style.width = progress + "%";
+            document.getElementById('pointsToNext').innerText = faltam;
+
+            // Nomes de Patentes
+            const patentes = ["Iniciante", "Focado", "Atleta", "Brabo", "Elite", "Mestre", "Lenda"];
+            document.getElementById('levelTitle').innerText = patentes[Math.min(level - 1, patentes.length - 1)];
+        }
+
+        // --- BOTÕES ---
+        document.getElementById('btnSalvar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnSalvar');
+            const user = document.getElementById('username').value.trim();
+            if(!user) return alert("Nome vazio!");
+            
+            btn.disabled = true;
+            await db.collection("users").doc(currentUser.uid).set({
+                username: user.replace('@', ''),
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value
+            }, { merge: true });
+            
+            alert("Salvo!");
+            btn.disabled = false;
+            toggleMenu();
+        });
+
+        document.getElementById('btnTreinar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnTreinar');
+            btn.disabled = true;
+
+            const doc = await db.collection("users").doc(currentUser.uid).get();
+            const nome = doc.data().username || "Atleta";
+
+            await db.collection("history").add({
+                username: nome,
+                type: "Check-in",
+                value: 50,
+                date: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // FUNÇÕES
-            window.toggleMenu = function() {
-                const x = document.getElementById("cardIdentity");
-                x.style.display = (x.style.display === "none") ? "block" : "none";
-            }
+            await db.collection("users").doc(currentUser.uid).update({
+                coins: firebase.firestore.FieldValue.increment(50)
+            });
 
-            window.sair = function() {
-                auth.signOut().then(() => window.location.href = "index.html");
-            }
+            alert("CONCLUÍDO!");
+            btn.disabled = false;
+        });
 
-            window.salvarPerfil = function() {
-                const nome = document.getElementById('username').value;
-                const peso = document.getElementById('weight').value;
-                const altura = document.getElementById('height').value;
-
-                if(!nome) return alert("Coloque um nome!");
-
-                db.collection("users").doc(currentUser.uid).set({
-                    username: nome.replace('@', ''),
-                    weight: parseFloat(peso) || 0,
-                    height: parseFloat(altura) || 0
-                }, { merge: true }).then(() => {
-                    alert("Salvo!");
-                    toggleMenu();
-                }).catch(e => alert("Erro: " + e.message));
-            }
-
-            // BOTÃO TREINAR (CHECK-IN)
-            document.getElementById('btnTreinar').addEventListener('click', function() {
-                const btn = document.getElementById('btnTreinar');
-                const userText = document.getElementById('displayUsername').innerText;
-
-                if(userText.includes("Carregando") || userText.includes("Configurar")) {
-                    toggleMenu();
-                    return alert("Configure seu perfil primeiro!");
-                }
-
-                btn.disabled = true;
-                btn.innerText = "REGISTRANDO...";
-
-                // Pega nome atualizado
-                db.collection("users").doc(currentUser.uid).get().then(doc => {
-                    const myName = doc.data().username || "Atleta";
+        function carregarDados() {
+            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    const d = doc.data();
+                    const coins = d.coins || 0;
+                    document.getElementById('coinBalance').innerText = coins.toLocaleString();
+                    document.getElementById('displayUsername').innerText = d.username ? "@" + d.username + " ⚙️" : "Configurar Perfil ⚙️";
                     
-                    // Salva histórico
-                    db.collection("history").add({
-                        userId: currentUser.uid,
-                        username: myName,
-                        type: "Check-in",
-                        value: 50,
-                        date: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    // Paga
-                    db.collection("users").doc(currentUser.uid).update({
-                        coins: firebase.firestore.FieldValue.increment(50)
-                    }).then(() => {
-                        alert("CHECK-IN FEITO!");
-                        btn.disabled = false;
-                        btn.innerText = "CONFIRMAR (+50 FC)";
-                    });
-                });
+                    atualizarNivel(coins); // Roda a lógica de nível
+                }
             });
 
-            function carregarDados() {
-                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        document.getElementById('coinBalance').innerText = d.coins || 0;
-                        
-                        if(d.username) {
-                            document.getElementById('displayUsername').innerText = "@" + d.username + " ⚙️";
-                            document.getElementById('username').value = d.username;
-                        } else {
-                            document.getElementById('displayUsername').innerText = "Configurar Perfil ⚙️";
-                        }
-                        
-                        if(d.weight) document.getElementById('weight').value = d.weight;
-                        if(d.height) document.getElementById('height').value = d.height;
-                    }
+            db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                const div = document.getElementById('focoFeed');
+                div.innerHTML = "<h3>Mural da Tribo</h3>";
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    div.innerHTML += `
+                        <div class="feed-post">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="post-avatar">${(d.username || 'A')[0]}</div>
+                                <span>@${d.username || 'Atleta'}</span>
+                            </div>
+                            <span style="color:var(--gold)">+${d.value} FC</span>
+                        </div>`;
                 });
+            });
+        }
 
-                db.collection("history").orderBy("date", "desc").limit(10).onSnapshot(snap => {
-                    const div = document.getElementById('focoFeed');
-                    div.innerHTML = "<h3>Mural</h3>";
-                    snap.forEach(doc => {
-                        const d = doc.data();
-                        div.innerHTML += `<div class="feed-post"><span>@${d.username || 'Atleta'}</span> <span style="color:#ffd700">+${d.value}</span></div>`;
-                    });
-                });
-            }
-
-        } catch (e) {
-            alert("Erro crítico: " + e.message);
+        window.toggleMenu = function() {
+            const m = document.getElementById('cardIdentity');
+            m.style.display = (m.style.display === "none") ? "block" : "none";
         }
     </script>
 </body>
