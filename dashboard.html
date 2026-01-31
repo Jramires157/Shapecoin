@@ -5,54 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - ShapeCoin</title>
     <style>
-        /* ESTILO DARK MODE */
+        /* --- ESTILO DARK MODE --- */
         :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; }
-        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 80px; }
+        body { 
+            background-color: var(--dark); 
+            color: var(--text); 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            padding-bottom: 100px; /* Espaço extra pro banner */
+        }
         
-        /* Header */
+        /* Cabeçalho */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
-        .user-info h2 { margin: 0; font-size: 1.2rem; }
+        .user-info h2 { margin: 0; font-size: 1.2rem; color: #fff; }
         .coin-badge { background: #333; padding: 10px 20px; border-radius: 50px; color: #ffd700; font-weight: bold; border: 1px solid #ffd700; font-size: 1.2rem; }
 
-        /* Cards */
-        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        
-        /* Títulos sem Emojis */
-        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
+        /* Cards (Caixas) */
+        .card { 
+            background: var(--card); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid #333; 
+            margin-bottom: 20px; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            display: block; /* Garante que apareça */
+        }
 
-        /* Inputs e Botões */
+        /* Títulos LIMPOS (Sem Emojis) */
+        h3 { color: var(--primary); margin-top: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* Formulários */
         input, select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
         
-        /* Layout de Colunas para o Perfil */
+        /* Layout de Colunas (Peso/Altura) */
         .row { display: flex; gap: 10px; }
         .row input { width: 50%; }
 
-        /* Botão Principal */
+        /* Botões */
         button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         button:hover { opacity: 0.9; transform: scale(1.01); }
         
-        /* Botão Bônus */
+        /* Botão Dourado (Bônus) */
         .btn-bonus { background: linear-gradient(45deg, #ffd700, #ffaa00); color: black; animation: pulse 2s infinite; border: 2px solid #fff; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
         /* Resultado IMC */
-        .imc-result { text-align: center; margin-top: 15px; padding: 10px; background: #252525; border-radius: 6px; display: none; }
-        .imc-value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
-        .imc-status { color: #aaa; font-size: 0.9rem; }
+        .imc-result { text-align: center; margin-top: 15px; padding: 15px; background: #252525; border-radius: 6px; border: 1px dashed #555; display: none; }
+        .imc-value { font-size: 2rem; font-weight: bold; color: var(--primary); display: block; }
+        .imc-status { color: #aaa; font-size: 1rem; margin-top: 5px; }
+
+        /* Banner Fixo */
+        .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; z-index: 100; }
+        .banner-content { background: #00ff88; color: black; padding: 5px 15px; border-radius: 4px; font-weight: bold; display: inline-block; }
 
         /* Lista Histórico */
         .history-item { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid var(--primary); }
-        .gain { color: #00ff88; font-weight: bold; }
-
-        /* BANNER FIXO */
-        .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 10px; text-align: center; cursor: pointer; z-index: 100; display: flex; justify-content: center; align-items: center; }
-        .banner-content { background: #00ff88; color: black; padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
-        .banner-text { margin-right: 10px; color: #aaa; font-size: 0.8rem; }
-
-        /* Modal Loading */
-        .ad-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 999; flex-direction: column; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;}
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -63,6 +73,122 @@
 
     <div class="header">
         <div class="user-info">
-            <span style="color: #888; font-size: 0.9rem;">Atleta:</span>
-            <h2 id="userEmail">...</h2>
+            <span style="color: #888; font-size: 0.9rem;">Olá,</span>
+            <h2 id="userEmail">Carregando...</h2>
         </div>
+        <div class="coin-badge">💎 <span id="coinBalance">...</span></div>
+    </div>
+
+    <div class="card">
+        <h3>Meus Dados</h3>
+        
+        <label style="color: #aaa; font-size: 0.8rem;">Data de Nascimento</label>
+        <input type="date" id="birthDate">
+
+        <div class="row">
+            <input type="number" id="weight" placeholder="Peso (kg)">
+            <input type="number" id="height" placeholder="Altura (cm)">
+        </div>
+
+        <button onclick="salvarPerfil()" style="background: #333; color: white; border: 1px solid #555;">Calcular IMC & Salvar</button>
+
+        <div id="imcBox" class="imc-result">
+            <span id="imcValue" class="imc-value">0.0</span>
+            <span id="imcStatus" class="imc-status">Calculando...</span>
+        </div>
+    </div>
+
+    <div class="card" style="border-color: #ffd700;">
+        <h3 style="color: #ffd700;">Área de Recompensas</h3>
+        <p style="color:#aaa; font-size: 0.9rem;">Ganhe moedas assistindo vídeos.</p>
+        <button onclick="assistirBonus()" class="btn-bonus">ASSISTIR VÍDEO (+20 MOEDAS)</button>
+    </div>
+
+    <div class="card">
+        <h3>Registrar Treino</h3>
+        
+        <select id="workoutType">
+            <option value="Superior">Treino Superior</option>
+            <option value="Inferior">Treino Inferior</option>
+            <option value="Cardio">Cardio / Corrida</option>
+            <option value="Crossfit">Crossfit</option>
+        </select>
+
+        <select id="intensity">
+            <option value="50">Nível Normal (+50 SC)</option>
+            <option value="80">Nível Pesado (+80 SC)</option>
+        </select>
+
+        <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR</button>
+    </div>
+
+    <div class="card">
+        <h3>Histórico Recente</h3>
+        <div id="historyList">Carregando...</div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <button onclick="sair()" style="background:#333; width: auto; padding: 10px 30px;">Sair</button>
+    </div>
+
+    <div class="sticky-banner" onclick="abrirLinkAds()">
+        <span style="color: #888; margin-right: 10px;">Patrocinado:</span>
+        <div class="banner-content">👉 VER OFERTAS</div>
+    </div>
+
+    <script>
+        // --- SEU LINK DA MONETAG ---
+        const LINK_ADS = "https://google.com"; // Troque pelo seu link real
+        // ---------------------------
+
+        // 1. Configuração Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        // 2. Inicialização
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
+
+            console.log("Sistema Iniciado.");
+
+            // 3. Login Check
+            auth.onAuthStateChanged((user) => {
+                if (!user) {
+                    window.location.href = "index.html";
+                } else {
+                    currentUser = user;
+                    // Mostra parte do email como nome
+                    document.getElementById('userEmail').innerText = user.email.split('@')[0];
+                    carregarDadosUsuario();
+                    carregarHistorico();
+                }
+            });
+
+            // 4. Carregar Perfil e Moedas
+            function carregarDadosUsuario() {
+                db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('coinBalance').innerText = data.coins || 0;
+                        
+                        // Carrega dados do perfil nos inputs
+                        if(data.weight) document.getElementById('weight').value = data.weight;
+                        if(data.height) document.getElementById('height').value = data.height;
+                        if(data.birthDate) document.getElementById('birthDate').value = data.birthDate;
+
+                        // Se já tiver dados, mostra o IMC
+                        if(data.weight && data.height) {
+                            calcularIMC(data.weight, data.height);
+                        }
+                    }
+                });
+            }
