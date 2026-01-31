@@ -2,38 +2,141 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel - ShapeCoin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
+    <title>Painel - ShapeCoin Premium</title>
     <style>
-        /* --- ESTILO DARK MODE --- */
-        :root { --primary: #00ff88; --dark: #0a0a0a; --card: #1e1e1e; --text: #ffffff; --error: #ff4444; }
-        body { background-color: var(--dark); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; padding-bottom: 100px; }
+        /* --- TEMA PREMIUM --- */
+        :root {
+            --primary: #00ff9d;       /* Verde Menta Neon */
+            --gold: #ffd700;          /* Dourado Principal */
+            --gold-dark: #b8860b;     /* Dourado Escuro */
+            --bg-deep: #050505;       /* Preto Quase Puro */
+            --text-light: #ffffff;
+            --text-dim: #a0a0a0;
+            --glass-bg: rgba(255, 255, 255, 0.05); /* Vidro */
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            /* Fundo sutil com gradiente para profundidade */
+            background-image: radial-gradient(circle at top right, rgba(0, 255, 157, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.05), transparent 40%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 110px; /* Espaço para o banner flutuante */
+        }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 20px; }
-        .user-info h2 { margin: 0; font-size: 1.2rem; color: #fff; }
-        .coin-badge { background: #333; padding: 10px 20px; border-radius: 50px; color: #ffd700; font-weight: bold; border: 1px solid #ffd700; font-size: 1.2rem; }
+        /* CABEÇALHO DE LUXO */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 25px; margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .user-info span { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
+        .user-info h2 { margin: 5px 0 0 0; font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* O DISTINTIVO DE OURO */
+        .coin-badge {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            padding: 12px 25px; border-radius: 50px;
+            color: #000; font-weight: 900; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); /* Brilho Dourado */
+            display: flex; align-items: center; gap: 8px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.4);
+        }
 
-        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; display: block; }
-        h3 { color: var(--primary); margin-top: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+        /* CARTÕES DE VIDRO (GLASSMORPHISM) */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* O efeito de desfoque */
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+            max-width: 600px; margin-left: auto; margin-right: auto;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); /* Sombra suave */
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-2px); } /* Leve flutuada ao passar o mouse */
 
-        input, select, button { width: 100%; padding: 15px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        .row { display: flex; gap: 10px; }
+        /* TÍTULOS ELEGANTES */
+        h3 {
+            color: var(--primary); margin-top: 0; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;
+            border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 20px;
+            display: flex; align-items: center;
+        }
+        h3::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px var(--primary); }
+
+        /* INPUTS E SELECTS MODERNOS */
+        input, select {
+            width: 100%; padding: 16px; margin: 10px 0;
+            background: rgba(0,0,0,0.3); /* Fundo mais escuro que o card */
+            border: 1px solid var(--glass-border); color: white; border-radius: 12px;
+            font-size: 16px; box-sizing: border-box; transition: 0.3s;
+            appearance: none; /* Remove estilo padrão do navegador */
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 255, 157, 0.2); outline: none; }
+        input::placeholder { color: #666; }
+
+        /* Layout de Colunas */
+        .row { display: flex; gap: 15px; }
         .row input { width: 50%; }
 
-        button { background: var(--primary); color: black; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        button:hover { opacity: 0.9; transform: scale(1.01); }
-        button:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
+        /* BOTÃO PRINCIPAL (NEON) */
+        button {
+            width: 100%; padding: 18px; margin-top: 15px;
+            background: linear-gradient(to right, var(--primary), #00cc7a);
+            color: #000; font-weight: 800; border: none; border-radius: 12px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; font-size: 14px;
+            transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 255, 157, 0.3);
+        }
+        button:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(0, 255, 157, 0.5); }
+        button:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
 
-        .btn-bonus { background: linear-gradient(45deg, #ffd700, #ffaa00); color: black; animation: pulse 2s infinite; border: 2px solid #fff; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        /* CARD BÔNUS (EDIÇÃO OURO) */
+        .card-gold { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.03); }
+        .card-gold h3 { color: var(--gold); }
+        .card-gold h3::before { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        
+        .btn-bonus {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark), var(--gold));
+            background-size: 200% auto;
+            color: black; animation: shine 3s infinite linear; border: none;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+        @keyframes shine { to { background-position: 200% center; } }
 
-        .imc-result { text-align: center; margin-top: 15px; padding: 15px; background: #252525; border-radius: 6px; border: 1px dashed #555; display: none; }
-        .imc-value { font-size: 2rem; font-weight: bold; color: var(--primary); display: block; }
+        /* RESULTADO IMC */
+        .imc-result { text-align: center; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px; display: none; border: 1px solid var(--glass-border); }
+        .imc-value { font-size: 2.5rem; font-weight: 900; color: var(--primary); display: block; text-shadow: 0 0 15px rgba(0,255,157,0.3); }
+        .imc-status { color: var(--text-dim); font-size: 1rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .sticky-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; border-top: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; z-index: 100; }
-        .banner-content { background: #00ff88; color: black; padding: 5px 15px; border-radius: 4px; font-weight: bold; display: inline-block; }
+        /* HISTÓRICO */
+        .history-item {
+            display: flex; justify-content: space-between; padding: 18px;
+            background: rgba(255,255,255,0.03); margin-bottom: 10px; border-radius: 12px;
+            border-left: 4px solid var(--primary); align-items: center;
+        }
+        .history-type { font-weight: 600; }
+        .gain-pill { background: rgba(0, 255, 157, 0.15); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
 
-        .history-item { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid var(--primary); }
+        /* BANNER FLUTUANTE PREMIUM */
+        .sticky-banner {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 20px; text-align: center; cursor: pointer; z-index: 100;
+            border-radius: 50px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .banner-cta { background: var(--primary); color: black; padding: 8px 20px; border-radius: 30px; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -44,69 +147,74 @@
 
     <div class="header">
         <div class="user-info">
-            <span style="color: #888; font-size: 0.9rem;">Atleta:</span>
+            <span>Bem-vindo,</span>
             <h2 id="userEmail">Carregando...</h2>
         </div>
-        <div class="coin-badge">💎 <span id="coinBalance">...</span></div>
+        <div class="coin-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/></svg>
+            <span id="coinBalance">...</span>
+        </div>
     </div>
 
     <div class="card">
-        <h3>Meus Dados</h3>
-        <label style="color: #aaa; font-size: 0.8rem;">Data de Nascimento</label>
-        <input type="date" id="birthDate">
+        <h3>Dados Corporais</h3>
+        <label style="color: var(--text-dim); font-size: 0.8rem; margin-left: 5px;">Nascimento</label>
+        <input type="date" id="birthDate" style="color-scheme: dark;">
         <div class="row">
-            <input type="text" id="weight" placeholder="Peso (kg) ex: 70.5">
-            <input type="tel" id="height" placeholder="Altura (cm) ex: 175">
+            <input type="text" id="weight" placeholder="Peso (kg)">
+            <input type="tel" id="height" placeholder="Altura (cm)">
         </div>
-        <button onclick="salvarPerfil()" id="btnSalvarPerfil" style="background: #333; color: white; border: 1px solid #555;">Calcular IMC & Salvar</button>
+        <button onclick="salvarPerfil()" id="btnSalvarPerfil" style="background: transparent; border: 2px solid var(--primary); color: var(--primary);">Atualizar & Calcular IMC</button>
 
         <div id="imcBox" class="imc-result">
-            <span id="imcValue" class="imc-value">0.0</span>
+            <span id="imcValue" class="imc-value">0.00</span>
             <span id="imcStatus" class="imc-status">Calculando...</span>
         </div>
     </div>
 
-    <div class="card" style="border-color: #ffd700;">
-        <h3 style="color: #ffd700;">Bônus Diário</h3>
-        <p style="color:#aaa; font-size: 0.9rem;">Limite: <span id="bonusCount">0</span>/10 vídeos hoje.</p>
-        <button onclick="assistirBonus()" id="btnBonus" class="btn-bonus">ASSISTIR VÍDEO (+20 MOEDAS)</button>
+    <div class="card card-gold">
+        <h3>Bônus Diário</h3>
+        <p style="color:var(--text-dim); font-size: 0.9rem; margin-bottom: 20px;">Assista e ganhe. Limite: <span id="bonusCount" style="color:var(--gold); font-weight:bold;">0</span>/10 hoje.</p>
+        <button onclick="assistirBonus()" id="btnBonus" class="btn-bonus">
+            RESGATAR +20 SC
+        </button>
     </div>
 
     <div class="card">
-        <h3>Registrar Treino</h3>
-        <p style="color:#aaa; font-size: 0.8rem; margin-bottom: 10px;">Regra: Máx 2 treinos/dia com intervalo de 2h.</p>
+        <h3>Registrar Atividade</h3>
+        <p style="color:var(--text-dim); font-size: 0.8rem; margin-bottom: 15px;">Regra: Máx 2 treinos/dia. Intervalo de 2h.</p>
         
         <select id="workoutType">
-            <option value="Superior">Treino Superior</option>
-            <option value="Inferior">Treino Inferior</option>
-            <option value="Cardio">Cardio / Corrida</option>
-            <option value="Crossfit">Crossfit</option>
+            <option value="Superior">🏋️ Treino Superior</option>
+            <option value="Inferior">🦿 Treino Inferior</option>
+            <option value="Cardio">🏃 Cardio / Corrida</option>
+            <option value="Crossfit">🔥 Crossfit / Funcional</option>
         </select>
         <select id="intensity">
             <option value="50">Nível Normal (+50 SC)</option>
             <option value="80">Nível Pesado (+80 SC)</option>
         </select>
-        <button onclick="salvarTreino()" id="btnTreinar">CONFIRMAR TREINO</button>
+        <button onclick="salvarTreino()" id="btnTreinar">VALIDAR TREINO</button>
     </div>
 
     <div class="card">
-        <h3>Histórico Recente</h3>
-        <div id="historyList">Carregando...</div>
+        <h3>Últimas Movimentações</h3>
+        <div id="historyList">
+            <p style="color: var(--text-dim); text-align: center;">Carregando...</p>
+        </div>
     </div>
 
-    <div style="text-align: center; margin-bottom: 20px;">
-        <button onclick="sair()" style="background:#333; width: auto; padding: 10px 30px;">Sair</button>
+    <div style="text-align: center; margin: 30px 0;">
+        <button onclick="sair()" style="background: transparent; border: 1px solid #333; color: var(--text-dim); width: auto; padding: 12px 40px;">Sair da Conta</button>
     </div>
 
     <div class="sticky-banner" onclick="abrirLinkAds()">
-        <span style="color: #888; margin-right: 10px;">Patrocinado:</span>
-        <div class="banner-content">👉 VER OFERTAS</div>
+        <span style="color: #fff; font-weight: 600; font-size: 0.9rem;">Oferta Exclusiva</span>
+        <div class="banner-cta">VER AGORA →</div>
     </div>
 
     <script>
-        // --- SEU LINK AQUI ---
-        const LINK_ADS = "https://google.com"; // Troque pelo link da Monetag
-        // ---------------------
+        const LINK_ADS = "https://google.com"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
@@ -136,9 +244,9 @@
                 db.collection("users").doc(currentUser.uid).onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
-                        document.getElementById('coinBalance').innerText = data.coins || 0;
+                        // Formata o saldo com ponto se for milhar (ex: 1.200)
+                        document.getElementById('coinBalance').innerText = (data.coins || 0).toLocaleString('pt-BR');
                         
-                        // Contadores do Dia (Reseta visualmente se o dia virou, mas o controle real é no banco)
                         const hoje = new Date().toDateString();
                         const lastBonusDate = data.lastBonusDate ? data.lastBonusDate.toDate().toDateString() : "";
                         
@@ -148,7 +256,6 @@
                             document.getElementById('bonusCount').innerText = 0;
                         }
 
-                        // Perfil
                         if(data.weight) document.getElementById('weight').value = data.weight;
                         if(data.height) document.getElementById('height').value = data.height;
                         if(data.birthDate) document.getElementById('birthDate').value = data.birthDate;
@@ -158,122 +265,66 @@
                 carregarHistorico();
             }
 
-            // --- SISTEMA ECONÔMICO SEGURO ---
-
             async function salvarTreino() {
                 const btn = document.getElementById('btnTreinar');
                 const type = document.getElementById('workoutType').value;
                 const value = parseInt(document.getElementById('intensity').value);
-
-                btn.disabled = true;
-                btn.innerText = "VERIFICANDO...";
-
+                btn.disabled = true; btn.innerText = "VERIFICANDO...";
                 try {
-                    // 1. Busca dados do usuário para checar limites
                     const userRef = db.collection("users").doc(currentUser.uid);
                     const doc = await userRef.get();
                     const data = doc.data() || {};
-
                     const hoje = new Date().toDateString();
                     const lastTrainDate = data.lastTrainDate ? data.lastTrainDate.toDate() : null;
                     const lastTrainDayStr = lastTrainDate ? lastTrainDate.toDateString() : "";
-                    
-                    // Verifica quantos treinos já fez hoje
                     let dailyTrainCount = (lastTrainDayStr === hoje) ? (data.dailyTrainCount || 0) : 0;
 
-                    // REGRA 1: Limite Diário (Máx 2)
-                    if (dailyTrainCount >= 2) {
-                        alert("⚠️ Limite diário atingido! Você só pode registrar 2 treinos por dia. Volte amanhã!");
-                        btn.disabled = false; btn.innerText = "CONFIRMAR TREINO";
-                        return;
-                    }
-
-                    // REGRA 2: Cooldown (Intervalo de 2 horas = 7200000 ms)
+                    if (dailyTrainCount >= 2) { alert("⚠️ Limite diário de 2 treinos atingido."); btn.disabled = false; btn.innerText = "VALIDAR TREINO"; return; }
                     if (lastTrainDate) {
                         const diffTime = new Date() - lastTrainDate;
                         if (diffTime < 7200000) { 
                             const faltaMin = Math.ceil((7200000 - diffTime) / 60000);
-                            alert(`⏳ Descanso obrigatório! Espere mais ${faltaMin} minutos para registrar outro treino.`);
-                            btn.disabled = false; btn.innerText = "CONFIRMAR TREINO";
-                            return;
+                            alert(`⏳ Aguarde ${faltaMin} minutos para o próximo treino.`);
+                            btn.disabled = false; btn.innerText = "VALIDAR TREINO"; return;
                         }
                     }
-
-                    // Se passou nas regras, Salva!
-                    btn.innerText = "SALVANDO...";
-                    
-                    // Atualiza contadores e saldo
                     await userRef.set({
                         coins: firebase.firestore.FieldValue.increment(value),
                         lastTrainDate: firebase.firestore.FieldValue.serverTimestamp(),
                         dailyTrainCount: (lastTrainDayStr === hoje) ? dailyTrainCount + 1 : 1
                     }, { merge: true });
-
-                    // Salva histórico
-                    await db.collection("history").add({
-                        userId: currentUser.uid, type: type, value: value,
-                        date: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    alert(`✅ Treino Validado! +${value} SC na conta.`);
-                    btn.innerText = "CONFIRMAR TREINO";
-                    btn.disabled = false;
-
-                } catch (error) {
-                    alert("Erro: " + error.message);
-                    btn.disabled = false;
-                }
+                    await db.collection("history").add({ userId: currentUser.uid, type: type, value: value, date: firebase.firestore.FieldValue.serverTimestamp() });
+                    alert(`✅ +${value} SC creditados com sucesso!`);
+                    btn.innerText = "VALIDAR TREINO"; btn.disabled = false;
+                } catch (error) { alert("Erro: " + error.message); btn.disabled = false; }
             }
 
             async function assistirBonus() {
                 const btn = document.getElementById('btnBonus');
                 btn.disabled = true;
-
                 try {
                     const userRef = db.collection("users").doc(currentUser.uid);
                     const doc = await userRef.get();
                     const data = doc.data() || {};
-                    
                     const hoje = new Date().toDateString();
                     const lastBonusDayStr = data.lastBonusDate ? data.lastBonusDate.toDate().toDateString() : "";
                     let dailyBonusCount = (lastBonusDayStr === hoje) ? (data.dailyBonusCount || 0) : 0;
 
-                    // REGRA 3: Limite de Bônus (Máx 10)
-                    if (dailyBonusCount >= 10) {
-                        alert("⚠️ Você atingiu o limite de vídeos por hoje. Volte amanhã!");
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    // Abre o anúncio
+                    if (dailyBonusCount >= 10) { alert("⚠️ Limite de bônus diário atingido."); btn.disabled = false; return; }
                     window.open(LINK_ADS, '_blank');
-                    
-                    // Simula tempo e paga
                     setTimeout(async () => {
-                        const bonus = 20;
-                        
                         await userRef.set({
-                            coins: firebase.firestore.FieldValue.increment(bonus),
+                            coins: firebase.firestore.FieldValue.increment(20),
                             lastBonusDate: firebase.firestore.FieldValue.serverTimestamp(),
                             dailyBonusCount: (lastBonusDayStr === hoje) ? dailyBonusCount + 1 : 1
                         }, { merge: true });
-
-                        await db.collection("history").add({
-                            userId: currentUser.uid, type: "🎁 Bônus Vídeo", value: bonus,
-                            date: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        alert(`💰 Bônus Recebido! +${bonus} SC`);
+                        await db.collection("history").add({ userId: currentUser.uid, type: "🎁 Bônus Diário", value: 20, date: firebase.firestore.FieldValue.serverTimestamp() });
+                        alert(`💰 +20 SC Recebidos!`);
                         btn.disabled = false;
                     }, 5000);
-
-                } catch (e) {
-                    console.error(e);
-                    btn.disabled = false;
-                }
+                } catch (e) { btn.disabled = false; }
             }
 
-            // --- FUNÇÕES DE PERFIL (Igual Anterior) ---
             window.salvarPerfil = function() {
                 const btn = document.getElementById('btnSalvarPerfil');
                 let weightStr = document.getElementById('weight').value.replace(',', '.');
@@ -281,28 +332,19 @@
                 const weight = parseFloat(weightStr);
                 const height = parseFloat(heightStr);
                 const birthDate = document.getElementById('birthDate').value;
-
-                if(isNaN(weight) || isNaN(height)) { alert("Dados inválidos"); return; }
-
+                if(isNaN(weight) || isNaN(height)) { alert("Digite Peso e Altura válidos"); return; }
                 btn.innerText = "SALVANDO...";
-                db.collection("users").doc(currentUser.uid).set({
-                    weight: weight, height: height, birthDate: birthDate
-                }, { merge: true }).then(() => {
-                    calcularIMC(weight, height);
-                    btn.innerText = "SALVO!";
-                    setTimeout(() => btn.innerText = "Calcular IMC & Salvar", 2000);
-                });
+                db.collection("users").doc(currentUser.uid).set({ weight: weight, height: height, birthDate: birthDate }, { merge: true })
+                .then(() => { calcularIMC(weight, height); btn.innerText = "DADOS ATUALIZADOS"; setTimeout(() => btn.innerText = "Atualizar & Calcular IMC", 2000); });
             };
 
             function calcularIMC(peso, alturaCm) {
                 const imc = peso / ((alturaCm / 100) ** 2);
-                const el = document.getElementById('imcBox');
-                const stat = document.getElementById('imcStatus');
-                el.style.display = 'block';
+                document.getElementById('imcBox').style.display = 'block';
                 document.getElementById('imcValue').innerText = imc.toFixed(2);
-                
-                if(imc < 18.5) { stat.innerText = "Abaixo do peso"; stat.style.color = "yellow"; }
-                else if(imc < 24.9) { stat.innerText = "Peso Normal ✅"; stat.style.color = "#00ff88"; }
+                const stat = document.getElementById('imcStatus');
+                if(imc < 18.5) { stat.innerText = "Abaixo do peso"; stat.style.color = "#ffd700"; }
+                else if(imc < 24.9) { stat.innerText = "Peso Normal ✅"; stat.style.color = "#00ff9d"; }
                 else if(imc < 29.9) { stat.innerText = "Sobrepeso"; stat.style.color = "orange"; }
                 else { stat.innerText = "Obesidade"; stat.style.color = "#ff4444"; }
             }
@@ -313,7 +355,9 @@
                     list.innerHTML = "";
                     snap.forEach((doc) => {
                         const d = doc.data();
-                        list.innerHTML += `<div class="history-item"><span>${d.type}</span><span style="color:#00ff88">+${d.value}</span></div>`;
+                        // Remove emojis do histórico para ficar limpo
+                        const tipoLimpo = d.type.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2702}-\u{27B0}\u{24C2}-\u{1F9FF}]/gu, '').trim();
+                        list.innerHTML += `<div class="history-item"><span class="history-type">${tipoLimpo}</span><span class="gain-pill">+${d.value} SC</span></div>`;
                     });
                 });
             }
