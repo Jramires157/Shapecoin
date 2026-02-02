@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCUS | Login</title>
+    <title>FOCUS | Atelier</title>
     
     <meta name="theme-color" content="#F2F0E9">
     <link rel="manifest" href="manifest.json">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
     <style>
         /* PALETA QUIET LUXURY */
@@ -21,6 +21,8 @@
             --text-muted: #8E8E8E;
             --border: #E5E5E5;
             --black-btn: #111111;
+            --shadow: 0 10px 40px rgba(0,0,0,0.03);
+            --gold: #C5A059; /* Cor das medalhas */
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -28,86 +30,137 @@
         body { 
             background-color: var(--bg); color: var(--text-main); 
             font-family: 'Outfit', sans-serif; 
-            margin: 0; padding: 40px;
-            display: flex; flex-direction: column; 
-            min-height: 100vh; justify-content: center;
+            margin: 0; padding: 25px; padding-bottom: 110px;
+            overflow-x: hidden;
         }
 
-        /* LOGO */
-        .brand-area { text-align: center; margin-bottom: 50px; animation: fadeDown 0.8s ease; }
-        .logo { 
-            font-size: 0.9rem; letter-spacing: 2px; font-weight: 600; 
-            text-transform: uppercase; color: var(--text-muted);
-        }
-        .tagline {
-            font-size: 1.8rem; font-weight: 300; margin-top: 15px; 
-            line-height: 1.2; color: var(--text-main);
-        }
+        /* HEADER & MEDALHAS */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .logo { font-weight: 600; letter-spacing: 1px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
+        
+        .medals-row { display: flex; gap: 5px; }
+        .medal { width: 24px; height: 24px; border-radius: 50%; background: #DDD; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #FFF; opacity: 0.3; }
+        .medal.active { opacity: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .medal.copper { background: #B87333; }
+        .medal.silver { background: #C0C0C0; }
+        .medal.gold { background: #FFD700; color: #555; }
+        .medal.obsidian { background: #000; }
 
-        /* CARD DE LOGIN (LIMPO) */
-        .login-card {
-            animation: fadeUp 0.8s ease;
+        /* TIMER AREA */
+        .focus-target-badge {
+            text-align: center; background: rgba(0,0,0,0.05); color: var(--text-main);
+            display: inline-block; padding: 6px 16px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 500; margin-bottom: 20px;
         }
+        .timer-wrapper { text-align: center; margin-bottom: 30px; }
+        .timer-circle {
+            width: 260px; height: 260px; margin: 0 auto; border-radius: 50%;
+            background: var(--surface); box-shadow: var(--shadow);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .main-time { font-size: 3.5rem; font-weight: 300; line-height: 1; letter-spacing: -2px; color: var(--text-main); }
+        .time-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
 
-        /* INPUTS ESTILO ATELIER */
-        .input-group { margin-bottom: 20px; }
-        .clean-input {
-            width: 100%; padding: 22px 25px; 
-            border-radius: 100px; /* Pílula */
-            border: 1px solid transparent;
-            background: var(--surface); 
-            font-family: 'Outfit'; font-size: 1rem; color: var(--text-main);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            transition: 0.3s;
-        }
-        .clean-input:focus {
-            border-color: #DDD; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-        }
-        .clean-input::placeholder { color: #BBB; font-weight: 300; }
+        /* FRASES */
+        .quote-box { text-align: center; margin-bottom: 40px; min-height: 40px; padding: 0 20px; }
+        .quote-text { font-size: 0.9rem; color: var(--text-main); font-style: italic; font-weight: 300; line-height: 1.4; }
+
+        /* XP */
+        .xp-container { margin-bottom: 40px; padding: 0 10px; }
+        .xp-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; }
+        .xp-track { height: 4px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+        .xp-fill { height: 100%; width: 0%; background: var(--text-main); transition: width 1s ease; }
 
         /* BOTÕES */
+        .btn-stack { display: flex; flex-direction: column; gap: 12px; }
         .btn {
-            width: 100%; padding: 22px; border-radius: 100px; border: none;
-            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 1rem;
-            cursor: pointer; transition: transform 0.2s, opacity 0.2s;
-            margin-top: 10px;
+            width: 100%; padding: 20px; border-radius: 100px; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.9rem;
+            cursor: pointer; transition: transform 0.2s;
         }
         .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--black-btn); color: #FFF; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+        .btn-ghost { background: transparent; border: 1px solid #D0D0D0; color: var(--text-muted); }
 
-        .btn-primary { 
-            background: var(--black-btn); color: #FFF; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        /* LOJA (GRID & CARDS) */
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .shop-card {
+            background: var(--surface); padding: 25px 15px; border-radius: 20px;
+            text-align: center; box-shadow: 0 10px 30px var(--shadow);
+            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .shop-tag { font-size: 0.6rem; background: #000; color: #fff; padding: 2px 8px; border-radius: 4px; position: absolute; top: 10px; right: 10px;}
+        .shop-icon { font-size: 1.8rem; display: block; margin-bottom: 15px; opacity: 0.8; }
+        .shop-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); line-height: 1.2;}
+        .shop-price { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
+
+        /* MODAIS GERAIS */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(242, 240, 233, 0.95); z-index: 200; 
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: var(--surface); padding: 30px; width: 90%; max-width: 400px;
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            text-align: center; max-height: 80vh; overflow-y: auto;
         }
         
-        .btn-ghost {
-            background: transparent; color: var(--text-muted);
-            font-size: 0.9rem; margin-top: 20px;
-        }
-        .btn-ghost:hover { color: var(--text-main); }
+        /* MODAL LEITURA (EBOOK) */
+        .reader-modal { text-align: left; }
+        .reader-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 10px; }
+        .reader-content { font-family: 'Outfit', sans-serif; font-size: 0.9rem; line-height: 1.6; color: #444; }
+        .reader-content h3 { font-size: 1rem; margin-top: 20px; color: #000; }
 
-        /* MENSAGEM DE ERRO */
-        #error-msg {
-            color: #D64545; text-align: center; font-size: 0.8rem;
-            margin-bottom: 20px; min-height: 20px; opacity: 0; transition: opacity 0.3s;
+        /* MODAL RESPIRAÇÃO (PANIC BUTTON) */
+        .breath-circle {
+            width: 100px; height: 100px; background: #C5A059; border-radius: 50%;
+            margin: 40px auto; opacity: 0.8;
+            animation: breathe 8s infinite ease-in-out;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(2.5); opacity: 0.2; }
         }
 
-        /* FOOTER */
-        .footer {
-            text-align: center; margin-top: auto; 
-            font-size: 0.7rem; color: #AAA; padding-top: 40px;
+        /* INPUTS */
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; margin-left: 10px;}
+        .clean-input {
+            width: 100%; padding: 15px 20px; border-radius: 15px; border: 1px solid var(--border);
+            background: #FAFAFA; font-family: 'Outfit'; font-size: 1rem; color: var(--text-main);
+        }
+        .clean-textarea {
+            width: 100%; padding: 15px 20px; border-radius: 15px; border: 1px solid var(--border);
+            background: #FAFAFA; font-family: 'Outfit'; font-size: 0.9rem; color: var(--text-main);
+            min-height: 100px; resize: none;
         }
 
-        /* ANIMAÇÕES */
-        @keyframes fadeUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
-        @keyframes fadeDown { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
-        
-        /* LOADING OVERLAY */
-        #loading-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: var(--bg); z-index: 999;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted);
+        /* HABITS GRID */
+        .habits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
+        .habit-pill {
+            padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s;
         }
+        .habit-pill.selected { background: var(--text-main); color: #FFF; border-color: var(--text-main); }
+
+        /* DOCK */
+        .dock {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--surface); padding: 6px; border-radius: 100px;
+            display: flex; gap: 5px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+        .dock-item {
+            padding: 12px 24px; border-radius: 50px; cursor: pointer;
+            color: var(--text-muted); font-size: 0.8rem; font-weight: 500; transition: 0.3s;
+        }
+        .dock-item.active { background: #F5F5F0; color: var(--text-main); }
+
+        .screen { display: none; opacity: 0; transition: opacity 0.4s; }
+        .screen.active { display: block; opacity: 1; }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:999; color:#999; font-size:0.8rem; letter-spacing:2px;}
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -116,33 +169,200 @@
 </head>
 <body>
 
-    <div id="loading-overlay">ATELIER</div>
+    <div id="loading">ATELIER v2</div>
 
-    <div class="brand-area">
-        <div class="logo">FOCUS • OS</div>
-        <div class="tagline">Domine sua mente.<br>Recupere seu tempo.</div>
+    <div id="screen-focus" class="screen active">
+        <div class="header">
+            <div class="logo">FOCUS • OS</div>
+            <div class="medals-row">
+                <div class="medal copper" id="medal1">1</div>
+                <div class="medal silver" id="medal3">3</div>
+                <div class="medal gold" id="medal7">7</div>
+                <div class="medal obsidian" id="medal30">30</div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="focus-target-badge" id="targetDisplay">Carregando...</div>
+        </div>
+
+        <div class="timer-wrapper">
+            <div class="timer-circle">
+                <div class="main-time" id="timerDisplay">00:00</div>
+                <div class="time-label">Tempo Limpo</div>
+            </div>
+        </div>
+
+        <div class="quote-box">
+            <div class="quote-text" id="quoteDisplay">"Carregando..."</div>
+        </div>
+
+        <div class="xp-container">
+            <div class="xp-info">
+                <span>Clareza Mental</span>
+                <span id="xpDisplay">0 XP</span>
+            </div>
+            <div class="xp-track"><div class="xp-fill" id="xpBar"></div></div>
+        </div>
+
+        <div class="btn-stack">
+            <button id="btnClaim" class="btn btn-primary" onclick="openJournal()" disabled>
+                Registrar Vitória (+100 XP)
+            </button>
+            <button id="btnReset" class="btn btn-ghost" onclick="openBreathing()">
+                Sinto que vou falhar...
+            </button>
+        </div>
     </div>
 
-    <div class="login-card">
-        <div id="error-msg"></div>
+    <div id="screen-shop" class="screen">
+        <div class="header">
+            <div class="logo">CONHECIMENTO</div>
+            <div style="font-size:0.7rem; color:#999;">Premium</div>
+        </div>
 
-        <div class="input-group">
-            <input type="email" id="email" class="clean-input" placeholder="seu@email.com" autocomplete="email">
+        <div class="shop-grid">
+            <div class="shop-card" onclick="openEbook('pornografia')">
+                <span class="shop-tag">E-BOOK</span>
+                <span class="shop-icon">🧠</span>
+                <div class="shop-name">O Cérebro vs. Pornografia</div>
+                <div class="shop-price">Protocolo de Recuperação</div>
+            </div>
+            <div class="shop-card" onclick="openEbook('dopamina')">
+                <span class="shop-tag">E-BOOK</span>
+                <span class="shop-icon">⚡</span>
+                <div class="shop-name">Jejum de Dopamina</div>
+                <div class="shop-price">Guia Científico</div>
+            </div>
+            <div class="shop-card" onclick="openEbook('social')">
+                <span class="shop-tag">E-BOOK</span>
+                <span class="shop-icon">📱</span>
+                <div class="shop-name">Vício Digital</div>
+                <div class="shop-price">Como Desconectar</div>
+            </div>
+            
+            <div class="shop-card" onclick="openLink('https://amazon.com.br/kindle')">
+                <span class="shop-tag">TOOL</span>
+                <span class="shop-icon">📖</span>
+                <div class="shop-name">Kindle Paperwhite</div>
+                <div class="shop-price">Leitura Focada</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-log" class="screen">
+        <div class="header">
+            <div class="logo">JORNADA</div>
         </div>
         
-        <div class="input-group">
-            <input type="password" id="password" class="clean-input" placeholder="Sua senha secreta">
+        <div onclick="openProfile()" style="margin-bottom: 20px; text-align: right; cursor: pointer;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid #ccc;">Editar Meu Foco</span>
         </div>
 
-        <button class="btn btn-primary" id="btnLogin">Entrar no Santuário</button>
-        <button class="btn btn-ghost" id="btnRegister">Ainda não é membro? Criar conta</button>
+        <div id="logList" style="margin-top:10px;">Carregando...</div>
+        <button class="btn btn-ghost" onclick="logout()" style="margin-top:30px;">Sair</button>
     </div>
 
-    <div class="footer">
-        v2.0 • Quiet Luxury Edition
+    <div id="modalProfile" class="modal-overlay">
+        <div class="modal-card">
+            <div style="font-size:1rem; font-weight:500; margin-bottom:20px;">Sua Intenção</div>
+            <div class="input-group">
+                <label class="input-label">NOME</label>
+                <input type="text" id="inputName" class="clean-input" placeholder="Seu nome">
+            </div>
+            <div class="input-group">
+                <label class="input-label">FOCO PRINCIPAL</label>
+                <div class="habits-grid">
+                    <div class="habit-pill" onclick="selectHabit('Pornografia', this)">Pornografia / PMO</div>
+                    <div class="habit-pill" onclick="selectHabit('Redes Sociais', this)">Redes Sociais</div>
+                    <div class="habit-pill" onclick="selectHabit('Açúcar', this)">Açúcar / Doces</div>
+                    <div class="habit-pill" onclick="selectHabit('Jogos', this)">Jogos / Apostas</div>
+                    <div class="habit-pill" onclick="selectHabit('Cigarro', this)">Cigarro</div>
+                    <div class="habit-pill" onclick="selectHabit('Ansiedade', this)">Ansiedade Geral</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveProfile()">Salvar</button>
+        </div>
+    </div>
+
+    <div id="modalBreath" class="modal-overlay">
+        <div class="modal-card" style="background: #050505; color: #FFF;">
+            <div style="font-size:1.2rem; margin-bottom:10px;">Respire Comigo</div>
+            <p style="font-size:0.8rem; color:#999; margin-bottom:30px;">Inspire quando crescer. Expire quando diminuir.</p>
+            
+            <div class="breath-circle"></div>
+            
+            <button class="btn btn-ghost" onclick="closeBreathing()" style="border-color:#333; color:#fff; margin-top:30px;">
+                Estou mais calmo
+            </button>
+            <button class="btn" style="color:#FF4444; background:transparent; font-size:0.8rem; margin-top:10px;" onclick="failProtocol()">
+                Ainda quero desistir
+            </button>
+        </div>
+    </div>
+
+    <div id="modalJournal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="font-size:1.2rem; margin-bottom:10px;">Parabéns</div>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:20px;">Registre como você se sente hoje.</p>
+            
+            <textarea id="journalInput" class="clean-textarea" placeholder="Hoje foi um dia difícil/fácil porque..."></textarea>
+            
+            <button class="btn btn-primary" onclick="confirmClaim()" style="margin-top:20px;">Salvar Vitória</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('modalJournal').style.display='none'" style="margin-top:10px; border:none;">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modalReader" class="modal-overlay">
+        <div class="modal-card reader-modal">
+            <div id="readerContent"></div>
+            <button class="btn btn-primary" onclick="document.getElementById('modalReader').style.display='none'" style="margin-top:30px;">Fechar Leitura</button>
+        </div>
+    </div>
+
+    <div class="dock">
+        <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
+        <div class="dock-item" onclick="nav('shop', this)">Biblioteca</div>
+        <div class="dock-item" onclick="nav('log', this)">Dados</div>
     </div>
 
     <script>
+        // --- CONTEÚDO DOS EBOOKS (DATABASE INTERNO) ---
+        const ebooksContent = {
+            'pornografia': `
+                <div class="reader-title">O Cérebro vs. PMO</div>
+                <div class="reader-content">
+                    <p>O vício em pornografia não é uma falha moral, é um sequestro químico.</p>
+                    <h3>1. O Efeito Coolidge</h3>
+                    <p>Seu cérebro evoluiu para buscar novidade. A pornografia oferece parceiros infinitos, enganando seu sistema límbico e criando uma superestimulação que a vida real não consegue acompanhar.</p>
+                    <h3>2. DeltaFosB</h3>
+                    <p>O consumo crônico acumula essa proteína nos neurônios, criando novas conexões que exigem estímulos cada vez mais extremos para sentir prazer.</p>
+                    <h3>3. O Protocolo</h3>
+                    <p>• <strong>Dia 1-7:</strong> Abstinência total. Espere irritabilidade.<br>
+                    • <strong>Dia 14:</strong> "Flatline" (Queda de libido). É normal, seu cérebro está resetando.<br>
+                    • <strong>Dia 90:</strong> Ressensibilização. O prazer em coisas simples retorna.</p>
+                </div>
+            `,
+            'dopamina': `
+                <div class="reader-title">O Jejum de Dopamina</div>
+                <div class="reader-content">
+                    <p>A dopamina não é prazer, é desejo. É o que te faz buscar, não o que te faz gostar.</p>
+                    <h3>Linha de Base</h3>
+                    <p>Picos artificiais (redes sociais, açúcar) fazem sua linha de base cair. Resultado: falta de motivação para tarefas difíceis.</p>
+                    <h3>Como fazer</h3>
+                    <p>Não é sobre parar de sentir prazer, é sobre remover estímulos super-normais por 24h para que seu cérebro volte a valorizar o tédio.</p>
+                </div>
+            `,
+            'social': `
+                <div class="reader-title">A Caixa de Skinner Digital</div>
+                <div class="reader-content">
+                    <p>As redes sociais usam "Recompensa Variável". Você rola o feed porque não sabe o que vem a seguir. É a mesma mecânica de caça-níqueis.</p>
+                    <h3>Estratégia: Escala de Cinza</h3>
+                    <p>Mude a tela do seu celular para preto e branco. Sem as cores vibrantes, seu cérebro perde 50% do interesse no Instagram.</p>
+                </div>
+            `
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -152,85 +372,187 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
+        const quotes = [
+            "Aquele que conquista a si mesmo é o maior dos guerreiros.",
+            "Não troque o que você mais quer pelo que você quer agora.",
+            "A dor da disciplina é menor que a dor do arrependimento.",
+            "O tédio é o começo da criatividade. Abrace-o.",
+            "Sua mente é um jardim. O que você está plantando?"
+        ];
+
         try {
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.firestore();
+            let currentUser = null;
+            let lastResetTime = null;
+            let timerInterval = null;
+            let selectedHabit = "Geral";
 
-            // Verifica se já está logado
+            if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
+
             auth.onAuthStateChanged((user) => {
-                if (user) {
-                    window.location.href = "dashboard.html";
-                } else {
-                    document.getElementById('loading-overlay').style.display = 'none';
-                }
+                if (!user) window.location.href = "index.html";
+                else { currentUser = user; initApp(); }
             });
 
-            // LOGIN
-            document.getElementById('btnLogin').addEventListener('click', () => {
-                const email = document.getElementById('email').value;
-                const pass = document.getElementById('password').value;
-                const btn = document.getElementById('btnLogin');
-
-                if(!email || !pass) return showError("Preencha todos os campos.");
-
-                btn.innerText = "Autenticando...";
-                btn.disabled = true;
-
-                auth.signInWithEmailAndPassword(email, pass)
-                    .then(() => {
-                        window.location.href = "dashboard.html";
-                    })
-                    .catch((error) => {
-                        btn.innerText = "Entrar no Santuário";
-                        btn.disabled = false;
-                        if(error.code === 'auth/user-not-found') showError("Membro não encontrado.");
-                        else if(error.code === 'auth/wrong-password') showError("Senha incorreta.");
-                        else showError(error.message);
-                    });
-            });
-
-            // REGISTRO (Cria conta e já joga pro app)
-            document.getElementById('btnRegister').addEventListener('click', () => {
-                const email = document.getElementById('email').value;
-                const pass = document.getElementById('password').value;
-                const btn = document.getElementById('btnRegister');
-
-                if(!email || !pass) return showError("Para criar conta, preencha email e senha acima.");
-                if(pass.length < 6) return showError("A senha precisa ter no mínimo 6 dígitos.");
-
-                btn.innerText = "Criando seu espaço...";
-                btn.disabled = true;
-
-                auth.createUserWithEmailAndPassword(email, pass)
-                    .then((userCredential) => {
-                        // Cria documento inicial do usuário
-                        db.collection("users").doc(userCredential.user.uid).set({
-                            coins: 0,
-                            username: "", // Será preenchido no onboarding
-                            joinDate: firebase.firestore.FieldValue.serverTimestamp()
-                        }).then(() => {
-                            window.location.href = "dashboard.html";
-                        });
-                    })
-                    .catch((error) => {
-                        btn.innerText = "Ainda não é membro? Criar conta";
-                        btn.disabled = false;
-                        if(error.code === 'auth/email-already-in-use') showError("Este email já possui cadastro.");
-                        else showError(error.message);
-                    });
-            });
-
-            function showError(msg) {
-                const el = document.getElementById('error-msg');
-                el.innerText = msg;
-                el.style.opacity = 1;
-                setTimeout(() => { el.style.opacity = 0; }, 4000);
+            window.nav = (id, el) => {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+                document.getElementById('screen-' + id).classList.add('active');
+                el.classList.add('active');
             }
 
-        } catch(e) {
-            alert("Erro de sistema: " + e.message);
-        }
+            function initApp() {
+                document.getElementById('quoteDisplay').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const d = doc.data();
+                        const xp = d.coins || 0;
+                        selectedHabit = d.focusTarget || "Geral";
+                        
+                        document.getElementById('targetDisplay').innerText = "Foco: " + selectedHabit;
+                        document.getElementById('inputName').value = d.username || "";
+                        
+                        // Atualiza Medalhas
+                        updateMedals(d.lastReset ? d.lastReset.toDate() : new Date());
+
+                        const target = 1000;
+                        const pct = Math.min((xp / target) * 100, 100);
+                        document.getElementById('xpBar').style.width = pct + "%";
+                        document.getElementById('xpDisplay').innerText = `${xp} XP`;
+
+                        if(d.lastReset) { lastResetTime = d.lastReset.toDate(); } 
+                        else { lastResetTime = new Date(); db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }); }
+                        
+                        startTimer();
+                        document.getElementById('loading').style.display = 'none';
+                        if(!d.username) document.getElementById('modalProfile').style.display = 'flex';
+
+                    } else {
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0, lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                    }
+                });
+
+                // Logs com Journaling
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                    const list = document.getElementById('logList');
+                    list.innerHTML = "";
+                    snap.forEach(d => {
+                        const val = d.data();
+                        const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
+                        const note = val.note ? `<div style="font-size:0.75rem; color:#666; margin-top:5px; font-style:italic;">"${val.note}"</div>` : "";
+                        
+                        list.innerHTML += `
+                            <div style="padding:15px 0; border-bottom:1px solid #E5E5E5;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <div><div style="font-size:0.9rem;">${val.type}</div><div style="font-size:0.7rem; color:#999;">${date}</div></div>
+                                    <div style="font-weight:600;">${val.value > 0 ? '+' : ''}${val.value}</div>
+                                </div>
+                                ${note}
+                            </div>`;
+                    });
+                });
+            }
+
+            function updateMedals(resetDate) {
+                const diff = new Date() - resetDate;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                
+                if(days >= 1) document.getElementById('medal1').classList.add('active');
+                if(days >= 3) document.getElementById('medal3').classList.add('active');
+                if(days >= 7) document.getElementById('medal7').classList.add('active');
+                if(days >= 30) document.getElementById('medal30').classList.add('active');
+            }
+
+            function startTimer() {
+                if(timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    if(!lastResetTime) return;
+                    const diff = new Date() - lastResetTime;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const hStr = hours.toString().padStart(2, '0');
+                    const mStr = mins.toString().padStart(2, '0');
+                    document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}`;
+                    
+                    const btnClaim = document.getElementById('btnClaim');
+                    // TESTE: 86400000 para 24h
+                    if(diff > 86400000) { 
+                        btnClaim.disabled = false;
+                        btnClaim.innerText = "Registrar Vitória (+100 XP)";
+                    } else {
+                        btnClaim.disabled = true;
+                    }
+                }, 1000);
+            }
+
+            // --- LÓGICA DE EBOOKS E MODAIS ---
+            window.openEbook = (key) => {
+                const content = ebooksContent[key] || "Conteúdo indisponível.";
+                document.getElementById('readerContent').innerHTML = content;
+                document.getElementById('modalReader').style.display = 'flex';
+            }
+
+            window.openBreathing = () => {
+                document.getElementById('modalBreath').style.display = 'flex';
+            }
+            window.closeBreathing = () => {
+                document.getElementById('modalBreath').style.display = 'none';
+            }
+
+            window.openJournal = () => {
+                document.getElementById('modalJournal').style.display = 'flex';
+            }
+
+            window.confirmClaim = async () => {
+                const note = document.getElementById('journalInput').value;
+                document.getElementById('modalJournal').style.display = 'none';
+                
+                // AD RECOMPENSA
+                window.open('https://otieu.com/4/10557860', '_blank');
+
+                try {
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Ciclo Vencido", value: 100, note: note,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            window.failProtocol = async () => {
+                document.getElementById('modalBreath').style.display = 'none';
+                // AD PUNITIVO
+                window.open('https://otieu.com/4/10557860', '_blank');
+                
+                try {
+                    await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Recaída", value: 0,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            // PERFIL
+            window.openProfile = () => document.getElementById('modalProfile').style.display = 'flex';
+            window.selectHabit = (habit, el) => {
+                selectedHabit = habit;
+                document.querySelectorAll('.habit-pill').forEach(p => p.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+            window.saveProfile = async () => {
+                const name = document.getElementById('inputName').value;
+                document.getElementById('modalProfile').style.display = 'none';
+                await db.collection("users").doc(currentUser.uid).set({ username: name, focusTarget: selectedHabit }, { merge: true });
+            }
+
+            window.openLink = (url) => window.open(url, '_blank');
+            window.logout = () => auth.signOut().then(() => window.location.reload());
+
+        } catch(e) { alert("Erro: " + e.message); }
     </script>
 </body>
 </html>
