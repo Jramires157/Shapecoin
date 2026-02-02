@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCUS | OS</title>
+    <title>FOCUS | Atelier</title>
     
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#F2F0E9">
     <link rel="manifest" href="manifest.json">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* TEMA "QUIET LUXURY" */
+        /* PALETA "QUIET LUXURY" (Off-White & Charcoal) */
         :root { 
-            --bg: #050505; 
-            --card: #121212; 
-            --text-main: #F2F2F2;
-            --text-muted: #666666;
-            --accent: #FFFFFF; /* Branco Puro para destaque */
-            --border: #222222;
+            --bg: #F2F0E9; /* Off-White Quente (Papel Antigo) */
+            --surface: #FFFFFF; /* Branco Puro */
+            --text-main: #1A1A1A; /* Carvão */
+            --text-muted: #888888; /* Cinza Suave */
+            --accent: #E0DDD5; /* Bege para bordas */
+            --black-btn: #111111; /* Botão Preto Fosco */
+            --shadow: rgba(0,0,0,0.04); /* Sombra ultra suave */
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -29,111 +30,121 @@
             background-color: var(--bg); 
             color: var(--text-main); 
             font-family: 'Outfit', sans-serif; 
-            margin: 0; padding: 25px; padding-bottom: 100px;
+            margin: 0; padding: 30px; padding-bottom: 110px;
             overflow-x: hidden;
         }
 
-        /* HEADER MINIMALISTA */
+        /* HEADER */
         .header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; padding-top: 10px;
+            margin-bottom: 50px;
         }
-        .app-logo { font-weight: 700; letter-spacing: 2px; font-size: 0.9rem; color: var(--text-muted); }
-        .user-chip { 
-            background: var(--card); border: 1px solid var(--border); 
-            padding: 8px 16px; border-radius: 50px; 
-            font-size: 0.8rem; color: var(--text-main); font-weight: 500;
+        .logo { 
+            font-weight: 600; letter-spacing: 1px; font-size: 0.9rem; 
+            text-transform: uppercase; color: var(--text-main);
+        }
+        .user-badge {
+            font-size: 0.8rem; color: var(--text-muted); font-weight: 400;
+            background: rgba(255,255,255,0.5); padding: 5px 12px; border-radius: 20px;
         }
 
-        /* TIMER CENTRAL (Elegância Pura) */
-        .timer-wrapper {
-            text-align: center; margin: 50px 0;
-            position: relative;
+        /* TIMER CENTRAL (Círculo Limpo) */
+        .timer-display {
+            text-align: center; margin: 40px 0; position: relative;
         }
-        .timer-ring {
-            width: 280px; height: 280px; margin: 0 auto;
+        /* Círculo decorativo sutil */
+        .timer-circle {
+            width: 260px; height: 260px; margin: 0 auto;
             border-radius: 50%;
-            border: 1px solid var(--border);
+            background: var(--surface);
+            box-shadow: 0 20px 60px var(--shadow);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            background: radial-gradient(circle, #0a0a0a 0%, #050505 70%);
-            box-shadow: 0 0 40px rgba(255,255,255,0.02);
+            margin-bottom: 30px;
         }
-        .timer-val { font-size: 3.5rem; font-weight: 300; letter-spacing: -2px; color: var(--text-main); line-height: 1; }
-        .timer-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; letter-spacing: 1px; text-transform: uppercase;}
+        .main-time { 
+            font-size: 3.2rem; font-weight: 300; color: var(--text-main); 
+            letter-spacing: -2px; line-height: 1;
+        }
+        .time-label { 
+            font-size: 0.75rem; color: var(--text-muted); 
+            text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;
+        }
 
-        /* BARRA DE PROGRESSO SUTIL */
-        .progress-container { margin: 40px 0; }
-        .progress-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
-        .progress-bg { width: 100%; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: width 1s ease; }
+        /* PROGRESSO (Minimalista) */
+        .xp-container { padding: 0 10px; margin-bottom: 50px; }
+        .xp-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; }
+        .xp-track { width: 100%; height: 6px; background: #E5E5E5; border-radius: 10px; overflow: hidden; }
+        .xp-fill { height: 100%; width: 0%; background: var(--text-main); border-radius: 10px; transition: width 1s ease; }
 
-        /* BOTÕES REDONDOS E PREMIUM */
-        .action-grid { display: grid; gap: 15px; }
+        /* BOTÕES (Pílulas Arredondadas) */
+        .btn-stack { display: flex; flex-direction: column; gap: 15px; }
         
         .btn {
             width: 100%; padding: 22px; border-radius: 100px;
             font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem;
-            cursor: pointer; transition: transform 0.2s, opacity 0.2s;
-            border: none; display: flex; justify-content: center; align-items: center; gap: 10px;
+            cursor: pointer; transition: transform 0.2s;
+            border: none; display: flex; justify-content: center; align-items: center;
         }
-        .btn:active { transform: scale(0.98); }
-        
-        /* Botão Principal (Branco) */
-        .btn-primary { 
-            background: var(--accent); color: #000; 
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-        }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .btn:active { transform: scale(0.97); }
 
-        /* Botão Secundário (Outline/Ghost) - Para Falha */
-        .btn-ghost { 
-            background: transparent; color: var(--text-muted); 
-            border: 1px solid var(--border);
+        /* Botão Preto (Principal) */
+        .btn-black { 
+            background: var(--black-btn); color: #FFF; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
-        .btn-ghost:hover { border-color: #444; color: #fff; }
+        .btn-black:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        /* Botão Outline (Secundário) */
+        .btn-outline { 
+            background: transparent; color: var(--text-muted); 
+            border: 1px solid #DDD;
+        }
+        .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); }
 
         /* CARDS DA LOJA */
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .shop-card {
-            background: var(--card); border-radius: 24px; padding: 25px 15px;
-            text-align: center; border: 1px solid transparent; transition: 0.3s;
+            background: var(--surface); padding: 30px 20px; border-radius: 24px;
+            text-align: center; box-shadow: 0 10px 30px var(--shadow);
+            transition: 0.3s; cursor: pointer;
         }
-        .shop-card:hover { border-color: #333; transform: translateY(-3px); }
+        .shop-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
         .shop-icon { font-size: 1.8rem; display: block; margin-bottom: 15px; opacity: 0.8; }
-        .shop-title { font-size: 0.85rem; color: var(--text-main); font-weight: 500; display: block; }
-        .shop-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; display: block; }
+        .shop-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+        .shop-price { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* LOGS LIMPOS */
-        .log-list { margin-top: 20px; }
+        /* LOGS (Histórico Limpo) */
         .log-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 0; border-bottom: 1px solid var(--border);
-            font-size: 0.85rem; color: var(--text-muted);
+            padding: 18px 0; border-bottom: 1px solid #EAEAEA;
         }
-        .log-val { color: var(--text-main); font-weight: 500; }
+        .log-type { font-size: 0.85rem; color: var(--text-main); }
+        .log-date { font-size: 0.7rem; color: var(--text-muted); }
+        .log-val { font-weight: 600; font-size: 0.85rem; }
 
-        /* NAVEGAÇÃO FLUTUANTE (DOCK) */
-        .dock-nav {
+        /* MENU FLUTUANTE (Dock Branco) */
+        .dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px);
-            padding: 8px 10px; border-radius: 100px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--surface); padding: 6px; border-radius: 100px;
             display: flex; gap: 5px; z-index: 100;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.02);
         }
-        .nav-pill {
-            padding: 12px 24px; border-radius: 50px; cursor: pointer;
-            color: #666; font-size: 0.8rem; font-weight: 500; transition: 0.3s;
+        .dock-item {
+            padding: 14px 28px; border-radius: 50px; cursor: pointer;
+            color: var(--text-muted); font-size: 0.8rem; font-weight: 500; transition: 0.3s;
         }
-        .nav-pill.active { background: #fff; color: #000; }
+        .dock-item.active { background: #F5F5F0; color: var(--text-main); font-weight: 600; }
+
+        .screen { display: none; opacity: 0; transition: opacity 0.4s; }
+        .screen.active { display: block; opacity: 1; }
         
-        /* UTILITÁRIOS */
-        .screen { display: none; animation: fadeUp 0.4s ease; }
-        .screen.active { display: block; }
-        @keyframes fadeUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
-        
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); z-index:999; font-size: 0.8rem; letter-spacing: 2px;}
+        #loading { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: var(--bg); display:flex; align-items:center; justify-content:center; 
+            color: var(--text-muted); z-index:999; font-size: 0.8rem; letter-spacing: 2px;
+        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -142,38 +153,35 @@
 </head>
 <body>
 
-    <div id="loading">CARREGANDO...</div>
+    <div id="loading">FOCUS OS</div>
 
     <div id="screen-focus" class="screen active">
         <div class="header">
-            <div class="app-logo">FOCUS • OS</div>
-            <div class="user-chip" id="userDisplay">...</div>
+            <div class="logo">FOCUS • OS</div>
+            <div class="user-badge" id="userDisplay">Convidado</div>
         </div>
 
-        <div class="timer-wrapper">
-            <div class="timer-ring">
-                <div class="timer-val" id="timerDisplay">00:00</div>
-                <div class="timer-label">Tempo em Foco</div>
+        <div class="timer-display">
+            <div class="timer-circle">
+                <div class="main-time" id="timerDisplay">00:00</div>
+                <div class="time-label">Tempo Presente</div>
             </div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-info">
-                <span>Nível de Clareza</span>
-                <span id="xpDisplay">0 / 500</span>
+        <div class="xp-container">
+            <div class="xp-info">
+                <span>Estado de Fluxo</span>
+                <span id="xpDisplay">0 XP</span>
             </div>
-            <div class="progress-bg">
-                <div class="progress-fill" id="xpBar"></div>
-            </div>
+            <div class="xp-track"><div class="xp-fill" id="xpBar"></div></div>
         </div>
 
-        <div class="action-grid">
-            <button id="btnClaim" class="btn btn-primary" onclick="claimBonus()" disabled>
-                <span>Resgatar Consciência</span>
-                <span style="opacity:0.5; font-size:0.7rem;">(+100 XP)</span>
+        <div class="btn-stack">
+            <button id="btnClaim" class="btn btn-black" onclick="claimBonus()" disabled>
+                Reivindicar Sessão (+100 XP)
             </button>
 
-            <button id="btnReset" class="btn btn-ghost" onclick="failProtocol()">
+            <button id="btnReset" class="btn btn-outline" onclick="failProtocol()">
                 Reiniciar Ciclo
             </button>
         </div>
@@ -181,55 +189,57 @@
 
     <div id="screen-shop" class="screen">
         <div class="header">
-            <div class="app-logo">ESSENCIAIS</div>
-            <div class="user-chip">Loja</div>
+            <div class="logo">CURADORIA</div>
+            <div class="user-badge">Essenciais</div>
         </div>
-        
-        <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">Ferramentas curadas para maximizar seu desempenho cognitivo.</p>
+
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:30px; line-height:1.5;">
+            Ferramentas selecionadas para maximizar sua clareza mental e produtividade.
+        </p>
 
         <div class="shop-grid">
             <div class="shop-card" onclick="openLink('https://amazon.com.br/kindle')">
                 <span class="shop-icon">📖</span>
-                <span class="shop-title">Kindle</span>
-                <span class="shop-sub">Leitura Profunda</span>
+                <div class="shop-name">Kindle Paperwhite</div>
+                <div class="shop-price">Leitura Sem Distração</div>
             </div>
             <div class="shop-card" onclick="openLink('https://amazon.com.br/cafeina')">
                 <span class="shop-icon">☕</span>
-                <span class="shop-title">Nootrópicos</span>
-                <span class="shop-sub">Energia Limpa</span>
+                <div class="shop-name">Nootrópicos</div>
+                <div class="shop-price">Foco Limpo</div>
             </div>
             <div class="shop-card" onclick="openLink('https://amazon.com.br/bloqueadorazul')">
                 <span class="shop-icon">👓</span>
-                <span class="shop-title">Blue Light</span>
-                <span class="shop-sub">Proteção Ocular</span>
+                <div class="shop-name">Óculos Blue Light</div>
+                <div class="shop-price">Proteção Ocular</div>
             </div>
             <div class="shop-card" onclick="openLink('https://amazon.com.br/fones')">
                 <span class="shop-icon">🎧</span>
-                <span class="shop-title">Silêncio</span>
-                <span class="shop-sub">Cancelamento de Ruído</span>
+                <div class="shop-name">Noise Cancelling</div>
+                <div class="shop-price">Silêncio Absoluto</div>
             </div>
         </div>
     </div>
 
     <div id="screen-log" class="screen">
         <div class="header">
-            <div class="app-logo">JORNADA</div>
-            <div class="user-chip">Histórico</div>
+            <div class="logo">REGISTROS</div>
+            <div class="user-badge">Histórico</div>
         </div>
 
-        <div id="logList" class="log-list">
-            <div style="text-align:center; color:#444; margin-top:50px;">Carregando dados...</div>
+        <div id="logList" style="margin-top:20px;">
+            <p style="text-align:center; color:var(--text-muted);">Sincronizando...</p>
         </div>
 
-        <button class="btn btn-ghost" onclick="logout()" style="margin-top:40px; border-color: rgba(255,0,0,0.2); color: #888;">
+        <button class="btn btn-outline" onclick="logout()" style="margin-top:40px; border-color:#DDD; color:#AAA;">
             Desconectar
         </button>
     </div>
 
-    <div class="dock-nav">
-        <div class="nav-pill active" onclick="nav('focus', this)">Foco</div>
-        <div class="nav-pill" onclick="nav('shop', this)">Shop</div>
-        <div class="nav-pill" onclick="nav('log', this)">Dados</div>
+    <div class="dock">
+        <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
+        <div class="dock-item" onclick="nav('shop', this)">Loja</div>
+        <div class="dock-item" onclick="nav('log', this)">Dados</div>
     </div>
 
     <script>
@@ -260,7 +270,7 @@
             // NAV
             window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-pill').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
                 document.getElementById('screen-' + id).classList.add('active');
                 el.classList.add('active');
             }
@@ -270,22 +280,17 @@
                     if(doc.exists) {
                         const d = doc.data();
                         const xp = d.coins || 0;
-                        
                         document.getElementById('userDisplay').innerText = d.username || "Membro";
                         
                         // XP Bar
-                        const target = 500; // Meta fixa para visual
+                        const target = 500;
                         const pct = Math.min((xp / target) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
-                        document.getElementById('xpDisplay').innerText = `${xp} pts`;
+                        document.getElementById('xpDisplay').innerText = `${xp} XP`;
 
                         // Timer
-                        if(d.lastReset) {
-                            lastResetTime = d.lastReset.toDate();
-                        } else {
-                            lastResetTime = new Date();
-                            db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
-                        }
+                        if(d.lastReset) { lastResetTime = d.lastReset.toDate(); } 
+                        else { lastResetTime = new Date(); db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }); }
                         
                         startTimer();
                         document.getElementById('loading').style.display = 'none';
@@ -294,26 +299,22 @@
                     }
                 });
 
-                // Logs (Clean)
+                // Logs
                 db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(8).onSnapshot(snap => {
                     const list = document.getElementById('logList');
                     list.innerHTML = "";
-                    if(snap.empty) {
-                        list.innerHTML = "<div style='text-align:center; color:#444; margin-top:20px;'>Nenhum registro ainda.</div>";
-                        return;
-                    }
                     snap.forEach(d => {
                         const val = d.data();
                         const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
-                        const isGood = val.value > 0;
+                        const isPos = val.value > 0;
                         list.innerHTML += `
                             <div class="log-item">
                                 <div>
-                                    <div style="color:var(--text-main); margin-bottom:2px;">${val.type}</div>
-                                    <div style="font-size:0.7rem; opacity:0.6;">${date}</div>
+                                    <div class="log-type">${val.type}</div>
+                                    <div class="log-date">${date}</div>
                                 </div>
-                                <div class="log-val" style="color: ${isGood ? '#fff' : '#666'}">
-                                    ${isGood ? '+' : ''}${val.value}
+                                <div class="log-val" style="color: ${isPos ? '#1A1A1A' : '#999'}">
+                                    ${isPos ? '+' : ''}${val.value}
                                 </div>
                             </div>`;
                     });
@@ -328,55 +329,47 @@
                     
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    // Simplificado para H:MM para ser mais elegante
                     const hStr = hours.toString().padStart(2, '0');
                     const mStr = mins.toString().padStart(2, '0');
                     
                     document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}`;
 
-                    // Botão Claim ativa após 24h
+                    // Lógica 24h
                     const btnClaim = document.getElementById('btnClaim');
-                    // TESTE: Mude 86400000 para 10000 (10 seg) para testar agora
+                    // TESTE: Mude 86400000 para 10000 para testar rápido
                     if(diff > 86400000) { 
                         btnClaim.disabled = false;
-                        btnClaim.innerHTML = "<span>Resgatar Consciência</span>";
+                        btnClaim.innerText = "Reivindicar Sessão (+100 XP)";
                     } else {
                         btnClaim.disabled = true;
-                        // Mostra quanto falta se quiser, ou deixa estático
                     }
                 }, 1000);
             }
 
-            // AÇÕES
+            // AÇÕES COM ADS
             window.failProtocol = async () => {
-                if(!confirm("Reiniciar seu ciclo de foco?")) return;
-                
-                // AD PUNITIVO
-                window.open('https://otieu.com/4/10557860', '_blank');
-
+                if(!confirm("Deseja realmente reiniciar seu ciclo de foco?")) return;
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
                 try {
                     await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Reinício de Ciclo", value: 0,
+                        userId: currentUser.uid, type: "Reinício", value: 0,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } catch(e) { console.error(e); }
             }
 
             window.claimBonus = async () => {
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
                 const btn = document.getElementById('btnClaim');
-                
-                // AD RECOMPENSA
-                window.open('https://otieu.com/4/10557860', '_blank');
-
-                btn.innerText = "Processando..."; btn.disabled = true;
+                btn.innerText = "Sincronizando..."; btn.disabled = true;
                 try {
                     await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Ciclo Completo", value: 100,
+                        userId: currentUser.uid, type: "Sessão Completa", value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    alert("Foco recompensado.");
+                    alert("Sessão registrada com sucesso.");
                 } catch(e) { console.error(e); }
             }
 
