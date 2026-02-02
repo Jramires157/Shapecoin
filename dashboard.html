@@ -45,7 +45,7 @@
         }
         .card-title { color: var(--primary); font-size: 1rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LOJA (NOVO) */
+        /* LOJA */
         .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .shop-item { 
             border: 1px solid #333; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s;
@@ -81,8 +81,10 @@
         .screen.active { display: block; }
         
         /* LOADING */
-        #loading { position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); color: var(--primary); font-size: 0.8rem; letter-spacing: 2px; animation: blink 1s infinite; }
+        #loading { position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); color: var(--primary); font-size: 0.8rem; letter-spacing: 2px; animation: blink 1s infinite; text-align: center; width: 100%;}
         @keyframes blink { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
+        
+        #error-msg { display: none; color: red; font-size: 0.7rem; margin-top: 20px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -91,7 +93,10 @@
 </head>
 <body>
 
-    <div id="loading">SISTEMA INICIANDO...</div>
+    <div id="loading">
+        CONECTANDO AO SISTEMA...
+        <div id="error-msg"></div>
+    </div>
 
     <div id="screen-home" class="screen active">
         
@@ -128,7 +133,7 @@
         <div class="system-card" style="border-color: var(--gold);">
             <div class="card-title" style="color:var(--gold)">⚡ Bênção do Sistema</div>
             <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px;">
-                Receba um buff de energia gratuito assistindo a uma mensagem do sistema.
+                Receba energia extra assistindo a uma mensagem.
             </p>
             <button id="btnBuff" style="border-color:var(--gold); color:var(--gold)">RESGATAR (+20 XP)</button>
         </div>
@@ -144,20 +149,17 @@
                 <span class="item-name">Poção de Força</span>
                 <span class="item-price">R$ 89,90</span>
             </div>
-
             <div class="shop-item" onclick="abrirLink('https://amazon.com.br/halteres')">
                 <span class="item-icon">⚖️</span>
                 <span class="item-name">Pesos de Ferro</span>
                 <span class="item-price">R$ 120,00</span>
             </div>
-
             <div class="shop-item" onclick="abrirLink('https://amazon.com.br/whey')">
                 <span class="item-icon">🥩</span>
                 <span class="item-name">Ração de Elite</span>
                 <span class="item-price">R$ 150,00</span>
             </div>
-
-            <div class="shop-item" onclick="alert('Em breve: Apoie o Desenvolvedor')">
+            <div class="shop-item" onclick="alert('Em breve.')">
                 <span class="item-icon">💎</span>
                 <span class="item-name">Apoiar Criador</span>
                 <span class="item-price">Doação</span>
@@ -165,7 +167,7 @@
         </div>
         
         <p style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;">
-            *Itens fornecidos por mercadores externos (Amazon/Parceiros).
+            *Itens fornecidos por mercadores externos.
         </p>
     </div>
 
@@ -193,6 +195,12 @@
     </div>
 
     <script>
+        // Captura erros para mostrar na tela (Anti-Travamento)
+        window.onerror = function(msg) {
+            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('error-msg').innerText = "ERRO: " + msg;
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -202,59 +210,137 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
 
-        // Limpeza de cache de segurança
-        if(navigator.serviceWorker) { navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())); }
+            // Remove Service Workers antigos que podem estar travando
+            if(navigator.serviceWorker) { navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())); }
 
-        auth.onAuthStateChanged((user) => {
-            if (!user) window.location.href = "index.html";
-            else { currentUser = user; carregarSistema(); }
-        });
+            auth.onAuthStateChanged((user) => {
+                if (!user) window.location.href = "index.html";
+                else { currentUser = user; carregarSistema(); }
+            });
 
-        // --- NAVEGAÇÃO ---
-        window.mudarTela = (telaId, btn) => {
-            // Esconde todas
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            // Mostra a certa
-            document.getElementById('screen-' + telaId).classList.add('active');
-            btn.classList.add('active');
-        }
+            // NAVEGAÇÃO
+            window.mudarTela = (telaId, btn) => {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('screen-' + telaId).classList.add('active');
+                btn.classList.add('active');
+            }
 
-        window.abrirLink = (url) => {
-            // Aqui você colocará seus links de afiliado reais depois
-            // Ex: window.open('https://amzn.to/SEU_CODIGO', '_blank');
-            if(url.includes('amazon')) alert("Aqui abrirá seu link de afiliado da Amazon!"); 
-            else window.open(url, '_blank');
-        }
+            window.abrirLink = (url) => {
+                if(url.includes('amazon')) alert("Aqui abrirá seu link da Amazon!"); 
+                else window.open(url, '_blank');
+            }
 
-        // --- LÓGICA DO SISTEMA ---
-        function calcularRank(xp) {
-            if(xp < 1000) return { rank: "E", next: 1000 };
-            if(xp < 3000) return { rank: "D", next: 3000 };
-            if(xp < 6000) return { rank: "C", next: 6000 };
-            if(xp < 10000) return { rank: "B", next: 10000 };
-            if(xp < 20000) return { rank: "A", next: 20000 };
-            return { rank: "S", next: 50000 };
-        }
+            // SISTEMA DE RANKS
+            function calcularRank(xp) {
+                if(xp < 1000) return { rank: "E", next: 1000 };
+                if(xp < 3000) return { rank: "D", next: 3000 };
+                if(xp < 6000) return { rank: "C", next: 6000 };
+                if(xp < 10000) return { rank: "B", next: 10000 };
+                if(xp < 20000) return { rank: "A", next: 20000 };
+                return { rank: "S", next: 50000 };
+            }
 
-        function carregarSistema() {
-            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const xp = data.coins || 0;
-                    const nome = data.username || "Desconhecido";
+            function carregarSistema() {
+                // 1. Carrega Perfil (Simples)
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const xp = data.coins || 0;
+                        const nome = data.username || "Desconhecido";
 
-                    document.getElementById('playerName').innerText = nome;
-                    document.getElementById('inputName').value = nome;
+                        document.getElementById('playerName').innerText = nome;
+                        document.getElementById('inputName').value = nome;
 
-                    const info = calcularRank(xp);
-                    document.getElementById('rankDisplay').innerText = info.rank;
+                        const info = calcularRank(xp);
+                        document.getElementById('rankDisplay').innerText = info.rank;
+                        
+                        const pct = Math.min((xp / info.next) * 100, 100);
+                        document.getElementById('xpBar').style.width = pct + "%";
+                        document.getElementById('xpText').innerText = `${xp} / ${info.next}`;
+
+                        // DESTRAVAMENTO: Remove tela de carregamento assim que pegar os dados básicos
+                        document.getElementById('loading').style.display = 'none';
+                    } else {
+                        // Cria perfil se não existir
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0 }, { merge: true });
+                    }
+                });
+
+                // 2. Carrega Logs (CORRIGIDO: Sem ordenação no banco para não travar)
+                db.collection("history")
+                  .where("userId", "==", currentUser.uid)
+                  .limit(10) // Traz os últimos 10 (desordenados)
+                  .onSnapshot(snap => {
+                    const div = document.getElementById('logFeed');
+                    div.innerHTML = "";
                     
-                    const pct = Math.min((xp / info.next) * 100, 100);
-                    document.getElementById('xp
+                    let logs = [];
+                    snap.forEach(d => logs.push(d.data()));
+                    
+                    // Ordena AQUI no celular (evita erro de índice no banco)
+                    logs.sort((a,b) => (b.date?.toMillis() || 0) - (a.date?.toMillis() || 0));
+
+                    logs.forEach(d => {
+                        const val = d.value;
+                        const type = d.type;
+                        div.innerHTML += `<div style="margin-bottom:5px; border-left:2px solid #333; padding-left:5px;">${type}: <span style="color:var(--primary)">+${val} XP</span></div>`;
+                    });
+                });
+            }
+
+            // AÇÕES
+            document.getElementById('btnComplete').addEventListener('click', async () => {
+                const btn = document.getElementById('btnComplete');
+                btn.disabled = true; btn.innerText = "VERIFICANDO...";
+                
+                try {
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Missão Diária", value: 100,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
+                    alert("MISSÃO CUMPRIDA! +100 XP");
+                } catch(e) { console.log(e); }
+                
+                btn.disabled = false; btn.innerText = "COMPLETAR (+100 XP)";
+            });
+
+            document.getElementById('btnBuff').addEventListener('click', async () => {
+                const btn = document.getElementById('btnBuff');
+                window.open('https://otieu.com/4/10557860', '_blank');
+
+                btn.disabled = true; btn.innerText = "ABSORVENDO...";
+
+                try {
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Bênção do Sistema", value: 20,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
+                    setTimeout(() => { alert("PODER AUMENTADO! +20 XP"); }, 2000);
+                } catch(e) { console.log(e); }
+
+                setTimeout(() => { btn.disabled = false; btn.innerText = "RESGATAR (+20 XP)"; }, 15000);
+            });
+
+            window.salvarPerfil = async () => {
+                const nome = document.getElementById('inputName').value;
+                if(nome) await db.collection("users").doc(currentUser.uid).set({ username: nome }, { merge: true });
+                alert("REGISTRO ATUALIZADO");
+            }
+
+            window.sair = () => auth.signOut().then(() => window.location.reload());
+
+        } catch(e) {
+            document.getElementById('error-msg').innerText = "ERRO FATAL: " + e.message;
+        }
+    </script>
+</body>
+</html>
