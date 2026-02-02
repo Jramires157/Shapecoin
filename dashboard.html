@@ -192,15 +192,39 @@
         }
 
         function loadLogs(uid) {
-            db.collection("history").where("userId","==",uid).orderBy("date","desc").limit(5).onSnapshot(snap => {
-                const list = document.getElementById('logList');
-                list.innerHTML = snap.docs.map(d => `
-                    <div style="border-bottom:1px solid #EEE; padding:10px 0; font-size:0.8rem;">
-                        <b>${d.data().type}</b><br>
-                        <small>${d.data().date ? d.data().date.toDate().toLocaleDateString() : ''}</small>
-                    </div>`).join('');
+    const list = document.getElementById('logList');
+    
+    // Tentativa de carregar com ordenação (pode exigir criação de índice no Firebase)
+    db.collection("history")
+        .where("userId", "==", uid)
+        .orderBy("date", "desc")
+        .limit(10)
+        .onSnapshot(snap => {
+            if (snap.empty) {
+                list.innerHTML = "<div style='text-align:center; color:#999; font-size:0.8rem;'>Sem registros ainda.</div>";
+                return;
+            }
+            list.innerHTML = snap.docs.map(d => {
+                const data = d.data();
+                const dataFormatada = data.date ? data.date.toDate().toLocaleDateString('pt-BR') : "Recente";
+                return `
+                    <div style="border-bottom:1px solid #EEE; padding:12px 0; font-size:0.8rem; display:flex; justify-content:space-between;">
+                        <div>
+                            <b style="color:#333;">${data.type}</b><br>
+                            <small style="color:#999;">${data.note || ''}</small>
+                        </div>
+                        <span style="color:#BBB;">${dataFormatada}</span>
+                    </div>`;
+            }).join('');
+        }, error => {
+            console.error("Erro no Histórico:", error);
+            // Fallback: se o orderBy falhar (falta de índice), tenta carregar sem ordem
+            db.collection("history").where("userId", "==", uid).limit(10).get().then(snap => {
+                 list.innerHTML = "<div style='color:orange; font-size:0.7rem; margin-bottom:10px;'>Dica: Crie um índice no Firebase para ordenar por data.</div>" + 
+                 snap.docs.map(d => `<div style="padding:5px 0;">${d.data().type}</div>`).join('');
             });
-        }
+        });
+}
 
         function nav(id, el) {
             document.querySelectorAll('.screen').forEach(s => s.style.display='none');
@@ -213,3 +237,4 @@
     </script>
 </body>
 </html>
+
