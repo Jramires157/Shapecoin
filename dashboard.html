@@ -25,7 +25,7 @@
             text-transform: uppercase; user-select: none;
         }
         
-        /* HUD SUPERIOR */
+        /* HUD HEADER */
         .hud-header { 
             border: 1px solid var(--primary); padding: 15px; margin-bottom: 20px; 
             background: rgba(0, 255, 157, 0.05); position: relative;
@@ -37,12 +37,22 @@
             color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary);
         }
 
-        /* BARRA DE XP */
+        /* GRID DE ATRIBUTOS (NOVO) */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { 
+            background: #111; border: 1px solid #333; padding: 10px; text-align: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .stat-card:hover { border-color: var(--primary); }
+        .stat-val { font-size: 1.1rem; font-weight: bold; color: white; }
+        .stat-lbl { font-size: 0.6rem; color: #666; margin-top: 5px; }
+
+        /* XP BAR */
         .stat-box { margin-bottom: 30px; }
         .bar-container { width: 100%; height: 8px; background: #111; border: 1px solid #333; margin-top: 5px; }
         .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); transition: width 0.5s ease; }
 
-        /* BOTOES DE TREINO */
+        /* BOTOES TREINO */
         .workout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .workout-btn {
             background: #111; border: 1px solid #333; padding: 20px 10px;
@@ -51,7 +61,7 @@
         .workout-btn.selected { border-color: var(--primary); background: #0a1a10; box-shadow: 0 0 10px rgba(0,255,157,0.2); }
         .muscle-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
 
-        /* BOTÃO DE AÇÃO (SEM POPUP) */
+        /* ACTION BTN */
         .action-btn { 
             width: 100%; background: transparent; color: var(--primary); 
             font-family: 'Courier New', monospace; font-weight: bold; 
@@ -60,26 +70,33 @@
         }
         .action-btn:active { transform: scale(0.98); }
         .action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
-        
-        /* Feedback Visual (Sucesso) */
         .success-anim { background: var(--primary) !important; color: black !important; border-color: var(--primary) !important; }
 
-        /* CALENDÁRIO (MATRIZ DE FREQUÊNCIA) */
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px;
+        /* MODAL DE EDIÇÃO (NOVO) */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center;
         }
+        .modal-box {
+            background: #000; border: 1px solid var(--primary); padding: 25px; width: 85%; max-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+        }
+        .modal-input {
+            width: 100%; background: #111; border: 1px solid #333; color: white;
+            padding: 15px; margin-bottom: 10px; font-family: monospace; box-sizing: border-box;
+        }
+
+        /* CALENDÁRIO */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
         .calendar-day {
             aspect-ratio: 1; background: #111; border: 1px solid #222;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.7rem; color: #444;
         }
-        .calendar-day.active {
-            background: var(--primary); color: black; font-weight: bold;
-            box-shadow: 0 0 5px var(--primary); border-color: var(--primary);
-        }
+        .calendar-day.active { background: var(--primary); color: black; font-weight: bold; box-shadow: 0 0 5px var(--primary); }
         .calendar-day.today { border: 1px solid white; color: white; }
 
-        /* NAV E MODAIS */
+        /* NAV */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: #000; border-top: 1px solid #333;
@@ -100,17 +117,43 @@
 </head>
 <body>
 
-    <div id="loading">SINCRONIZANDO SISTEMA...</div>
+    <div id="loading">SINCRONIZANDO BIOMETRIA...</div>
 
     <div id="screen-status" class="screen active">
         <div class="hud-header">
-            <div class="hud-label">ATLETA</div>
-            <div class="hud-value" id="playerName">...</div>
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <div class="hud-label">JOGADOR</div>
+                    <div class="hud-value" id="playerName">...</div>
+                </div>
+                <div onclick="abrirModal()" style="cursor:pointer; color:#666; font-size:1.5rem;">⚙️</div>
+            </div>
+            
             <div style="margin-top: 15px;">
-                <div class="hud-label">CLASSIFICAÇÃO</div>
+                <div class="hud-label">PATENTE</div>
                 <div class="hud-value" id="rankName" style="color:white">...</div>
             </div>
             <div class="rank-badge" id="rankLetter">-</div>
+        </div>
+
+        <div class="hud-label">ATRIBUTOS FÍSICOS</div>
+        <div class="stats-grid">
+            <div class="stat-card" onclick="abrirModal()">
+                <div class="stat-val" id="dispWeight">--</div>
+                <div class="stat-lbl">PESO (KG)</div>
+            </div>
+            <div class="stat-card" onclick="abrirModal()">
+                <div class="stat-val" id="dispHeight">--</div>
+                <div class="stat-lbl">ALTURA (CM)</div>
+            </div>
+            <div class="stat-card" onclick="abrirModal()">
+                <div class="stat-val" id="dispAge">--</div>
+                <div class="stat-lbl">IDADE (NVL)</div>
+            </div>
+        </div>
+        
+        <div style="text-align:center; margin-bottom:20px; font-size:0.7rem; color:#666;">
+            STATUS CORPORAL (IMC): <span id="imcVal" style="color:var(--primary)">CALCULANDO...</span>
         </div>
 
         <div class="stat-box">
@@ -158,17 +201,39 @@
             <div class="hud-label">FREQUÊNCIA MENSAL</div>
             <div class="hud-value">MATRIZ DE TREINO</div>
         </div>
-        
         <div style="margin-bottom: 20px;">
             <div style="text-align: center; font-size: 0.8rem; color: #666;" id="currentMonthLabel">MÊS ATUAL</div>
-            <div class="calendar-grid" id="calendarGrid">
-                </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
         </div>
-
         <div class="hud-label" style="margin-top:30px;">ÚLTIMOS REGISTROS</div>
         <div id="logList" style="font-size:0.7rem; color:#888; margin-top:10px;"></div>
-
         <button class="action-btn" onclick="logout()" style="border-color:#ff3333; color:#ff3333; margin-top:30px;">SAIR DO SISTEMA</button>
+    </div>
+
+    <div id="modalProfile" class="modal-overlay">
+        <div class="modal-box">
+            <div class="hud-label" style="margin-bottom:20px; font-size:1rem;">ATUALIZAR BIO-DADOS</div>
+            
+            <label class="hud-label">CODENAME (NOME)</label>
+            <input type="text" id="editName" class="modal-input" placeholder="Seu Nome">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="width:50%">
+                    <label class="hud-label">PESO (KG)</label>
+                    <input type="number" id="editWeight" class="modal-input" placeholder="Ex: 80">
+                </div>
+                <div style="width:50%">
+                    <label class="hud-label">ALTURA (CM)</label>
+                    <input type="number" id="editHeight" class="modal-input" placeholder="Ex: 175">
+                </div>
+            </div>
+            
+            <label class="hud-label">IDADE (ANOS)</label>
+            <input type="number" id="editAge" class="modal-input" placeholder="Ex: 25">
+
+            <button onclick="salvarPerfil()" class="action-btn" id="btnSalvar">SALVAR ALTERAÇÕES</button>
+            <button onclick="fecharModal()" class="action-btn" style="border:none; color:#666; margin-top:0;">CANCELAR</button>
+        </div>
     </div>
 
     <div class="bottom-nav">
@@ -194,7 +259,6 @@
             let currentUser = null;
             let treinoAtual = "";
 
-            // Limpa Service Workers
             if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
 
             auth.onAuthStateChanged((user) => {
@@ -202,13 +266,13 @@
                 else { currentUser = user; initSystem(); }
             });
 
-            // --- NAVEGAÇÃO E UI ---
+            // UI
             window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 document.getElementById('screen-' + id).classList.add('active');
                 el.classList.add('active');
-                if(id === 'log') renderCalendar(); // Renderiza calendário ao abrir aba
+                if(id === 'log') renderCalendar();
             }
 
             window.selectW = (tipo, el) => {
@@ -220,12 +284,73 @@
                 btn.innerText = "CONFIRMAR: " + tipo;
             }
 
-            // --- LÓGICA SEM POP-UP ---
+            // MODAL
+            window.abrirModal = () => document.getElementById('modalProfile').style.display = 'flex';
+            window.fecharModal = () => document.getElementById('modalProfile').style.display = 'none';
+
+            // DADOS E LÓGICA
+            function getRank(xp) {
+                if(xp < 1000) return { l: "E", t: "INICIANTE", n: 1000 };
+                if(xp < 3000) return { l: "D", t: "EM CONSTRUÇÃO", n: 3000 };
+                if(xp < 6000) return { l: "C", t: "PROJETO ATLETA", n: 6000 };
+                if(xp < 10000) return { l: "B", t: "SHAPE INEXPLICÁVEL", n: 10000 };
+                if(xp < 20000) return { l: "A", t: "MUTANTE", n: 20000 };
+                return { l: "S", t: "OLYMPIA", n: 50000 };
+            }
+
+            // CALCULO DE IMC
+            function calcIMC(weight, height) {
+                if(!weight || !height) return "SEM DADOS";
+                const hM = height / 100;
+                const imc = weight / (hM * hM);
+                
+                if(imc < 18.5) return "ABAIXO DO PESO";
+                if(imc < 24.9) return "EUTRÓFICO (NORMAL)";
+                if(imc < 29.9) return "SOBREPESO (BULKING?)";
+                return "OBESIDADE (CUTTING!)";
+            }
+
+            function initSystem() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const d = doc.data();
+                        const xp = d.coins || 0;
+                        const rank = getRank(xp);
+                        
+                        // Infos Básicas
+                        document.getElementById('playerName').innerText = d.username || "Atleta";
+                        document.getElementById('rankLetter').innerText = rank.l;
+                        document.getElementById('rankName').innerText = rank.t;
+                        
+                        // Infos Atributos
+                        document.getElementById('dispWeight').innerText = d.weight || "--";
+                        document.getElementById('dispHeight').innerText = d.height || "--";
+                        document.getElementById('dispAge').innerText = d.age || "--";
+                        
+                        // Preenche Modal
+                        document.getElementById('editName').value = d.username || "";
+                        document.getElementById('editWeight').value = d.weight || "";
+                        document.getElementById('editHeight').value = d.height || "";
+                        document.getElementById('editAge').value = d.age || "";
+
+                        // IMC
+                        document.getElementById('imcVal').innerText = calcIMC(d.weight, d.height);
+
+                        // Barra XP
+                        const pct = Math.min((xp / rank.n) * 100, 100);
+                        document.getElementById('xpBar').style.width = pct + "%";
+                        document.getElementById('xpText').innerText = `${xp} / ${rank.n}`;
+                        
+                        document.getElementById('loading').style.display = 'none';
+                    } else {
+                        db.collection("users").doc(currentUser.uid).set({coins:0, username:"Player"}, {merge:true});
+                    }
+                });
+            }
+
+            // AÇÕES
             window.confirmarTreino = async () => {
                 const btn = document.getElementById('btnConfirmar');
-                const originalText = btn.innerText;
-
-                // Feedback Visual Imediato
                 btn.disabled = true;
                 btn.innerText = "REGISTRANDO...";
                 
@@ -236,142 +361,101 @@
                     });
                     await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
                     
-                    // Sucesso Visual
                     btn.classList.add('success-anim');
                     btn.innerText = "TREINO CONCLUÍDO!";
                     
-                    // Reseta botão após 2 segundos
                     setTimeout(() => {
                         btn.classList.remove('success-anim');
                         btn.innerText = "SELECIONE OUTRO";
                         btn.disabled = true;
                         document.querySelectorAll('.workout-btn').forEach(b => b.classList.remove('selected'));
                     }, 2000);
-
                 } catch(e) { console.error(e); }
+            }
+
+            window.salvarPerfil = async () => {
+                const btn = document.getElementById('btnSalvar');
+                btn.innerText = "SALVANDO...";
+                
+                const name = document.getElementById('editName').value;
+                const w = parseFloat(document.getElementById('editWeight').value);
+                const h = parseFloat(document.getElementById('editHeight').value);
+                const a = parseFloat(document.getElementById('editAge').value);
+
+                try {
+                    await db.collection("users").doc(currentUser.uid).set({
+                        username: name,
+                        weight: w || 0,
+                        height: h || 0,
+                        age: a || 0
+                    }, { merge: true });
+                    
+                    fecharModal();
+                    btn.innerText = "SALVAR ALTERAÇÕES";
+                } catch(e) { alert("Erro ao salvar: " + e.message); }
             }
 
             window.ativarBuff = async () => {
                 const btn = document.getElementById('btnBuff');
-                window.open('https://otieu.com/4/10557860', '_blank'); // Seu Link
-
-                // Feedback Visual
+                window.open('https://otieu.com/4/10557860', '_blank');
                 btn.innerText = "ABSORVENDO...";
                 btn.disabled = true;
-
                 try {
                     await db.collection("history").add({
                         userId: currentUser.uid, type: "Buff de Sistema", value: 20,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
-                    
                     setTimeout(() => {
-                        btn.classList.add('success-anim'); // Fica verde
-                        btn.innerText = "+20 XP OBTIDO";
-                        btn.style.color = "black";
+                        btn.classList.add('success-anim'); btn.innerText = "+20 XP OBTIDO"; btn.style.color = "black";
                     }, 1000);
-                    
-                    // Libera de novo depois de um tempo
                     setTimeout(() => {
-                        btn.classList.remove('success-anim');
-                        btn.style.color = "var(--gold)";
-                        btn.innerText = "RESGATAR NOVAMENTE";
-                        btn.disabled = false;
+                        btn.classList.remove('success-anim'); btn.style.color = "var(--gold)"; btn.innerText = "RESGATAR NOVAMENTE"; btn.disabled = false;
                     }, 15000);
-
                 } catch(e) { console.error(e); }
             }
 
-            window.goShop = (url) => window.open(url, '_blank'); // Abre direto, sem alert
+            window.goShop = (url) => window.open(url, '_blank');
 
-            // --- SISTEMA DE DADOS ---
-            function getRank(xp) {
-                if(xp < 1000) return { l: "E", t: "INICIANTE", n: 1000 };
-                if(xp < 3000) return { l: "D", t: "EM CONSTRUÇÃO", n: 3000 };
-                if(xp < 6000) return { l: "C", t: "PROJETO ATLETA", n: 6000 };
-                if(xp < 10000) return { l: "B", t: "SHAPE INEXPLICÁVEL", n: 10000 };
-                if(xp < 20000) return { l: "A", t: "MUTANTE", n: 20000 };
-                return { l: "S", t: "OLYMPIA", n: 50000 };
-            }
-
-            function initSystem() {
-                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                    if(doc.exists) {
-                        const d = doc.data();
-                        const xp = d.coins || 0;
-                        const rank = getRank(xp);
-                        
-                        document.getElementById('playerName').innerText = d.username || "Atleta";
-                        document.getElementById('rankLetter').innerText = rank.l;
-                        document.getElementById('rankName').innerText = rank.t;
-                        
-                        const pct = Math.min((xp / rank.n) * 100, 100);
-                        document.getElementById('xpBar').style.width = pct + "%";
-                        document.getElementById('xpText').innerText = `${xp} / ${rank.n}`;
-                        document.getElementById('loading').style.display = 'none';
-                    } else {
-                        db.collection("users").doc(currentUser.uid).set({coins:0, username:"Player"}, {merge:true});
-                    }
-                });
-            }
-
-            // --- AGENDA / CALENDÁRIO ---
-            let userLogs = []; // Cache local dos logs
-
+            // CALENDÁRIO
+            let userLogs = [];
             function renderCalendar() {
                 const grid = document.getElementById('calendarGrid');
                 const list = document.getElementById('logList');
-                grid.innerHTML = "";
-                list.innerHTML = "";
+                grid.innerHTML = ""; list.innerHTML = "";
 
                 const now = new Date();
                 const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
                 const today = now.getDate();
-
                 document.getElementById('currentMonthLabel').innerText = now.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
 
-                // 1. Busca dados se ainda não buscou
-                db.collection("history")
-                  .where("userId", "==", currentUser.uid)
-                  .orderBy("date", "desc").limit(30)
-                  .onSnapshot(snap => {
-                      userLogs = [];
-                      snap.forEach(d => userLogs.push(d.data()));
-                      drawGrid(daysInMonth, today); // Desenha após receber dados
-                  });
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(30).onSnapshot(snap => {
+                    userLogs = [];
+                    snap.forEach(d => userLogs.push(d.data()));
+                    drawGrid(daysInMonth, today);
+                });
             }
 
             function drawGrid(totalDays, today) {
                 const grid = document.getElementById('calendarGrid');
                 grid.innerHTML = "";
-                
-                // Mapeia dias que tiveram treino
                 const activeDays = new Set();
                 userLogs.forEach(log => {
                     if(log.date) {
                         const d = log.date.toDate();
-                        // Só marca se for do mês atual
-                        const now = new Date();
-                        if(d.getMonth() === now.getMonth()) {
-                            activeDays.add(d.getDate());
-                        }
+                        if(d.getMonth() === new Date().getMonth()) activeDays.add(d.getDate());
                     }
                 });
 
-                // Gera os quadrados
                 for(let i = 1; i <= totalDays; i++) {
                     const dayBox = document.createElement('div');
                     dayBox.className = 'calendar-day';
                     dayBox.innerText = i;
-                    
-                    if(activeDays.has(i)) dayBox.classList.add('active'); // Dia Treinado (Verde)
-                    if(i === today) dayBox.classList.add('today');       // Dia Atual (Borda Branca)
-                    
+                    if(activeDays.has(i)) dayBox.classList.add('active');
+                    if(i === today) dayBox.classList.add('today');
                     grid.appendChild(dayBox);
                 }
 
-                // Lista de Texto (Log simples)
                 const list = document.getElementById('logList');
                 list.innerHTML = "";
                 userLogs.slice(0, 5).forEach(log => {
