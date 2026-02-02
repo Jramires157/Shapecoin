@@ -40,7 +40,7 @@
             width: 260px; height: 260px; margin: 0 auto 30px; border-radius: 50%;
             background: var(--surface); display: flex; flex-direction: column; 
             align-items: center; justify-content: center; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.04); /* Sombra Premium */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.04);
         }
         .main-time { font-size: 3.8rem; font-weight: 300; letter-spacing: -2px; line-height: 1; color: var(--text-main); }
         .time-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 15px; text-transform: uppercase; }
@@ -54,10 +54,9 @@
         }
         .share-btn:hover { border-color: var(--text-main); color: var(--text-main); }
 
-        /* BOTÕES DE AÇÃO (ESTILO ANTIGO RESTAURADO) */
+        /* BOTÕES DE AÇÃO (ESTILO CLÁSSICO) */
         .btn-stack { display:flex; flex-direction:column; align-items: center; width: 100%; }
         
-        /* O Botão Preto Sólido */
         .btn-victory {
             width: 100%; padding: 22px; border-radius: 100px;
             background: #050505; color: #FFFFFF; border: none;
@@ -69,7 +68,6 @@
         .btn-victory:active { transform: scale(0.98); }
         .btn-victory:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
-        /* O Botão de Texto Simples */
         .btn-text-link {
             background: none; border: none; color: #999;
             font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
@@ -116,11 +114,27 @@
         }
         @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(2.5); opacity: 0.2; } }
 
-        .screen { display: none; opacity: 0; transition: opacity 0.4s; }
-        .screen.active { display: block; opacity: 1; }
+        /* TELAS */
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* LOADING SYSTEM */
+        #system-loading {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            color: var(--text-muted); font-size: 0.8rem; letter-spacing: 2px;
+        }
+        #error-log { color: red; font-size: 0.7rem; margin-top: 20px; text-align: center; max-width: 80%; }
     </style>
 </head>
 <body>
+
+    <div id="system-loading">
+        <div>INICIANDO SISTEMA...</div>
+        <div id="error-log"></div>
+    </div>
 
     <div id="share-template">
         <h1 style="font-size: 40px; letter-spacing: 10px; color: #888;">FOCUS | OS</h1>
@@ -143,7 +157,7 @@
         </div>
 
         <div class="timer-circle">
-            <div class="main-time" id="timerDisplay">00:00</div>
+            <div class="main-time" id="timerDisplay">--:--</div>
             <div class="time-label">Tempo Limpo</div>
         </div>
 
@@ -226,7 +240,11 @@
     </div>
 
     <script>
-        // --- CONTEÚDO ---
+        // Captura Global de Erros (Anti-Tela Branca)
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById('error-log').innerText = "ERRO: " + message;
+        };
+
         const ebooks = {
             'dopamina': `<h1>Jejum de Dopamina</h1><p>A dopamina é o neurotransmissor do desejo. O excesso de estímulos digitais cria resistência...</p>`,
             'social': `<h1>Mente Digital</h1><p>A recompensa variável das redes sociais vicia seu cérebro exatamente como um caça-níqueis...</p>`
@@ -241,106 +259,142 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
-        let lastReset = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
+            let lastReset = null;
 
-        auth.onAuthStateChanged(user => {
-            if (!user) window.location.href = "index.html";
-            else { currentUser = user; initApp(); }
-        });
-
-        function initApp() {
-            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                const d = doc.data();
-                if(d.lastReset) {
-                    lastReset = d.lastReset.toDate();
-                    updateTimer();
-                    updateMedals(lastReset);
-                } else {
-                    lastReset = new Date();
-                    db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = "index.html";
+                } else { 
+                    currentUser = user; 
+                    initApp(); 
                 }
             });
-            loadLogs();
-        }
 
-        function updateTimer() {
-            const diff = new Date() - lastReset;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('timerDisplay').innerText = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
-            // TESTE: Libera botão após 10s (mude para 86400000 para 24h)
-            if(diff > 10000) document.getElementById('btnClaim').disabled = false;
-        }
-
-        function updateMedals(date) {
-            const days = Math.floor((new Date() - date) / (86400000));
-            if(days >= 1) document.getElementById('medal1').classList.add('active');
-            if(days >= 3) document.getElementById('medal3').classList.add('active');
-            if(days >= 7) document.getElementById('medal7').classList.add('active');
-            if(days >= 30) document.getElementById('medal30').classList.add('active');
-        }
-
-        function loadLogs() {
-            db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(10).onSnapshot(snap => {
-                const list = document.getElementById('logList');
-                list.innerHTML = "";
-                snap.forEach(d => {
-                    const v = d.data();
-                    const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
-                    list.innerHTML += `<div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; font-size:0.8rem;">
-                        <span>${v.type}</span><span style="color:#888;">${dt}</span>
-                    </div>`;
+            function initApp() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    // Remove tela de carregamento se conectar
+                    document.getElementById('system-loading').style.display = 'none';
+                    
+                    if(doc.exists) {
+                        const d = doc.data();
+                        if(d.lastReset) {
+                            lastReset = d.lastReset.toDate();
+                            updateTimer();
+                            updateMedals(lastReset);
+                        } else {
+                            // Primeiro acesso
+                            lastReset = new Date();
+                            db.collection("users").doc(currentUser.uid).set({ 
+                                lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                                coins: 0
+                            }, {merge:true});
+                        }
+                    } else {
+                        // Cria doc se não existir
+                        db.collection("users").doc(currentUser.uid).set({ 
+                            lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                            coins: 0
+                        });
+                        document.getElementById('system-loading').style.display = 'none';
+                    }
+                }, (error) => {
+                    document.getElementById('error-log').innerText = "Erro DB: " + error.message;
                 });
-            });
-        }
+                
+                loadLogs();
+            }
 
-        // --- AÇÕES ---
-        async function generateShareImage() {
-            const target = document.getElementById('share-template');
-            const diff = new Date() - lastReset;
-            const days = Math.floor(diff / 86400000);
-            document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
+            function updateTimer() {
+                const diff = new Date() - lastReset;
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('timerDisplay').innerText = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
+                
+                // TESTE: Libera botão após 10s (mude para 86400000 na versão final)
+                if(diff > 10000) document.getElementById('btnClaim').disabled = false;
+            }
+
+            function updateMedals(date) {
+                const days = Math.floor((new Date() - date) / (86400000));
+                if(days >= 1) document.getElementById('medal1').classList.add('active');
+                if(days >= 3) document.getElementById('medal3').classList.add('active');
+                if(days >= 7) document.getElementById('medal7').classList.add('active');
+                if(days >= 30) document.getElementById('medal30').classList.add('active');
+            }
+
+            function loadLogs() {
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                    const list = document.getElementById('logList');
+                    list.innerHTML = "";
+                    if(snap.empty) {
+                        list.innerHTML = "<div style='text-align:center; color:#ccc; font-size:0.8rem; margin-top:20px;'>Sem registros ainda.</div>";
+                    }
+                    snap.forEach(d => {
+                        const v = d.data();
+                        const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
+                        list.innerHTML += `<div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; font-size:0.8rem;">
+                            <span>${v.type}</span><span style="color:#888;">${dt}</span>
+                        </div>`;
+                    });
+                });
+            }
+
+            // --- AÇÕES ---
+            window.generateShareImage = async function() {
+                const target = document.getElementById('share-template');
+                const diff = new Date() - lastReset;
+                const days = Math.floor(diff / 86400000);
+                document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
+                
+                const canvas = await html2canvas(target);
+                const blob = await new Promise(res => canvas.toBlob(res));
+                const file = new File([blob], 'focus.png', { type: 'image/png' });
+                
+                if(navigator.share) navigator.share({files: [file]}).catch(e=>console.log(e));
+                else { const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click(); }
+            }
+
+            window.openJournal = () => document.getElementById('modalJournal').style.display = 'block';
             
-            const canvas = await html2canvas(target);
-            const blob = await new Promise(res => canvas.toBlob(res));
-            const file = new File([blob], 'focus.png', { type: 'image/png' });
+            window.confirmClaim = async function() {
+                closeModal();
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                const note = document.getElementById('journalInput').value;
+                await db.collection("history").add({ userId: currentUser.uid, type: "Vitória Diária", note, date: firebase.firestore.FieldValue.serverTimestamp() });
+                alert("Vitória registrada!");
+            }
+
+            window.openBreathing = () => document.getElementById('modalBreath').style.display = 'block';
             
-            if(navigator.share) navigator.share({files: [file]}).catch(e=>console.log(e));
-            else { const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click(); }
-        }
+            window.failProtocol = async function() {
+                closeModal();
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
+                await db.collection("history").add({ userId: currentUser.uid, type: "Recaída", date: firebase.firestore.FieldValue.serverTimestamp() });
+            }
 
-        window.openJournal = () => document.getElementById('modalJournal').style.display = 'block';
-        window.confirmClaim = async () => {
-            closeModal();
-            window.open('https://otieu.com/4/10557860', '_blank'); // AD
-            const note = document.getElementById('journalInput').value;
-            await db.collection("history").add({ userId: currentUser.uid, type: "Vitória Diária", note, date: firebase.firestore.FieldValue.serverTimestamp() });
-        }
+            window.openEbook = (k) => {
+                document.getElementById('ebookContent').innerHTML = ebooks[k];
+                document.getElementById('modalReader').style.display = 'block';
+            }
+            window.buyProtocol = () => window.open('https://hotmart.com', '_blank'); 
 
-        window.openBreathing = () => document.getElementById('modalBreath').style.display = 'block';
-        window.failProtocol = async () => {
-            closeModal();
-            window.open('https://otieu.com/4/10557860', '_blank'); // AD
-            await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
-            await db.collection("history").add({ userId: currentUser.uid, type: "Recaída", date: firebase.firestore.FieldValue.serverTimestamp() });
-        }
+            window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            
+            window.nav = (id, el) => {
+                document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+                document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+                document.getElementById('screen-' + id).style.display = 'block';
+                el.classList.add('active');
+            }
 
-        window.openEbook = (k) => {
-            document.getElementById('ebookContent').innerHTML = ebooks[k];
-            document.getElementById('modalReader').style.display = 'block';
-        }
-        window.buyProtocol = () => window.open('https://hotmart.com', '_blank'); // Link Pagamento
-
-        window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        window.nav = (id, el) => {
-            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-            document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('screen-' + id).style.display = 'block';
-            el.classList.add('active');
+        } catch(e) {
+            document.getElementById('error-log').innerText = "ERRO FATAL: " + e.message;
         }
     </script>
 </body>
