@@ -3,88 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM - Player</title>
+    <title>SYSTEM - Gym</title>
     
     <meta name="theme-color" content="#00ff9d">
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* TEMA "THE SYSTEM" */
+        /* TEMA "THE SYSTEM" (Gym Edition) */
         :root { 
-            --primary: #00ff9d; 
+            --primary: #00ff9d; /* Verde Neon Sistema */
             --danger: #ff3333; 
             --gold: #ffd700;
-            --bg: #000000; 
-            --panel: #0a0a0a; 
-            --border: #1a1a1a; 
+            --bg: #050505; 
+            --panel: #0f0f0f; 
+            --border: #222; 
         }
         
         body { 
             background-color: var(--bg); color: white; 
             font-family: 'Courier New', monospace; 
-            margin: 0; padding: 20px; padding-bottom: 80px;
+            margin: 0; padding: 20px; padding-bottom: 90px;
+            text-transform: uppercase;
         }
         
-        /* HEADER */
-        .player-header { border-bottom: 1px solid var(--primary); padding-bottom: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .player-name { font-size: 0.9rem; color: #666; letter-spacing: 2px; text-transform: uppercase; }
-        .player-rank { font-size: 2.5rem; font-weight: bold; color: var(--primary); line-height: 1; text-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
-        .rank-label { font-size: 0.8rem; color: var(--primary); text-align: right; letter-spacing: 3px; }
-
-        /* XP BAR */
-        .xp-section { margin-bottom: 40px; }
-        .xp-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; margin-bottom: 5px; }
-        .xp-bar-container { width: 100%; height: 6px; background: #111; border: 1px solid #333; }
-        .xp-bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 8px var(--primary); transition: width 0.5s ease; }
-
-        /* CARDS */
-        .system-card { 
-            background: rgba(255, 255, 255, 0.02); 
-            border: 1px solid #333; 
-            padding: 20px; margin-bottom: 20px; position: relative;
+        /* HUD SUPERIOR */
+        .hud-header { 
+            border: 1px solid var(--primary); 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            background: rgba(0, 255, 157, 0.05);
+            position: relative;
         }
-        .card-title { color: var(--primary); font-size: 1rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* LOJA */
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .shop-item { 
-            border: 1px solid #333; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s;
-            background: linear-gradient(180deg, #111, #000);
+        .hud-label { font-size: 0.6rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 5px; }
+        .hud-value { font-size: 1.2rem; font-weight: bold; color: white; letter-spacing: 1px; }
+        .rank-badge { 
+            position: absolute; right: 15px; top: 15px; 
+            font-size: 2rem; color: var(--primary); font-weight: 900; 
+            text-shadow: 0 0 10px var(--primary);
         }
-        .shop-item:hover { border-color: var(--gold); transform: translateY(-2px); }
-        .item-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-        .item-name { font-size: 0.8rem; color: #ccc; font-weight: bold; display: block; margin-bottom: 5px; }
-        .item-price { font-size: 0.7rem; color: var(--gold); }
-        
-        /* BOTÕES */
-        button { 
+
+        /* BARRA DE PROGRESSO (HIPERTROFIA) */
+        .stat-box { margin-bottom: 30px; }
+        .bar-container { width: 100%; height: 8px; background: #111; border: 1px solid #333; margin-top: 5px; }
+        .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); transition: width 0.5s ease; }
+
+        /* SELETOR DE TREINO (GRID) */
+        .workout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .workout-btn {
+            background: #111; border: 1px solid #333; padding: 20px 10px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .workout-btn:hover { border-color: var(--primary); background: #0a1a10; }
+        .workout-btn:active { transform: scale(0.98); }
+        .muscle-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+        .muscle-name { font-size: 0.8rem; font-weight: bold; color: #ccc; }
+
+        /* BOTÃO DE AÇÃO PRINCIPAL */
+        .action-btn { 
             width: 100%; background: transparent; color: var(--primary); 
             font-family: 'Courier New', monospace; font-weight: bold; 
             border: 1px solid var(--primary); padding: 15px; cursor: pointer; 
-            text-transform: uppercase; font-size: 1rem; transition: all 0.2s;
+            font-size: 1rem; transition: all 0.2s; margin-top: 10px;
         }
-        button:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
-        button:disabled { border-color: #333; color: #333; cursor: not-allowed; box-shadow: none; }
+        .action-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+        .action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; box-shadow: none; background: transparent; }
 
-        /* MENU INFERIOR FIXO */
+        /* CARD DE AFILIADO/AD (INTEGRADO AO SISTEMA) */
+        .system-alert {
+            border: 1px dashed var(--gold); padding: 15px; margin-top: 30px;
+            background: rgba(255, 215, 0, 0.05); text-align: center;
+        }
+
+        /* NAVEGAÇÃO */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: #000; border-top: 1px solid #333;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: #000; border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center;
             z-index: 100;
         }
-        .nav-btn { color: #555; font-size: 1.5rem; cursor: pointer; }
-        .nav-btn.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .nav-item { text-align: center; color: #444; font-size: 0.7rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 2px; }
 
-        /* MODAIS E TELAS */
-        .screen { display: none; padding-bottom: 60px; }
+        /* MODAIS */
+        .screen { display: none; }
         .screen.active { display: block; }
         
-        /* LOADING */
-        #loading { position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); color: var(--primary); font-size: 0.8rem; letter-spacing: 2px; animation: blink 1s infinite; text-align: center; width: 100%;}
-        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:var(--primary); z-index:999; }
         
-        #error-msg { display: none; color: red; font-size: 0.7rem; margin-top: 20px; }
+        #error-msg { display:none; color:red; font-size:0.7rem; margin-top:10px; text-align:center;}
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -93,114 +100,140 @@
 </head>
 <body>
 
-    <div id="loading">
-        CONECTANDO AO SISTEMA...
-        <div id="error-msg"></div>
-    </div>
+    <div id="loading">CARREGANDO DADOS BIOMÉTRICOS...</div>
+    <div id="error-msg"></div>
 
-    <div id="screen-home" class="screen active">
+    <div id="screen-status" class="screen active">
         
-        <div class="player-header">
-            <div>
-                <div class="player-name">CAÇADOR</div>
-                <div id="playerName" style="font-weight:bold; font-size:1.1rem; color:white;">...</div>
+        <div class="hud-header">
+            <div class="hud-label">ATLETA</div>
+            <div class="hud-value" id="playerName">...</div>
+            
+            <div style="margin-top: 15px;">
+                <div class="hud-label">CLASSIFICAÇÃO ATUAL</div>
+                <div class="hud-value" id="rankName" style="color:white">ANÁLISE...</div>
             </div>
-            <div>
-                <div class="player-rank" id="rankDisplay">E</div>
-                <div class="rank-label">RANK</div>
-            </div>
+
+            <div class="rank-badge" id="rankLetter">F</div>
         </div>
 
-        <div class="xp-section">
-            <div class="xp-info">
-                <span>NÍVEL DE PODER</span>
+        <div class="stat-box">
+            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#888;">
+                <span>PROGRESSO FÍSICO (XP)</span>
                 <span id="xpText">0 / 1000</span>
             </div>
-            <div class="xp-bar-container">
-                <div class="xp-bar-fill" id="xpBar"></div>
+            <div class="bar-container">
+                <div class="bar-fill" id="xpBar"></div>
             </div>
         </div>
 
-        <div class="system-card" style="border-color: var(--primary);">
-            <div class="card-title">⚠ Missão Diária</div>
-            <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px;">
-                "Aquele que não treina, não evolui."<br>
-                Objetivo: Realizar o treino completo de hoje.
-            </p>
-            <button id="btnComplete">COMPLETAR (+100 XP)</button>
+        <div style="border-top: 1px solid #222; padding-top: 20px;">
+            <div class="hud-label" style="margin-bottom: 15px;">INICIAR PROTOCOLO DE TREINO</div>
+            
+            <div class="workout-grid">
+                <div class="workout-btn" onclick="selecionarTreino('PEITO/TRICEPS')">
+                    <span class="muscle-icon">🦍</span>
+                    <span class="muscle-name">PUSH (EMPURRAR)</span>
+                </div>
+                <div class="workout-btn" onclick="selecionarTreino('COSTAS/BICEPS')">
+                    <span class="muscle-icon">🦅</span>
+                    <span class="muscle-name">PULL (PUXAR)</span>
+                </div>
+                <div class="workout-btn" onclick="selecionarTreino('PERNAS COMPLETO')">
+                    <span class="muscle-icon">🦖</span>
+                    <span class="muscle-name">LEGS (PERNAS)</span>
+                </div>
+                <div class="workout-btn" onclick="selecionarTreino('CARDIO/ABS')">
+                    <span class="muscle-icon">⚡</span>
+                    <span class="muscle-name">CARDIO / ABS</span>
+                </div>
+            </div>
+
+            <button id="btnConfirmar" class="action-btn" disabled>SELECIONE UM PROTOCOLO</button>
         </div>
 
-        <div class="system-card" style="border-color: var(--gold);">
-            <div class="card-title" style="color:var(--gold)">⚡ Bênção do Sistema</div>
-            <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px;">
-                Receba energia extra assistindo a uma mensagem.
-            </p>
-            <button id="btnBuff" style="border-color:var(--gold); color:var(--gold)">RESGATAR (+20 XP)</button>
+        <div class="system-alert" id="adBuffArea">
+            <div style="color:var(--gold); font-weight:bold; font-size:0.9rem;">⚠ SUPLEMENTAÇÃO DISPONÍVEL</div>
+            <p style="font-size:0.7rem; color:#888;">Assista ao vídeo tático para ganhar +20 XP extra.</p>
+            <button class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:10px;" onclick="ativarBuff()">RESGATAR BOOST</button>
         </div>
 
     </div>
 
     <div id="screen-shop" class="screen">
-        <h2 style="color:white; text-align:center; margin-bottom:30px; letter-spacing:2px;">MERCADOR</h2>
-        
-        <div class="shop-grid">
-            <div class="shop-item" onclick="abrirLink('https://amazon.com.br/creatina')">
-                <span class="item-icon">🧪</span>
-                <span class="item-name">Poção de Força</span>
-                <span class="item-price">R$ 89,90</span>
+        <div class="hud-header">
+            <div class="hud-label">MERCADO DO SISTEMA</div>
+            <div class="hud-value">EQUIPAMENTOS</div>
+        </div>
+
+        <div class="workout-grid">
+            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/creatina')">
+                <span class="muscle-icon">🧪</span>
+                <span class="muscle-name">CREATINA PURA</span>
+                <span style="font-size:0.6rem; color:var(--gold)">R$ 89,90</span>
             </div>
-            <div class="shop-item" onclick="abrirLink('https://amazon.com.br/halteres')">
-                <span class="item-icon">⚖️</span>
-                <span class="item-name">Pesos de Ferro</span>
-                <span class="item-price">R$ 120,00</span>
+            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/whey')">
+                <span class="muscle-icon">🥤</span>
+                <span class="muscle-name">WHEY PROTEIN</span>
+                <span style="font-size:0.6rem; color:var(--gold)">R$ 119,90</span>
             </div>
-            <div class="shop-item" onclick="abrirLink('https://amazon.com.br/whey')">
-                <span class="item-icon">🥩</span>
-                <span class="item-name">Ração de Elite</span>
-                <span class="item-price">R$ 150,00</span>
+            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/pretreino')">
+                <span class="muscle-icon">☠️</span>
+                <span class="muscle-name">PRÉ-TREINO</span>
+                <span style="font-size:0.6rem; color:var(--gold)">R$ 79,90</span>
             </div>
-            <div class="shop-item" onclick="alert('Em breve.')">
-                <span class="item-icon">💎</span>
-                <span class="item-name">Apoiar Criador</span>
-                <span class="item-price">Doação</span>
+             <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/straps')">
+                <span class="muscle-icon">🎗️</span>
+                <span class="muscle-name">STRAPS / LUVAS</span>
+                <span style="font-size:0.6rem; color:var(--gold)">R$ 39,90</span>
             </div>
         </div>
-        
-        <p style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;">
-            *Itens fornecidos por mercadores externos.
-        </p>
+
+        <div class="system-alert">
+            <p style="font-size:0.7rem; color:#666;">
+                *Adquirir itens aumenta seus atributos na vida real.<br>
+                Links seguros de parceiros (Amazon/Growth).
+            </p>
+        </div>
     </div>
 
-    <div id="screen-profile" class="screen">
-        <div class="system-card">
-            <div class="card-title">DADOS DO CAÇADOR</div>
-            <input type="text" id="inputName" placeholder="Alterar Nome" style="width:100%; padding:10px; background:#111; border:1px solid #333; color:white; margin-bottom:10px;">
-            <button onclick="salvarPerfil()">ATUALIZAR REGISTRO</button>
+    <div id="screen-log" class="screen">
+        <div class="hud-header">
+            <div class="hud-label">HISTÓRICO DE BATALHA</div>
+            <div class="hud-value">LOGS</div>
+        </div>
+        <div id="logFeed" style="font-size:0.8rem; color:#aaa;">
+            Carregando registros...
         </div>
         
-        <div class="system-card" style="border-color:var(--danger)">
-            <button onclick="sair()" style="border-color:var(--danger); color:var(--danger)">DESLOGAR DO SISTEMA</button>
-        </div>
-        
-        <div style="margin-top:20px; font-size:0.7rem; color:#444; font-family:monospace;">
-            LOG RECENTE:<br>
-            <div id="logFeed">Carregando dados...</div>
-        </div>
+        <button class="action-btn" onclick="auth.signOut().then(()=>location.reload())" style="border-color:var(--danger); color:var(--danger); margin-top:30px;">
+            ENCERRAR SESSÃO
+        </button>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-btn active" onclick="mudarTela('home', this)">🏠</div>
-        <div class="nav-btn" onclick="mudarTela('shop', this)">🛒</div>
-        <div class="nav-btn" onclick="mudarTela('profile', this)">👤</div>
+        <div class="nav-item active" onclick="nav('status', this)">
+            <span class="nav-icon">📊</span>
+            STATUS
+        </div>
+        <div class="nav-item" onclick="nav('shop', this)">
+            <span class="nav-icon">🛒</span>
+            LOJA
+        </div>
+        <div class="nav-item" onclick="nav('log', this)">
+            <span class="nav-icon">📜</span>
+            LOGS
+        </div>
     </div>
 
     <script>
-        // Captura erros para mostrar na tela (Anti-Travamento)
+        // TRATAMENTO DE ERROS
         window.onerror = function(msg) {
             document.getElementById('error-msg').style.display = 'block';
             document.getElementById('error-msg').innerText = "ERRO: " + msg;
         };
 
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -215,131 +248,146 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
             let currentUser = null;
+            let treinoSelecionado = "";
 
-            // Remove Service Workers antigos que podem estar travando
+            // Limpa SW antigo
             if(navigator.serviceWorker) { navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())); }
 
             auth.onAuthStateChanged((user) => {
                 if (!user) window.location.href = "index.html";
-                else { currentUser = user; carregarSistema(); }
+                else { currentUser = user; initSystem(); }
             });
 
             // NAVEGAÇÃO
-            window.mudarTela = (telaId, btn) => {
+            window.nav = (screenId, elem) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('screen-' + telaId).classList.add('active');
-                btn.classList.add('active');
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.getElementById('screen-' + screenId).classList.add('active');
+                elem.classList.add('active');
             }
 
-            window.abrirLink = (url) => {
-                if(url.includes('amazon')) alert("Aqui abrirá seu link da Amazon!"); 
-                else window.open(url, '_blank');
+            // SISTEMA DE RANKS (GYM EDITION)
+            function getRank(xp) {
+                if(xp < 1000) return { letter: "E", title: "FRANGO (INICIANTE)", next: 1000 };
+                if(xp < 3000) return { letter: "D", title: "EM CONSTRUÇÃO", next: 3000 };
+                if(xp < 6000) return { letter: "C", title: "PROJETO ATLETA", next: 6000 };
+                if(xp < 10000) return { letter: "B", title: "SHAPE INEXPLICÁVEL", next: 10000 };
+                if(xp < 20000) return { letter: "A", title: "MUTANTE", next: 20000 };
+                return { letter: "S", title: "LENDA DO OLYMPIA", next: 50000 };
             }
 
-            // SISTEMA DE RANKS
-            function calcularRank(xp) {
-                if(xp < 1000) return { rank: "E", next: 1000 };
-                if(xp < 3000) return { rank: "D", next: 3000 };
-                if(xp < 6000) return { rank: "C", next: 6000 };
-                if(xp < 10000) return { rank: "B", next: 10000 };
-                if(xp < 20000) return { rank: "A", next: 20000 };
-                return { rank: "S", next: 50000 };
-            }
-
-            function carregarSistema() {
-                // 1. Carrega Perfil (Simples)
+            function initSystem() {
+                // 1. CARREGA DADOS DO ATLETA
                 db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
                     if (doc.exists) {
-                        const data = doc.data();
-                        const xp = data.coins || 0;
-                        const nome = data.username || "Desconhecido";
+                        const d = doc.data();
+                        const xp = d.coins || 0;
+                        const nome = d.username || "Recruta";
+                        const rank = getRank(xp);
 
                         document.getElementById('playerName').innerText = nome;
-                        document.getElementById('inputName').value = nome;
-
-                        const info = calcularRank(xp);
-                        document.getElementById('rankDisplay').innerText = info.rank;
+                        document.getElementById('rankLetter').innerText = rank.letter;
+                        document.getElementById('rankName').innerText = rank.title;
                         
-                        const pct = Math.min((xp / info.next) * 100, 100);
+                        // Barra de XP
+                        const pct = Math.min((xp / rank.next) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
-                        document.getElementById('xpText').innerText = `${xp} / ${info.next}`;
-
-                        // DESTRAVAMENTO: Remove tela de carregamento assim que pegar os dados básicos
+                        document.getElementById('xpText').innerText = `${xp} / ${rank.next} XP`;
+                        
                         document.getElementById('loading').style.display = 'none';
                     } else {
-                        // Cria perfil se não existir
-                        db.collection("users").doc(currentUser.uid).set({ coins: 0 }, { merge: true });
+                        // Perfil novo
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0, username: "Player" }, { merge: true });
                     }
                 });
 
-                // 2. Carrega Logs (CORRIGIDO: Sem ordenação no banco para não travar)
+                // 2. CARREGA LOGS (Sem travar)
                 db.collection("history")
                   .where("userId", "==", currentUser.uid)
-                  .limit(10) // Traz os últimos 10 (desordenados)
+                  .limit(10)
                   .onSnapshot(snap => {
-                    const div = document.getElementById('logFeed');
-                    div.innerHTML = "";
-                    
-                    let logs = [];
-                    snap.forEach(d => logs.push(d.data()));
-                    
-                    // Ordena AQUI no celular (evita erro de índice no banco)
-                    logs.sort((a,b) => (b.date?.toMillis() || 0) - (a.date?.toMillis() || 0));
+                      const feed = document.getElementById('logFeed');
+                      feed.innerHTML = "";
+                      let logs = [];
+                      snap.forEach(d => logs.push(d.data()));
+                      logs.sort((a,b) => (b.date?.toMillis() || 0) - (a.date?.toMillis() || 0));
 
-                    logs.forEach(d => {
-                        const val = d.value;
-                        const type = d.type;
-                        div.innerHTML += `<div style="margin-bottom:5px; border-left:2px solid #333; padding-left:5px;">${type}: <span style="color:var(--primary)">+${val} XP</span></div>`;
-                    });
-                });
+                      logs.forEach(l => {
+                          const cor = l.type.includes("Buff") ? "var(--gold)" : "var(--primary)";
+                          feed.innerHTML += `
+                            <div style="border-left: 2px solid #333; padding-left: 10px; margin-bottom: 10px;">
+                                <div style="color:white; font-size:0.7rem;">${l.type.toUpperCase()}</div>
+                                <div style="color:${cor}; font-weight:bold;">+${l.value} XP</div>
+                            </div>
+                          `;
+                      });
+                  });
             }
 
-            // AÇÕES
-            document.getElementById('btnComplete').addEventListener('click', async () => {
-                const btn = document.getElementById('btnComplete');
-                btn.disabled = true; btn.innerText = "VERIFICANDO...";
+            // SELEÇÃO DE TREINO
+            window.selecionarTreino = (tipo) => {
+                treinoSelecionado = tipo;
+                // Visual feedback
+                document.querySelectorAll('.workout-btn').forEach(b => b.style.borderColor = '#333');
+                event.currentTarget.style.borderColor = 'var(--primary)';
                 
+                const btn = document.getElementById('btnConfirmar');
+                btn.innerText = "CONFIRMAR: " + tipo;
+                btn.disabled = false;
+            }
+
+            // CONFIRMAR TREINO
+            document.getElementById('btnConfirmar').addEventListener('click', async () => {
+                const btn = document.getElementById('btnConfirmar');
+                btn.disabled = true;
+                btn.innerText = "PROCESSANDO...";
+
                 try {
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Missão Diária", value: 100,
+                        userId: currentUser.uid,
+                        type: "Treino: " + treinoSelecionado,
+                        value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
-                    alert("MISSÃO CUMPRIDA! +100 XP");
-                } catch(e) { console.log(e); }
-                
-                btn.disabled = false; btn.innerText = "COMPLETAR (+100 XP)";
+                    await db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(100)
+                    });
+                    alert("TREINO REGISTRADO! +100 XP");
+                } catch(e) { console.error(e); }
+
+                btn.innerText = "TREINO CONCLUÍDO";
+                setTimeout(() => { 
+                    btn.innerText = "SELECIONE UM PROTOCOLO"; 
+                    treinoSelecionado = "";
+                }, 3000);
             });
 
-            document.getElementById('btnBuff').addEventListener('click', async () => {
-                const btn = document.getElementById('btnBuff');
+            // ATIVAR BUFF (AD)
+            window.ativarBuff = async () => {
+                // Link do seu anúncio
                 window.open('https://otieu.com/4/10557860', '_blank');
-
-                btn.disabled = true; btn.innerText = "ABSORVENDO...";
-
+                
+                // Dá recompensa
                 try {
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Bênção do Sistema", value: 20,
+                        userId: currentUser.uid, type: "Buff de Sistema", value: 20,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
-                    setTimeout(() => { alert("PODER AUMENTADO! +20 XP"); }, 2000);
-                } catch(e) { console.log(e); }
-
-                setTimeout(() => { btn.disabled = false; btn.innerText = "RESGATAR (+20 XP)"; }, 15000);
-            });
-
-            window.salvarPerfil = async () => {
-                const nome = document.getElementById('inputName').value;
-                if(nome) await db.collection("users").doc(currentUser.uid).set({ username: nome }, { merge: true });
-                alert("REGISTRO ATUALIZADO");
+                    await db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(20)
+                    });
+                } catch(e) { console.error(e); }
             }
 
-            window.sair = () => auth.signOut().then(() => window.location.reload());
+            // LINK EXTERNO
+            window.abrirLink = (url) => {
+                // Futuramente coloque seus links de afiliado aqui
+                window.open(url, '_blank');
+            }
 
         } catch(e) {
-            document.getElementById('error-msg').innerText = "ERRO FATAL: " + e.message;
+            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('error-msg').innerText = "FATAL: " + e.message;
         }
     </script>
 </body>
