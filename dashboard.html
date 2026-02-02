@@ -1,10 +1,145 @@
-<div id="screen-focus" class="screen active">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUS | Atelier</title>
+    
+    <meta name="theme-color" content="#F2F0E9">
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* PALETA QUIET LUXURY */
+        :root { 
+            --bg: #F2F0E9; 
+            --surface: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-muted: #8E8E8E;
+            --border: #E5E5E5;
+            --black-btn: #111111;
+            --shadow: 0 10px 40px rgba(0,0,0,0.03);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body { 
+            background-color: var(--bg); color: var(--text-main); 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; padding: 25px; padding-bottom: 110px;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .logo { font-weight: 600; letter-spacing: 1px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
+        .settings-btn { font-size: 1.2rem; cursor: pointer; color: var(--text-main); transition: 0.3s; }
+        .settings-btn:hover { opacity: 0.6; }
+
+        /* TIMER AREA */
+        .focus-target-badge {
+            text-align: center; background: rgba(0,0,0,0.05); color: var(--text-main);
+            display: inline-block; padding: 6px 16px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 500; margin-bottom: 20px;
+        }
+        .timer-wrapper { text-align: center; margin-bottom: 30px; }
+        .timer-circle {
+            width: 260px; height: 260px; margin: 0 auto; border-radius: 50%;
+            background: var(--surface); box-shadow: var(--shadow);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .main-time { font-size: 3.5rem; font-weight: 300; line-height: 1; letter-spacing: -2px; color: var(--text-main); }
+        .time-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
+
+        /* FRASES MOTIVACIONAIS */
+        .quote-box {
+            text-align: center; margin-bottom: 40px; min-height: 40px;
+            padding: 0 20px;
+        }
+        .quote-text { font-size: 0.9rem; color: var(--text-main); font-style: italic; font-weight: 300; line-height: 1.4; }
+
+        /* BARRA XP */
+        .xp-container { margin-bottom: 40px; padding: 0 10px; }
+        .xp-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; }
+        .xp-track { height: 4px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+        .xp-fill { height: 100%; width: 0%; background: var(--text-main); transition: width 1s ease; }
+
+        /* BOTÕES */
+        .btn-stack { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            width: 100%; padding: 20px; border-radius: 100px; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.9rem;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--black-btn); color: #FFF; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+        .btn-ghost { background: transparent; border: 1px solid #D0D0D0; color: var(--text-muted); }
+
+        /* MODAL DE CONFIGURAÇÃO (PREMIUM) */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(242, 240, 233, 0.95); z-index: 200; 
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: var(--surface); padding: 30px; width: 90%; max-width: 400px;
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .modal-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 25px; color: var(--text-main); }
+        
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; margin-left: 10px;}
+        .clean-input {
+            width: 100%; padding: 15px 20px; border-radius: 15px; border: 1px solid var(--border);
+            background: #FAFAFA; font-family: 'Outfit'; font-size: 1rem; color: var(--text-main);
+        }
+
+        /* GRID DE HÁBITOS */
+        .habits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
+        .habit-pill {
+            padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s;
+        }
+        .habit-pill.selected { background: var(--text-main); color: #FFF; border-color: var(--text-main); }
+
+        /* DOCK FLUTUANTE */
+        .dock {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--surface); padding: 6px; border-radius: 100px;
+            display: flex; gap: 5px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+        .dock-item {
+            padding: 12px 24px; border-radius: 50px; cursor: pointer;
+            color: var(--text-muted); font-size: 0.8rem; font-weight: 500; transition: 0.3s;
+        }
+        .dock-item.active { background: #F5F5F0; color: var(--text-main); }
+
+        .screen { display: none; opacity: 0; transition: opacity 0.4s; }
+        .screen.active { display: block; opacity: 1; }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:999; color:#999; font-size:0.8rem; letter-spacing:2px;}
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div id="loading">ATELIER</div>
+
+    <div id="screen-focus" class="screen active">
         <div class="header">
             <div class="logo">FOCUS • OS</div>
-            </div>
+            <div class="settings-btn" onclick="openProfile()">⚙️</div>
+        </div>
 
         <div style="text-align: center;">
-            <div class="focus-target-badge" id="targetDisplay">Carregando...</div>
+            <div class="focus-target-badge" id="targetDisplay">Foco: Geral</div>
         </div>
 
         <div class="timer-wrapper">
@@ -15,7 +150,7 @@
         </div>
 
         <div class="quote-box">
-            <div class="quote-text" id="quoteDisplay">"Carregando..."</div>
+            <div class="quote-text" id="quoteDisplay">"A calma é a verdadeira força."</div>
         </div>
 
         <div class="xp-container">
@@ -40,12 +175,209 @@
         <div class="header">
             <div class="logo">REGISTROS</div>
         </div>
-        
-        <div onclick="openProfile()" style="margin-bottom: 20px; text-align: right; cursor: pointer;">
-            <span style="font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid #ccc;">Editar Meu Foco</span>
-        </div>
-
-        <div id="logList" style="margin-top:10px;">Carregando...</div>
-        
+        <div id="logList" style="margin-top:20px;">Carregando...</div>
         <button class="btn btn-ghost" onclick="logout()" style="margin-top:30px;">Sair</button>
     </div>
+
+    <div id="modalProfile" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">Sua Intenção</div>
+            
+            <div class="input-group">
+                <label class="input-label">COMO DEVEMOS TE CHAMAR?</label>
+                <input type="text" id="inputName" class="clean-input" placeholder="Seu nome">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">O QUE VOCÊ QUER SUPERAR?</label>
+                <div class="habits-grid">
+                    <div class="habit-pill" onclick="selectHabit('Redes Sociais', this)">Redes Sociais</div>
+                    <div class="habit-pill" onclick="selectHabit('Açúcar', this)">Açúcar / Doces</div>
+                    <div class="habit-pill" onclick="selectHabit('Cigarro', this)">Cigarro</div>
+                    <div class="habit-pill" onclick="selectHabit('Jogos', this)">Jogos / Apostas</div>
+                    <div class="habit-pill" onclick="selectHabit('Procrastinação', this)">Procrastinação</div>
+                    <div class="habit-pill" onclick="selectHabit('Ansiedade', this)">Ansiedade</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveProfile()">Confirmar Identidade</button>
+        </div>
+    </div>
+
+    <div class="dock">
+        <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
+        <div class="dock-item" onclick="nav('log', this)">Dados</div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        const quotes = [
+            "Respire. Você está no controle.",
+            "Um dia de cada vez. Um passo de cada vez.",
+            "O silêncio é uma resposta poderosa.",
+            "Sua paz vale mais que qualquer prazer momentâneo.",
+            "A disciplina é a forma mais alta de amor próprio.",
+            "Você é mais forte do que a sua vontade de desistir.",
+            "O agora é o único momento que existe.",
+            "Sua mente é um santuário. Proteja-a."
+        ];
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
+            let lastResetTime = null;
+            let timerInterval = null;
+            let selectedHabit = "Geral";
+
+            if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
+
+            auth.onAuthStateChanged((user) => {
+                if (!user) window.location.href = "index.html";
+                else { currentUser = user; initApp(); }
+            });
+
+            window.nav = (id, el) => {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+                document.getElementById('screen-' + id).classList.add('active');
+                el.classList.add('active');
+            }
+
+            function initApp() {
+                // Sorteia Frase
+                document.getElementById('quoteDisplay').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const d = doc.data();
+                        const xp = d.coins || 0;
+                        selectedHabit = d.focusTarget || "Geral";
+                        
+                        document.getElementById('targetDisplay').innerText = "Livre de: " + selectedHabit;
+                        document.getElementById('inputName').value = d.username || "";
+                        
+                        // Atualiza seleção visual no modal
+                        document.querySelectorAll('.habit-pill').forEach(p => {
+                            if(p.innerText.includes(selectedHabit)) p.classList.add('selected');
+                            else p.classList.remove('selected');
+                        });
+
+                        const target = 500;
+                        const pct = Math.min((xp / target) * 100, 100);
+                        document.getElementById('xpBar').style.width = pct + "%";
+                        document.getElementById('xpDisplay').innerText = `${xp} XP`;
+
+                        if(d.lastReset) { lastResetTime = d.lastReset.toDate(); } 
+                        else { lastResetTime = new Date(); db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }); }
+                        
+                        startTimer();
+                        document.getElementById('loading').style.display = 'none';
+
+                        // Se não tiver nome, abre modal
+                        if(!d.username) openProfile();
+
+                    } else {
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0, lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                    }
+                });
+
+                // Logs
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(8).onSnapshot(snap => {
+                    const list = document.getElementById('logList');
+                    list.innerHTML = "";
+                    snap.forEach(d => {
+                        const val = d.data();
+                        const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
+                        list.innerHTML += `
+                            <div style="padding:15px 0; border-bottom:1px solid #E5E5E5; display:flex; justify-content:space-between;">
+                                <div><div style="font-size:0.9rem;">${val.type}</div><div style="font-size:0.7rem; color:#999;">${date}</div></div>
+                                <div style="font-weight:600;">${val.value > 0 ? '+' : ''}${val.value}</div>
+                            </div>`;
+                    });
+                });
+            }
+
+            function startTimer() {
+                if(timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    if(!lastResetTime) return;
+                    const diff = new Date() - lastResetTime;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const hStr = hours.toString().padStart(2, '0');
+                    const mStr = mins.toString().padStart(2, '0');
+                    document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}`;
+                    
+                    const btnClaim = document.getElementById('btnClaim');
+                    // TESTE: Mude 86400000 para 10000 (10s) para testar
+                    if(diff > 86400000) { 
+                        btnClaim.disabled = false;
+                        btnClaim.innerText = "Registrar Vitória (+100 XP)";
+                    } else {
+                        btnClaim.disabled = true;
+                    }
+                }, 1000);
+            }
+
+            // MODAL LOGIC
+            window.openProfile = () => document.getElementById('modalProfile').style.display = 'flex';
+            
+            window.selectHabit = (habit, el) => {
+                selectedHabit = habit;
+                document.querySelectorAll('.habit-pill').forEach(p => p.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+
+            window.saveProfile = async () => {
+                const name = document.getElementById('inputName').value;
+                if(!name) return alert("Por favor, digite seu nome.");
+                
+                document.getElementById('modalProfile').style.display = 'none';
+                
+                await db.collection("users").doc(currentUser.uid).set({
+                    username: name,
+                    focusTarget: selectedHabit
+                }, { merge: true });
+            }
+
+            // AÇÕES
+            window.failProtocol = async () => {
+                if(!confirm("Reiniciar ciclo? Seja honesto.")) return;
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                try {
+                    await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Recaída", value: 0,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    // Muda frase para conforto
+                    document.getElementById('quoteDisplay').innerText = "Tudo bem recomeçar. O importante é não desistir.";
+                } catch(e) { console.error(e); }
+            }
+
+            window.claimBonus = async () => {
+                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                try {
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
+                    await db.collection("history").add({
+                        userId: currentUser.uid, type: "Ciclo Vencido", value: 100,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            window.logout = () => auth.signOut().then(() => window.location.reload());
+        } catch(e) { alert("Erro: " + e.message); }
+    </script>
+</body>
+</html>
