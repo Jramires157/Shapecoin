@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM - Gym</title>
+    <title>PROTOCOL: FOCUS</title>
     
     <meta name="theme-color" content="#00ff9d">
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* TEMA "THE SYSTEM" - ULTIMATE LUXURY */
+        /* TEMA "CYBERPUNK INDUSTRIAL" */
         :root { 
             --primary: #00ff9d; 
             --primary-dim: rgba(0, 255, 157, 0.1);
-            --gold: #ffd700;
+            --alert: #ff2a2a;
             --bg: #050505; 
-            --panel: #121212; 
-            --border: #2a2a2a; 
+            --panel: #0a0a0a; 
+            --border: #222; 
         }
         
         body { 
@@ -25,133 +25,94 @@
             font-family: 'Courier New', monospace; 
             margin: 0; padding: 20px; padding-bottom: 90px;
             text-transform: uppercase; user-select: none;
-            background-image: radial-gradient(circle at top, #111 0%, #050505 100%);
+            background-image: linear-gradient(0deg, #050505 50%, #080808 50%);
+            background-size: 100% 4px; /* Efeito Scanline */
             min-height: 100vh;
         }
-        
-        /* HEADER HUD REORGANIZADO */
-        .hud-header { 
-            border: 1px solid var(--primary); 
-            padding: 25px; margin-bottom: 25px; 
-            background: linear-gradient(135deg, rgba(0, 255, 157, 0.03) 0%, rgba(0,0,0,0.5) 100%);
+
+        /* HEADER */
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px; margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        .user-label { font-size: 0.6rem; color: #666; letter-spacing: 2px; }
+        .user-val { font-size: 1rem; color: var(--primary); font-weight: bold; text-shadow: 0 0 10px var(--primary-dim); }
+
+        /* O TIMER GIGANTE */
+        .timer-container {
+            text-align: center; margin: 40px 0;
             position: relative;
-            border-radius: 6px;
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.02);
-            overflow: hidden; /* Garante que nada saia do card */
         }
-        /* Efeito de Scanline no fundo */
-        .hud-header::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 0; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        .timer-label { font-size: 0.7rem; color: #888; letter-spacing: 4px; margin-bottom: 10px; }
+        .main-timer {
+            font-size: 3.5rem; font-weight: 900; color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            line-height: 1; letter-spacing: -2px;
         }
-
-        .hud-content { position: relative; z-index: 1; } /* Conteúdo acima do efeito */
-
-        .hud-label { font-size: 0.6rem; color: var(--primary); letter-spacing: 3px; margin-bottom: 5px; opacity: 0.7; }
-        .hud-value { font-size: 1.4rem; font-weight: bold; color: white; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.1); margin-bottom: 5px; }
-        
-        /* RANK (POSICIONAMENTO ABSOLUTO NA DIREITA) */
-        .rank-badge { 
-            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-            font-size: 3.5rem; color: var(--primary); font-weight: 900; 
-            text-shadow: 0 0 20px var(--primary);
-            opacity: 0.9;
-            z-index: 2;
-        }
-
-        /* BOTÃO EDITAR (NOVO ESTILO - TEXTO PEQUENO) */
-        .edit-btn {
-            font-size: 0.6rem; color: #666; cursor: pointer; 
-            border: 1px solid #333; padding: 4px 10px; display: inline-block;
-            border-radius: 4px; transition: 0.3s; letter-spacing: 1px;
-            background: rgba(0,0,0,0.5);
-        }
-        .edit-btn:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 5px var(--primary-dim); }
-
-        /* GRID DE ATRIBUTOS */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .stat-card { 
-            background: #0f0f0f; border: 1px solid #333; padding: 15px 5px; text-align: center;
-            cursor: pointer; transition: all 0.3s ease; border-radius: 8px; position: relative;
-        }
-        .stat-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .stat-val { font-size: 1.1rem; font-weight: bold; color: white; }
-        .stat-lbl { font-size: 0.55rem; color: #888; margin-top: 5px; letter-spacing: 1px; }
+        .timer-unit { font-size: 0.8rem; color: #444; margin-top: 5px; }
 
         /* XP BAR */
-        .stat-box { margin-bottom: 35px; }
-        .bar-container { width: 100%; height: 4px; background: #222; margin-top: 8px; overflow: hidden; position: relative; }
-        .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+        .xp-box { margin-bottom: 40px; }
+        .xp-header { display: flex; justify-content: space-between; font-size: 0.6rem; color: #666; margin-bottom: 5px; }
+        .xp-track { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; }
+        .xp-fill { height: 100%; width: 0%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.5s ease; }
 
-        /* BOTÕES DE TREINO (PREMIUM GLOW) */
-        .workout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .workout-btn {
-            position: relative; background: #0e0e0e; border: 1px solid #222; border-radius: 12px;
-            padding: 25px 15px; text-align: center; cursor: pointer; transition: 0.3s; overflow: hidden;
-        }
-        .workout-btn:hover { border-color: #444; background: #111; }
-        .workout-btn.selected {
-            border-color: var(--primary); background: rgba(0, 255, 157, 0.05);
-            box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.05);
-        }
-        .workout-btn.selected .muscle-icon { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--primary)); }
-        .workout-btn.selected .muscle-name { color: var(--primary); }
+        /* BOTÕES DE AÇÃO */
+        .btn-grid { display: grid; gap: 15px; margin-bottom: 40px; }
         
-        .muscle-icon { font-size: 2rem; display: block; margin-bottom: 10px; transition: 0.3s; }
-        .muscle-name { font-size: 0.8rem; font-weight: bold; color: #666; letter-spacing: 1px; transition: 0.3s; }
-
-        /* ACTION BTN */
-        .action-btn { 
-            width: 100%; background: transparent; color: var(--primary); 
-            font-family: 'Courier New', monospace; font-weight: bold; 
-            border: 1px solid var(--primary); padding: 18px; cursor: pointer; 
-            font-size: 0.9rem; transition: all 0.2s; margin-top: 15px;
-            letter-spacing: 2px; border-radius: 6px;
-            text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
-        }
-        .action-btn:active { transform: scale(0.98); }
-        .action-btn:disabled { border-color: #333; color: #444; cursor: not-allowed; text-shadow: none; }
-        .success-anim { background: var(--primary) !important; color: black !important; box-shadow: 0 0 20px var(--primary) !important; }
-
-        /* MODAL */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px);
-        }
-        .modal-box {
-            background: #0a0a0a; border: 1px solid var(--primary); padding: 30px; width: 85%; max-width: 400px;
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.1); border-radius: 8px;
-        }
-        .modal-input {
-            width: 100%; background: #151515; border: 1px solid #333; color: white;
-            padding: 15px; margin-bottom: 12px; font-family: monospace; box-sizing: border-box;
+        .btn-action {
+            width: 100%; background: transparent; 
+            padding: 20px; cursor: pointer; border-radius: 4px;
+            font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.9rem;
+            transition: 0.2s; position: relative; overflow: hidden;
         }
 
-        /* CALENDÁRIO */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .calendar-day {
-            aspect-ratio: 1; background: #111; border: 1px solid #222; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; color: #444; transition: 0.2s;
+        /* Botão Recompensa (Verde) */
+        .btn-claim {
+            border: 1px solid var(--primary); color: var(--primary);
         }
-        .calendar-day.active { background: var(--primary); color: black; font-weight: bold; box-shadow: 0 0 8px var(--primary); border-color: var(--primary); }
-        .calendar-day.today { border: 1px solid white; color: white; }
+        .btn-claim:hover { background: var(--primary-dim); box-shadow: 0 0 20px var(--primary-dim); }
+        .btn-claim:disabled { border-color: #333; color: #333; cursor: not-allowed; box-shadow: none; }
+
+        /* Botão Falha (Vermelho) */
+        .btn-fail {
+            border: 1px solid var(--alert); color: var(--alert);
+        }
+        .btn-fail:hover { background: rgba(255, 42, 42, 0.1); box-shadow: 0 0 20px rgba(255, 42, 42, 0.1); }
+
+        /* LOJA (ARSENAL) */
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .shop-item {
+            background: #0a0a0a; border: 1px solid #222; padding: 15px; text-align: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .shop-item:hover { border-color: white; }
+        .shop-icon { font-size: 1.5rem; display: block; margin-bottom: 10px; }
+        .shop-name { font-size: 0.7rem; color: #888; }
+        
+        /* LOGS */
+        .log-entry { 
+            border-left: 2px solid #333; padding-left: 10px; margin-bottom: 10px; 
+            font-size: 0.7rem; color: #666; 
+        }
 
         /* NAV */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(0,0,0,0.95); border-top: 1px solid #222;
-            display: flex; justify-content: space-around; align-items: center; z-index: 100; backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(5,5,5,0.95); border-top: 1px solid #222;
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
+            backdrop-filter: blur(5px);
         }
-        .nav-item { text-align: center; color: #555; font-size: 0.65rem; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); transform: translateY(-2px); }
-        .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
-        .nav-item.active .nav-icon { text-shadow: 0 0 10px var(--primary); }
+        .nav-item { color: #444; font-size: 0.7rem; cursor: pointer; text-align: center; }
+        .nav-item.active { color: white; text-shadow: 0 0 10px white; }
+        .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 3px; }
 
-        .screen { display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .screen.active { display: block; opacity: 1; }
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:var(--primary); z-index:999; flex-direction: column; gap: 10px;}
+        .screen { display: none; animation: fadeIn 0.3s; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+        
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:white; z-index:999; flex-direction:column; gap:10px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -161,150 +122,98 @@
 <body>
 
     <div id="loading">
-        <div style="letter-spacing: 2px; font-weight:bold;">SYSTEM BOOT</div>
+        <div style="letter-spacing: 3px;">PROTOCOL: FOCUS</div>
+        <div style="font-size:0.7rem; color:#666;">SINCRONIZANDO...</div>
     </div>
 
-    <div id="screen-status" class="screen active">
-        
-        <div class="hud-header">
-            <div class="hud-content">
-                <div style="padding-right: 60px;"> <div class="hud-label">IDENTIFICAÇÃO</div>
-                    <div class="hud-value" id="playerName">...</div>
-                    
-                    <div class="edit-btn" onclick="abrirModal()">[ EDITAR DADOS ]</div>
-
-                    <div style="margin-top: 25px;">
-                        <div class="hud-label">CLASSIFICAÇÃO</div>
-                        <div class="hud-value" id="rankName" style="color:white; font-size:1rem;">...</div>
-                    </div>
-                </div>
+    <div id="screen-focus" class="screen active">
+        <div class="header">
+            <div>
+                <div class="user-label">OPERADOR</div>
+                <div class="user-val" id="playerName">...</div>
             </div>
-
-            <div class="rank-badge" id="rankLetter">-</div>
-        </div>
-
-        <div class="hud-label" style="margin-left:5px;">STATUS FÍSICO</div>
-        <div class="stats-grid">
-            <div class="stat-card" onclick="abrirModal()">
-                <div class="stat-val" id="dispWeight">--</div>
-                <div class="stat-lbl">PESO (KG)</div>
-            </div>
-            <div class="stat-card" onclick="abrirModal()">
-                <div class="stat-val" id="dispHeight">--</div>
-                <div class="stat-lbl">ALTURA (CM)</div>
-            </div>
-            <div class="stat-card" onclick="abrirModal()">
-                <div class="stat-val" id="dispAge">--</div>
-                <div class="stat-lbl">IDADE</div>
+            <div style="text-align: right;">
+                <div class="user-label">RANK</div>
+                <div class="user-val" id="rankDisplay">-</div>
             </div>
         </div>
-        
-        <div style="text-align:center; margin-bottom:25px; font-size:0.7rem; color:#666; letter-spacing: 1px;">
-            IMC: <span id="imcVal" style="color:var(--primary); font-weight:bold;">CALCULANDO...</span>
+
+        <div class="timer-container">
+            <div class="timer-label">TEMPO DE FOCO ABSOLUTO</div>
+            <div class="main-timer" id="timerDisplay">00:00:00</div>
+            <div class="timer-unit">HORAS : MIN : SEG</div>
         </div>
 
-        <div class="stat-box">
-            <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:#888; letter-spacing: 1px;">
-                <span>PROGRESSO (XP)</span>
-                <span id="xpText">0 / 1000</span>
+        <div class="xp-box">
+            <div class="xp-header">
+                <span>MENTALIDADE (XP)</span>
+                <span id="xpText">0 / 500</span>
             </div>
-            <div class="bar-container"><div class="bar-fill" id="xpBar"></div></div>
+            <div class="xp-track"><div class="xp-fill" id="xpBar"></div></div>
         </div>
 
-        <div style="border-top: 1px solid #222; padding-top: 25px;">
-            <div class="hud-label" style="margin-bottom: 20px; text-align: center;">SELECIONAR PROTOCOLO</div>
-            
-            <div class="workout-grid">
-                <div class="workout-btn" id="btn-push" onclick="selectW('PUSH', this)">
-                    <span class="muscle-icon">🦍</span><span class="muscle-name">PUSH</span>
-                </div>
-                <div class="workout-btn" id="btn-pull" onclick="selectW('PULL', this)">
-                    <span class="muscle-icon">🦅</span><span class="muscle-name">PULL</span>
-                </div>
-                <div class="workout-btn" id="btn-legs" onclick="selectW('LEGS', this)">
-                    <span class="muscle-icon">🦖</span><span class="muscle-name">LEGS</span>
-                </div>
-                <div class="workout-btn" id="btn-cardio" onclick="selectW('CARDIO', this)">
-                    <span class="muscle-icon">⚡</span><span class="muscle-name">CARDIO</span>
-                </div>
-            </div>
+        <div class="btn-grid">
+            <button id="btnClaim" class="btn-action btn-claim" disabled onclick="claimBonus()">
+                RESGATAR NEURO-XP (+100)
+                <div style="font-size:0.6rem; margin-top:5px; opacity:0.7;">DISPONÍVEL A CADA 24H</div>
+            </button>
 
-            <button id="btnConfirmar" class="action-btn" disabled onclick="confirmarTreino()">AGUARDANDO SELEÇÃO</button>
-        </div>
-
-        <div style="margin-top: 40px; border: 1px dashed var(--gold); padding: 20px; text-align: center; border-radius: 12px; background: rgba(255, 215, 0, 0.02);">
-            <div style="color:var(--gold); font-size:0.8rem; margin-bottom:8px; letter-spacing: 1px;">⚡ BOOST DE TESTOSTERONA</div>
-            <button id="btnBuff" class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:10px; font-size: 0.8rem;" onclick="ativarBuff()">
-                RESGATAR (+20 XP)
+            <button id="btnReset" class="btn-action btn-fail" onclick="failProtocol()">
+                ⚠️ RELATAR FALHA / RECAÍDA
+                <div style="font-size:0.6rem; margin-top:5px; opacity:0.7;">REINICIA O CONTADOR</div>
             </button>
         </div>
     </div>
 
     <div id="screen-shop" class="screen">
-        <div class="hud-header">
-            <div class="hud-label">MERCADO NEGRO</div>
-            <div class="hud-value">SUPRIMENTOS</div>
+        <div class="header">
+            <div class="user-label">ARSENAL</div>
+            <div class="user-val">BIO-HACKING</div>
         </div>
-        <div class="workout-grid">
-            <div class="workout-btn" onclick="goShop('https://amazon.com.br/creatina')">
-                <span class="muscle-icon">🧪</span><span class="muscle-name">CREATINA</span>
+        
+        <div class="shop-grid">
+            <div class="shop-item" onclick="openLink('https://amazon.com.br/kindle')">
+                <span class="shop-icon">📚</span>
+                <span class="shop-name">KINDLE (LEITURA)</span>
             </div>
-            <div class="workout-btn" onclick="goShop('https://amazon.com.br/whey')">
-                <span class="muscle-icon">🥤</span><span class="muscle-name">WHEY</span>
+            <div class="shop-item" onclick="openLink('https://amazon.com.br/cafeina')">
+                <span class="shop-icon">💊</span>
+                <span class="shop-name">NOOTRÓPICOS</span>
             </div>
-            <div class="workout-btn" onclick="goShop('https://amazon.com.br/pretreino')">
-                <span class="muscle-icon">☠️</span><span class="muscle-name">PRÉ-TREINO</span>
+            <div class="shop-item" onclick="openLink('https://amazon.com.br/bloqueadorazul')">
+                <span class="shop-icon">👓</span>
+                <span class="shop-name">ÓCULOS BLUE-LIGHT</span>
             </div>
-            <div class="workout-btn" onclick="goShop('https://amazon.com.br/acessorios')">
-                <span class="muscle-icon">🎒</span><span class="muscle-name">GEAR</span>
+            <div class="shop-item" onclick="openLink('https://amazon.com.br/fones')">
+                <span class="shop-icon">🎧</span>
+                <span class="shop-name">NOISE CANCELLING</span>
             </div>
+        </div>
+        
+        <div style="text-align:center; margin-top:30px; border:1px dashed #333; padding:15px;">
+            <div style="color:#666; font-size:0.7rem; margin-bottom:10px;">SUPORTE O DESENVOLVEDOR</div>
+            <button class="btn-action btn-claim" onclick="openLink('https://otieu.com/4/10557860')">
+                DOAR VISUALIZAÇÃO (AD)
+            </button>
         </div>
     </div>
 
     <div id="screen-log" class="screen">
-        <div class="hud-header">
-            <div class="hud-label">CONSTÂNCIA</div>
-            <div class="hud-value">MATRIZ MENSAL</div>
+        <div class="header">
+            <div class="user-label">BANCO DE DADOS</div>
+            <div class="user-val">HISTÓRICO</div>
         </div>
-        <div style="margin-bottom: 25px;">
-            <div style="text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 10px;" id="currentMonthLabel">MÊS ATUAL</div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
-        <div class="hud-label" style="margin-top:30px;">REGISTROS RECENTES</div>
-        <div id="logList" style="font-size:0.7rem; color:#888; margin-top:10px;"></div>
-        <button class="action-btn" onclick="logout()" style="border-color:#ff3333; color:#ff3333; margin-top:40px; font-size: 0.8rem;">DESCONECTAR</button>
-    </div>
-
-    <div id="modalProfile" class="modal-overlay">
-        <div class="modal-box">
-            <div class="hud-label" style="margin-bottom:20px; font-size:1rem; text-align: center;">ATUALIZAR BIO-DADOS</div>
-            
-            <label class="hud-label">CODENAME</label>
-            <input type="text" id="editName" class="modal-input" placeholder="Seu Nome">
-            
-            <div style="display:flex; gap:10px;">
-                <div style="width:50%">
-                    <label class="hud-label">PESO (KG)</label>
-                    <input type="number" id="editWeight" class="modal-input" placeholder="Ex: 80">
-                </div>
-                <div style="width:50%">
-                    <label class="hud-label">ALTURA (CM)</label>
-                    <input type="number" id="editHeight" class="modal-input" placeholder="Ex: 175">
-                </div>
-            </div>
-            
-            <label class="hud-label">IDADE (ANOS)</label>
-            <input type="number" id="editAge" class="modal-input" placeholder="Ex: 25">
-
-            <button onclick="salvarPerfil()" class="action-btn" id="btnSalvar">SALVAR NO SISTEMA</button>
-            <button onclick="fecharModal()" class="action-btn" style="border:none; color:#666; margin-top:5px; font-size: 0.8rem;">CANCELAR</button>
-        </div>
+        <div id="logList">Carregando dados...</div>
+        
+        <button class="btn-action btn-fail" onclick="logout()" style="margin-top:30px; border-color:#333; color:#666;">
+            DESCONECTAR SISTEMA
+        </button>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="nav('status', this)"><span class="nav-icon">📊</span>STATUS</div>
-        <div class="nav-item" onclick="nav('shop', this)"><span class="nav-icon">🛒</span>LOJA</div>
-        <div class="nav-item" onclick="nav('log', this)"><span class="nav-icon">📅</span>AGENDA</div>
+        <div class="nav-item active" onclick="nav('focus', this)"><span class="nav-icon">◉</span>FOCO</div>
+        <div class="nav-item" onclick="nav('shop', this)"><span class="nav-icon">⚡</span>ARSENAL</div>
+        <div class="nav-item" onclick="nav('log', this)"><span class="nav-icon">≡</span>LOGS</div>
     </div>
 
     <script>
@@ -322,200 +231,194 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
             let currentUser = null;
-            let treinoAtual = "";
+            let lastResetTime = null; // Timestamp do último reset
+            let timerInterval = null;
 
+            // Remove SW antigo
             if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
 
             auth.onAuthStateChanged((user) => {
                 if (!user) window.location.href = "index.html";
-                else { currentUser = user; initSystem(); }
+                else { currentUser = user; initProtocol(); }
             });
 
-            // UI LOGIC
+            // --- NAVEGAÇÃO ---
             window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 document.getElementById('screen-' + id).classList.add('active');
                 el.classList.add('active');
-                if(id === 'log') renderCalendar();
             }
 
-            window.selectW = (tipo, el) => {
-                treinoAtual = tipo;
-                document.querySelectorAll('.workout-btn').forEach(b => b.classList.remove('selected'));
-                el.classList.add('selected');
-                const btn = document.getElementById('btnConfirmar');
-                btn.disabled = false;
-                btn.innerText = "INICIAR: " + tipo;
-                btn.style.boxShadow = "0 0 15px rgba(0,255,157,0.2)";
-            }
-
-            window.abrirModal = () => document.getElementById('modalProfile').style.display = 'flex';
-            window.fecharModal = () => document.getElementById('modalProfile').style.display = 'none';
-
+            // --- SISTEMA DE RANKS (MENTAL) ---
             function getRank(xp) {
-                if(xp < 1000) return { l: "E", t: "INICIANTE", n: 1000 };
-                if(xp < 3000) return { l: "D", t: "EM CONSTRUÇÃO", n: 3000 };
-                if(xp < 6000) return { l: "C", t: "PROJETO ATLETA", n: 6000 };
-                if(xp < 10000) return { l: "B", t: "SHAPE INEXPLICÁVEL", n: 10000 };
-                if(xp < 20000) return { l: "A", t: "MUTANTE", n: 20000 };
-                return { l: "S", t: "OLYMPIA", n: 50000 };
+                if(xp < 500) return { t: "NOVIÇO", n: 500 };
+                if(xp < 1500) return { t: "DISCIPLINADO", n: 1500 };
+                if(xp < 3000) return { t: "ESTOICO", n: 3000 };
+                if(xp < 6000) return { t: "SOBERANO", n: 6000 };
+                return { t: "ILUMINADO", n: 10000 };
             }
 
-            function calcIMC(weight, height) {
-                if(!weight || !height) return "PENDENTE";
-                const hM = height / 100;
-                const imc = weight / (hM * hM);
-                if(imc < 18.5) return "ABAIXO DO PESO";
-                if(imc < 24.9) return "EUTRÓFICO";
-                if(imc < 29.9) return "SOBREPESO";
-                return "OBESIDADE";
-            }
-
-            function initSystem() {
+            // --- CORE LOGIC ---
+            function initProtocol() {
                 db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
                     if(doc.exists) {
                         const d = doc.data();
-                        const xp = d.coins || 0;
+                        const xp = d.coins || 0; // Usando 'coins' como XP Mental
                         const rank = getRank(xp);
                         
-                        document.getElementById('playerName').innerText = d.username || "Atleta";
-                        document.getElementById('rankLetter').innerText = rank.l;
-                        document.getElementById('rankName').innerText = rank.t;
+                        document.getElementById('playerName').innerText = d.username || "USER_01";
+                        document.getElementById('rankDisplay').innerText = rank.t;
                         
-                        document.getElementById('dispWeight').innerText = d.weight || "--";
-                        document.getElementById('dispHeight').innerText = d.height || "--";
-                        document.getElementById('dispAge').innerText = d.age || "--";
-                        document.getElementById('imcVal').innerText = calcIMC(d.weight, d.height);
-
-                        document.getElementById('editName').value = d.username || "";
-                        document.getElementById('editWeight').value = d.weight || "";
-                        document.getElementById('editHeight').value = d.height || "";
-                        document.getElementById('editAge').value = d.age || "";
-
+                        // XP Bar
                         const pct = Math.min((xp / rank.n) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
                         document.getElementById('xpText').innerText = `${xp} / ${rank.n}`;
+
+                        // Timer Logic
+                        if(d.lastReset) {
+                            lastResetTime = d.lastReset.toDate();
+                        } else {
+                            // Se nunca resetou, marca agora como inicio
+                            lastResetTime = new Date();
+                            db.collection("users").doc(currentUser.uid).update({ 
+                                lastReset: firebase.firestore.FieldValue.serverTimestamp() 
+                            });
+                        }
                         
+                        startTimer();
                         document.getElementById('loading').style.display = 'none';
                     } else {
-                        db.collection("users").doc(currentUser.uid).set({coins:0, username:"Player"}, {merge:true});
+                        db.collection("users").doc(currentUser.uid).set({
+                            coins: 0, 
+                            username: "INICIADO",
+                            lastReset: firebase.firestore.FieldValue.serverTimestamp()
+                        }, {merge:true});
                     }
+                });
+
+                // Carrega Logs
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                    const list = document.getElementById('logList');
+                    list.innerHTML = "";
+                    snap.forEach(d => {
+                        const val = d.data();
+                        const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
+                        const cor = val.type.includes("FALHA") ? "#ff2a2a" : "#00ff9d";
+                        list.innerHTML += `
+                            <div class="log-entry" style="border-color:${cor}">
+                                <div style="color:white; font-weight:bold;">${val.type}</div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>${date}</span>
+                                    <span style="color:${cor}">${val.value > 0 ? '+' + val.value + ' XP' : 'RESET'}</span>
+                                </div>
+                            </div>`;
+                    });
                 });
             }
 
-            window.confirmarTreino = async () => {
-                const btn = document.getElementById('btnConfirmar');
-                btn.disabled = true;
-                btn.innerText = "REGISTRANDO...";
+            function startTimer() {
+                if(timerInterval) clearInterval(timerInterval);
+                
+                timerInterval = setInterval(() => {
+                    if(!lastResetTime) return;
+                    
+                    const now = new Date();
+                    const diff = now - lastResetTime; // milisegundos
+                    
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    // Formatação com Zeros (01:05:09)
+                    const hStr = hours.toString().padStart(2, '0');
+                    const mStr = mins.toString().padStart(2, '0');
+                    const sStr = secs.toString().padStart(2, '0');
+
+                    document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}:${sStr}`;
+
+                    // Lógica do Botão Claim (Só libera após 24h = 86400000ms)
+                    // Para testes, vamos deixar 10 segundos (10000ms)
+                    // Na versão final mude 10000 para 86400000
+                    const btnClaim = document.getElementById('btnClaim');
+                    if(diff > 86400000) { 
+                        btnClaim.disabled = false;
+                        btnClaim.style.opacity = "1";
+                    } else {
+                        btnClaim.disabled = true;
+                        btnClaim.style.opacity = "0.5";
+                    }
+
+                }, 1000);
+            }
+
+            // --- AÇÕES DO USUÁRIO ---
+
+            // 1. FALHA (REINICIAR) - Onde entra o Ad Punitivo
+            window.failProtocol = async () => {
+                if(!confirm("CONFIRMAR FALHA DE PROTOCOLO?\nIsso vai zerar seu contador e exibir um anúncio punitivo.")) return;
+                
+                // Abre o Ad (Punição)
+                window.open('https://otieu.com/4/10557860', '_blank');
+
+                const btn = document.getElementById('btnReset');
+                btn.innerText = "REINICIANDO SISTEMA...";
                 
                 try {
+                    // Reseta o Tempo no Banco
+                    await db.collection("users").doc(currentUser.uid).update({
+                        lastReset: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Registra a Vergonha no Histórico
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Treino: " + treinoAtual, value: 100,
+                        userId: currentUser.uid,
+                        type: "⚠️ FALHA DE DISCIPLINA",
+                        value: 0,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
-                    
-                    btn.classList.add('success-anim');
-                    btn.innerText = "PROTOCOLO CONCLUÍDO!";
-                    
-                    setTimeout(() => {
-                        btn.classList.remove('success-anim');
-                        btn.innerText = "AGUARDANDO SELEÇÃO";
-                        btn.disabled = true;
-                        btn.style.boxShadow = "none";
-                        document.querySelectorAll('.workout-btn').forEach(b => b.classList.remove('selected'));
-                    }, 2000);
+
                 } catch(e) { console.error(e); }
+                
+                btn.innerText = "⚠️ RELATAR FALHA / RECAÍDA";
             }
 
-            window.salvarPerfil = async () => {
-                const btn = document.getElementById('btnSalvar');
-                btn.innerText = "SALVANDO...";
-                const name = document.getElementById('editName').value;
-                const w = parseFloat(document.getElementById('editWeight').value);
-                const h = parseFloat(document.getElementById('editHeight').value);
-                const a = parseFloat(document.getElementById('editAge').value);
-
-                try {
-                    await db.collection("users").doc(currentUser.uid).set({
-                        username: name, weight: w || 0, height: h || 0, age: a || 0
-                    }, { merge: true });
-                    fecharModal();
-                    btn.innerText = "SALVAR NO SISTEMA";
-                } catch(e) { alert("Erro ao salvar: " + e.message); }
-            }
-
-            window.ativarBuff = async () => {
-                const btn = document.getElementById('btnBuff');
+            // 2. RECOMPENSA (24H)
+            window.claimBonus = async () => {
+                const btn = document.getElementById('btnClaim');
+                
+                // Abre Ad (Recompensa)
                 window.open('https://otieu.com/4/10557860', '_blank');
-                btn.innerText = "ABSORVENDO..."; btn.disabled = true;
+
+                btn.innerText = "SINTONIZANDO...";
+                btn.disabled = true;
+
                 try {
+                    // Dá XP
+                    await db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(100),
+                        // Opcional: Se quiser resetar o timer a cada 24h para forçar novo ciclo, descomente abaixo:
+                        // lastReset: firebase.firestore.FieldValue.serverTimestamp() 
+                    });
+
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Buff de Sistema", value: 20,
+                        userId: currentUser.uid,
+                        type: "✅ CICLO 24H COMPLETO",
+                        value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
-                    setTimeout(() => {
-                        btn.classList.add('success-anim'); btn.innerText = "+20 XP OBTIDO"; btn.style.color = "black";
-                    }, 1000);
-                    setTimeout(() => {
-                        btn.classList.remove('success-anim'); btn.style.color = "var(--gold)"; btn.innerText = "RESGATAR NOVAMENTE"; btn.disabled = false;
-                    }, 15000);
+
+                    alert("XP ADICIONADO. MANTENHA O FOCO.");
+
                 } catch(e) { console.error(e); }
+
+                btn.innerText = "RESGATAR NEURO-XP (+100)";
             }
 
-            window.goShop = (url) => window.open(url, '_blank');
-
-            let userLogs = [];
-            function renderCalendar() {
-                const grid = document.getElementById('calendarGrid');
-                const list = document.getElementById('logList');
-                grid.innerHTML = ""; list.innerHTML = "";
-                const now = new Date();
-                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                const today = now.getDate();
-                document.getElementById('currentMonthLabel').innerText = now.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(30).onSnapshot(snap => {
-                    userLogs = [];
-                    snap.forEach(d => userLogs.push(d.data()));
-                    drawGrid(daysInMonth, today);
-                });
-            }
-
-            function drawGrid(totalDays, today) {
-                const grid = document.getElementById('calendarGrid');
-                grid.innerHTML = "";
-                const activeDays = new Set();
-                userLogs.forEach(log => {
-                    if(log.date) {
-                        const d = log.date.toDate();
-                        if(d.getMonth() === new Date().getMonth()) activeDays.add(d.getDate());
-                    }
-                });
-                for(let i = 1; i <= totalDays; i++) {
-                    const dayBox = document.createElement('div');
-                    dayBox.className = 'calendar-day';
-                    dayBox.innerText = i;
-                    if(activeDays.has(i)) dayBox.classList.add('active');
-                    if(i === today) dayBox.classList.add('today');
-                    grid.appendChild(dayBox);
-                }
-                const list = document.getElementById('logList');
-                list.innerHTML = "";
-                userLogs.slice(0, 5).forEach(log => {
-                    const d = log.date ? log.date.toDate().toLocaleDateString('pt-BR') : "-";
-                    const cor = log.type.includes("Buff") ? "var(--gold)" : "white";
-                    list.innerHTML += `<div style="border-bottom:1px solid #222; padding:8px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="color:${cor}; letter-spacing:1px;">${log.type.replace("Treino: ", "")}</span>
-                        <span style="color:#666; font-size:0.6rem;">${d}</span>
-                    </div>`;
-                });
-            }
-
+            window.openLink = (url) => window.open(url, '_blank');
             window.logout = () => auth.signOut().then(() => window.location.reload());
 
-        } catch(e) { alert("Erro crítico: " + e.message); }
+        } catch(e) { alert("ERRO: " + e.message); }
     </script>
 </body>
 </html>
