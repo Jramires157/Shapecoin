@@ -1,41 +1,284 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCUS | Acesso</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>FOCO - Acesso</title>
+    <title>FOCUS | Login</title>
+
+    <meta name="theme-color" content="#00ff9d">
+    <meta name="theme-color" content="#F2F0E9">
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
-        :root { --bg: #F2F0E9; --surface: #FFFFFF; --text: #1A1A1A; --muted: #8E8E8E; }
-        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; justify-content: center; padding: 40px; }
-        .brand { text-align: center; margin-bottom: 50px; }
-        .logo { font-size: 0.9rem; letter-spacing: 3px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
-        .tagline { font-size: 1.8rem; font-weight: 300; margin-top: 15px; }
+        :root { --primary: #00ff9d; --bg: #050505; }
+        /* PALETA QUIET LUXURY */
+        :root { 
+            --bg: #F2F0E9; 
+            --surface: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-muted: #8E8E8E;
+            --border: #E5E5E5;
+            --black-btn: #111111;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body { 
+            background-color: var(--bg); color: white; font-family: sans-serif; 
+            margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; 
+            background-color: var(--bg); color: var(--text-main); 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; padding: 40px;
+            display: flex; flex-direction: column; 
+            min-height: 100vh; justify-content: center;
+        }
+
+        .login-card {
+            background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333;
+            width: 85%; max-width: 350px; text-align: center;
+        /* LOGO */
+        .brand-area { text-align: center; margin-bottom: 50px; animation: fadeDown 0.8s ease; }
+        .logo { 
+            font-size: 0.9rem; letter-spacing: 2px; font-weight: 600; 
+            text-transform: uppercase; color: var(--text-muted);
+        }
+        .tagline {
+            font-size: 1.8rem; font-weight: 300; margin-top: 15px; 
+            line-height: 1.2; color: var(--text-main);
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 3rem; letter-spacing: -2px; }
+        p { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
+        /* CARD DE LOGIN (LIMPO) */
+        .login-card {
+            animation: fadeUp 0.8s ease;
+        }
+
+        input {
+            width: 100%; padding: 15px; margin: 10px 0; background: #222; 
+            border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box;
+        /* INPUTS ESTILO ATELIER */
         .input-group { margin-bottom: 20px; }
-        .input { width: 100%; padding: 22px; border-radius: 100px; border: 1px solid transparent; background: var(--surface); font-family: 'Outfit'; font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .btn { width: 100%; padding: 22px; border-radius: 100px; border: none; font-family: 'Outfit'; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .btn-black { background: #111; color: #FFF; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .btn-ghost { background: transparent; color: var(--muted); margin-top: 20px; }
+        .clean-input {
+            width: 100%; padding: 22px 25px; 
+            border-radius: 100px; /* Pílula */
+            border: 1px solid transparent;
+            background: var(--surface); 
+            font-family: 'Outfit'; font-size: 1rem; color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: 0.3s;
+        }
+        .clean-input:focus {
+            border-color: #DDD; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+        .clean-input::placeholder { color: #BBB; font-weight: 300; }
+
+        /* BOTÕES */
+        .btn {
+            width: 100%; padding: 22px; border-radius: 100px; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 1rem;
+            cursor: pointer; transition: transform 0.2s, opacity 0.2s;
+            margin-top: 10px;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        /* BOTÕES LADO A LADO */
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-primary { 
+            background: var(--black-btn); color: #FFF; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        button {
+            width: 100%; padding: 15px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; font-weight: bold; border: none;
+        .btn-ghost {
+            background: transparent; color: var(--text-muted);
+            font-size: 0.9rem; margin-top: 20px;
+        }
+        .btn-ghost:hover { color: var(--text-main); }
+
+        /* MENSAGEM DE ERRO */
+        #error-msg {
+            color: #D64545; text-align: center; font-size: 0.8rem;
+            margin-bottom: 20px; min-height: 20px; opacity: 0; transition: opacity 0.3s;
+        }
+
+        .btn-login { background: var(--primary); color: black; }
+        .btn-register { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        /* FOOTER */
+        .footer {
+            text-align: center; margin-top: auto; 
+            font-size: 0.7rem; color: #AAA; padding-top: 40px;
+        }
+
+        #status { margin-top: 20px; color: yellow; font-size: 0.8rem; min-height: 20px; }
+        /* ANIMAÇÕES */
+        @keyframes fadeUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+        @keyframes fadeDown { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
+        
+        /* LOADING OVERLAY */
+        #loading-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: var(--bg); z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted);
+        }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+@@ -47,19 +116,30 @@
 </head>
 <body>
-    <div class="brand">
+
+    <div id="loading-overlay">ATELIER</div>
+
+    <div class="brand-area">
         <div class="logo">FOCUS • OS</div>
         <div class="tagline">Domine sua mente.<br>Recupere seu tempo.</div>
     </div>
-    <div class="input-group"><input type="email" id="email" class="input" placeholder="E-mail"></div>
-    <div class="input-group"><input type="password" id="password" class="input" placeholder="Senha"></div>
-    <button class="btn btn-black" id="btnLogin">Acessar Jornada</button>
-    <button class="btn btn-ghost" id="btnRegister">Criar nova conta</button>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <div class="login-card">
+        <h1>FOCO</h1>
+        <p>Onde seu suor vira moeda</p>
+        <div id="error-msg"></div>
+
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="password" id="password" placeholder="Senha (mín 6 dígitos)">
+        <div class="input-group">
+            <input type="email" id="email" class="clean-input" placeholder="seu@email.com" autocomplete="email">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-login" id="btnLogin">ENTRAR</button>
+            <button class="btn-register" id="btnRegister">CRIAR CONTA</button>
+        <div class="input-group">
+            <input type="password" id="password" class="clean-input" placeholder="Sua senha secreta">
+        </div>
+
+        <div id="status">...</div>
+        <button class="btn btn-primary" id="btnLogin">Entrar no Santuário</button>
+        <button class="btn btn-ghost" id="btnRegister">Ainda não é membro? Criar conta</button>
+    </div>
+
+    <div class="footer">
+        v2.0 • Quiet Luxury Edition
+    </div>
+
     <script>
-        const firebaseConfig = { apiKey: "SUA_API_KEY", authDomain: "SEU_PROJETO.firebaseapp.com", projectId: "SEU_PROJETO" };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        document.getElementById('btnLogin').onclick = () => auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).then(()=> location.href='dashboard.html');
-        document.getElementById('btnRegister').onclick = () => auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).then(()=> location.href='dashboard.html');
+@@ -77,69 +157,79 @@ <h1>FOCO</h1>
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+
+            document.getElementById('status').innerText = "Pronto.";
+
+            // Redireciona se já estiver logado
+            // Verifica se já está logado
+            auth.onAuthStateChanged((user) => {
+                if (user) window.location.href = "dashboard.html";
+                if (user) {
+                    window.location.href = "dashboard.html";
+                } else {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                }
+            });
+
+            // --- 1. BOTÃO ENTRAR ---
+            // LOGIN
+            document.getElementById('btnLogin').addEventListener('click', () => {
+                const email = document.getElementById('email').value;
+                const pass = document.getElementById('password').value;
+                const status = document.getElementById('status');
+                const btn = document.getElementById('btnLogin');
+
+                if(!email || !pass) return alert("Preencha tudo!");
+                if(!email || !pass) return showError("Preencha todos os campos.");
+
+                btn.innerText = "Autenticando...";
+                btn.disabled = true;
+
+                status.innerText = "ENTRANDO...";
+                auth.signInWithEmailAndPassword(email, pass)
+                    .then(() => {
+                        status.innerText = "SUCESSO!";
+                        window.location.href = "dashboard.html";
+                    })
+                    .catch((e) => {
+                        status.innerText = "ERRO: Verifique senha ou e-mail.";
+                        alert("Erro no Login: " + e.message);
+                    .catch((error) => {
+                        btn.innerText = "Entrar no Santuário";
+                        btn.disabled = false;
+                        if(error.code === 'auth/user-not-found') showError("Membro não encontrado.");
+                        else if(error.code === 'auth/wrong-password') showError("Senha incorreta.");
+                        else showError(error.message);
+                    });
+            });
+
+            // --- 2. BOTÃO CRIAR CONTA ---
+            // REGISTRO (Cria conta e já joga pro app)
+            document.getElementById('btnRegister').addEventListener('click', () => {
+                const email = document.getElementById('email').value;
+                const pass = document.getElementById('password').value;
+                const status = document.getElementById('status');
+                const btn = document.getElementById('btnRegister');
+
+                if(!email || !pass) return showError("Para criar conta, preencha email e senha acima.");
+                if(pass.length < 6) return showError("A senha precisa ter no mínimo 6 dígitos.");
+
+                if(!email || !pass) return alert("Preencha tudo!");
+                if(pass.length < 6) return alert("Senha curta! Mínimo 6 dígitos.");
+                btn.innerText = "Criando seu espaço...";
+                btn.disabled = true;
+
+                status.innerText = "CRIANDO CONTA...";
+                
+                auth.createUserWithEmailAndPassword(email, pass)
+                    .then((res) => {
+                        // Cria o documento do usuário no banco
+                        db.collection("users").doc(res.user.uid).set({
+                            email: email,
+                    .then((userCredential) => {
+                        // Cria documento inicial do usuário
+                        db.collection("users").doc(userCredential.user.uid).set({
+                            coins: 0,
+                            username: "", // Começa vazio, ele configura no painel
+                            created: firebase.firestore.FieldValue.serverTimestamp()
+                            username: "", // Será preenchido no onboarding
+                            joinDate: firebase.firestore.FieldValue.serverTimestamp()
+                        }).then(() => {
+                            status.innerText = "CONTA CRIADA!";
+                            window.location.href = "dashboard.html";
+                        });
+                    })
+                    .catch((e) => {
+                        if(e.code === 'auth/email-already-in-use') {
+                            alert("Esse e-mail já tem conta! Use o botão ENTRAR.");
+                        } else {
+                            alert("Erro ao criar: " + e.message);
+                        }
+                        status.innerText = "Tente novamente.";
+                    .catch((error) => {
+                        btn.innerText = "Ainda não é membro? Criar conta";
+                        btn.disabled = false;
+                        if(error.code === 'auth/email-already-in-use') showError("Este email já possui cadastro.");
+                        else showError(error.message);
+                    });
+            });
+
+        } catch (e) {
+            alert("Erro Fatal: " + e.message);
+            function showError(msg) {
+                const el = document.getElementById('error-msg');
+                el.innerText = msg;
+                el.style.opacity = 1;
+                setTimeout(() => { el.style.opacity = 0; }, 4000);
+            }
+
+        } catch(e) {
+            alert("Erro de sistema: " + e.message);
+        }
     </script>
 </body>
-</html>
