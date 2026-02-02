@@ -40,12 +40,12 @@
             width: 260px; height: 260px; margin: 0 auto 30px; border-radius: 50%;
             background: var(--surface); display: flex; flex-direction: column; 
             align-items: center; justify-content: center; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.04);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.04); /* Sombra Premium */
         }
         .main-time { font-size: 3.8rem; font-weight: 300; letter-spacing: -2px; line-height: 1; color: var(--text-main); }
         .time-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 15px; text-transform: uppercase; }
 
-        /* BOTÃO DE PARTILHA */
+        /* BOTÃO DE PARTILHA (Pequeno e Fino) */
         .share-container { text-align: center; margin-bottom: 30px; }
         .share-btn {
             background: transparent; border: 1px solid #D0D0D0; padding: 8px 20px;
@@ -54,9 +54,10 @@
         }
         .share-btn:hover { border-color: var(--text-main); color: var(--text-main); }
 
-        /* BOTÕES DE AÇÃO */
+        /* BOTÕES DE AÇÃO (ESTILO ANTIGO RESTAURADO) */
         .btn-stack { display:flex; flex-direction:column; align-items: center; width: 100%; }
         
+        /* O Botão Preto Sólido */
         .btn-victory {
             width: 100%; padding: 22px; border-radius: 100px;
             background: #050505; color: #FFFFFF; border: none;
@@ -68,34 +69,25 @@
         .btn-victory:active { transform: scale(0.98); }
         .btn-victory:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
+        /* O Botão de Texto Simples */
         .btn-text-link {
             background: none; border: none; color: #999;
             font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
             margin-top: 25px; cursor: pointer; padding: 10px;
             font-family: 'Outfit', sans-serif;
         }
+        .btn-text-link:hover { color: #555; }
 
-        /* LOJA & DADOS (FUNDO BRANCO PURO) */
+        /* LOJA GRID */
         .section-title { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; margin: 30px 0 15px; }
         .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        /* Cartão Branco Genérico */
-        .white-card {
-            background: #FFFFFF; border-radius: 20px; padding: 20px;
+        .ebook-card {
+            background: var(--surface); border-radius: 20px; padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.02); position: relative; cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.02); /* Borda sutil */
         }
-        
         .ebook-tag { font-size: 0.6rem; background: #000; color: #fff; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; display: inline-block; }
         .ebook-tag.premium { background: var(--gold); }
         .ebook-name { font-size: 0.85rem; font-weight: 600; line-height: 1.2; margin-bottom: 5px; }
-        
-        /* LOGS CONTAINER (CARTÃO GRANDE BRANCO) */
-        .log-container {
-            background: #FFFFFF; border-radius: 24px; padding: 10px 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
-            min-height: 200px;
-        }
         
         /* DOCK */
         .dock {
@@ -110,12 +102,14 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; }
         .modal-content { max-width: 500px; margin: 0 auto; line-height: 1.6; }
         
+        /* SHARE TEMPLATE (Hidden) */
         #share-template {
             position: absolute; left: -9999px; width: 1080px; height: 1920px;
             background: #F2F0E9; display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 100px; color: #1A1A1A; text-align: center;
         }
 
+        /* ANIMAÇÃO RESPIRAÇÃO */
         .breath-circle {
             width: 100px; height: 100px; background: #C5A059; border-radius: 50%;
             margin: 40px auto; opacity: 0.8; animation: breathe 8s infinite ease-in-out;
@@ -172,12 +166,12 @@
         
         <div class="section-title">GUIAS GRATUITOS</div>
         <div class="shop-grid">
-            <div class="white-card" onclick="openEbook('dopamina')">
+            <div class="ebook-card" onclick="openEbook('dopamina')">
                 <span class="ebook-tag">LER AGORA</span>
                 <div class="ebook-name">O Jejum de Dopamina</div>
                 <div style="font-size:0.6rem; color:#888;">Neurociência Básica</div>
             </div>
-            <div class="white-card" onclick="openEbook('social')">
+            <div class="ebook-card" onclick="openEbook('social')">
                 <span class="ebook-tag">LER AGORA</span>
                 <div class="ebook-name">Mente Digital</div>
                 <div style="font-size:0.6rem; color:#888;">Controle de Telas</div>
@@ -185,7 +179,7 @@
         </div>
 
         <div class="section-title">PROTOCOLOS PREMIUM</div>
-        <div class="white-card" style="width: 100%; margin-bottom: 15px; border: 1px solid var(--gold);">
+        <div class="ebook-card" style="width: 100%; margin-bottom: 15px; border: 1px solid var(--gold);">
             <span class="ebook-tag premium">CURSO COMPLETO</span>
             <div class="ebook-name" style="font-size: 1.1rem;">Protocolo 90 Dias: Reboot</div>
             <p style="font-size:0.75rem; color:#666; margin-top:5px;">O guia definitivo para ressensibilizar seus receptores dopaminérgicos.</p>
@@ -195,12 +189,7 @@
 
     <div id="screen-log" class="screen">
         <div class="logo" style="margin-bottom: 20px;">HISTÓRICO</div>
-        
-        <div class="log-container">
-            <div id="logList">
-                <div style="text-align:center; padding-top:40px; color:#ccc;">Carregando dados...</div>
-            </div>
-        </div>
+        <div id="logList"></div>
     </div>
 
     <div id="modalReader" class="modal">
@@ -237,7 +226,7 @@
     </div>
 
     <script>
-        // CONTEÚDO
+        // --- CONTEÚDO ---
         const ebooks = {
             'dopamina': `<h1>Jejum de Dopamina</h1><p>A dopamina é o neurotransmissor do desejo. O excesso de estímulos digitais cria resistência...</p>`,
             'social': `<h1>Mente Digital</h1><p>A recompensa variável das redes sociais vicia seu cérebro exatamente como um caça-níqueis...</p>`
@@ -302,13 +291,14 @@
                 snap.forEach(d => {
                     const v = d.data();
                     const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
-                    list.innerHTML += `<div style="padding:15px 0; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; font-size:0.8rem;">
+                    list.innerHTML += `<div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; font-size:0.8rem;">
                         <span>${v.type}</span><span style="color:#888;">${dt}</span>
                     </div>`;
                 });
             });
         }
 
+        // --- AÇÕES ---
         async function generateShareImage() {
             const target = document.getElementById('share-template');
             const diff = new Date() - lastReset;
