@@ -10,141 +10,118 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        /* PALETA "QUIET LUXURY" (Off-White & Charcoal) */
+        /* PALETA QUIET LUXURY */
         :root { 
-            --bg: #F2F0E9; /* Off-White Quente (Papel Antigo) */
-            --surface: #FFFFFF; /* Branco Puro */
-            --text-main: #1A1A1A; /* Carvão */
-            --text-muted: #888888; /* Cinza Suave */
-            --accent: #E0DDD5; /* Bege para bordas */
-            --black-btn: #111111; /* Botão Preto Fosco */
-            --shadow: rgba(0,0,0,0.04); /* Sombra ultra suave */
+            --bg: #F2F0E9; 
+            --surface: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-muted: #8E8E8E;
+            --border: #E5E5E5;
+            --black-btn: #111111;
+            --shadow: 0 10px 40px rgba(0,0,0,0.03);
         }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body { 
-            background-color: var(--bg); 
-            color: var(--text-main); 
+            background-color: var(--bg); color: var(--text-main); 
             font-family: 'Outfit', sans-serif; 
-            margin: 0; padding: 30px; padding-bottom: 110px;
+            margin: 0; padding: 25px; padding-bottom: 110px;
             overflow-x: hidden;
         }
 
         /* HEADER */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 50px;
-        }
-        .logo { 
-            font-weight: 600; letter-spacing: 1px; font-size: 0.9rem; 
-            text-transform: uppercase; color: var(--text-main);
-        }
-        .user-badge {
-            font-size: 0.8rem; color: var(--text-muted); font-weight: 400;
-            background: rgba(255,255,255,0.5); padding: 5px 12px; border-radius: 20px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .logo { font-weight: 600; letter-spacing: 1px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
+        .settings-btn { font-size: 1.2rem; cursor: pointer; color: var(--text-main); transition: 0.3s; }
+        .settings-btn:hover { opacity: 0.6; }
 
-        /* TIMER CENTRAL (Círculo Limpo) */
-        .timer-display {
-            text-align: center; margin: 40px 0; position: relative;
+        /* TIMER AREA */
+        .focus-target-badge {
+            text-align: center; background: rgba(0,0,0,0.05); color: var(--text-main);
+            display: inline-block; padding: 6px 16px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 500; margin-bottom: 20px;
         }
-        /* Círculo decorativo sutil */
+        .timer-wrapper { text-align: center; margin-bottom: 30px; }
         .timer-circle {
-            width: 260px; height: 260px; margin: 0 auto;
-            border-radius: 50%;
-            background: var(--surface);
-            box-shadow: 0 20px 60px var(--shadow);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            margin-bottom: 30px;
+            width: 260px; height: 260px; margin: 0 auto; border-radius: 50%;
+            background: var(--surface); box-shadow: var(--shadow);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .main-time { 
-            font-size: 3.2rem; font-weight: 300; color: var(--text-main); 
-            letter-spacing: -2px; line-height: 1;
-        }
-        .time-label { 
-            font-size: 0.75rem; color: var(--text-muted); 
-            text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;
-        }
+        .main-time { font-size: 3.5rem; font-weight: 300; line-height: 1; letter-spacing: -2px; color: var(--text-main); }
+        .time-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
 
-        /* PROGRESSO (Minimalista) */
-        .xp-container { padding: 0 10px; margin-bottom: 50px; }
-        .xp-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; }
-        .xp-track { width: 100%; height: 6px; background: #E5E5E5; border-radius: 10px; overflow: hidden; }
-        .xp-fill { height: 100%; width: 0%; background: var(--text-main); border-radius: 10px; transition: width 1s ease; }
+        /* FRASES MOTIVACIONAIS */
+        .quote-box {
+            text-align: center; margin-bottom: 40px; min-height: 40px;
+            padding: 0 20px;
+        }
+        .quote-text { font-size: 0.9rem; color: var(--text-main); font-style: italic; font-weight: 300; line-height: 1.4; }
 
-        /* BOTÕES (Pílulas Arredondadas) */
-        .btn-stack { display: flex; flex-direction: column; gap: 15px; }
-        
+        /* BARRA XP */
+        .xp-container { margin-bottom: 40px; padding: 0 10px; }
+        .xp-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; }
+        .xp-track { height: 4px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+        .xp-fill { height: 100%; width: 0%; background: var(--text-main); transition: width 1s ease; }
+
+        /* BOTÕES */
+        .btn-stack { display: flex; flex-direction: column; gap: 12px; }
         .btn {
-            width: 100%; padding: 22px; border-radius: 100px;
-            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem;
+            width: 100%; padding: 20px; border-radius: 100px; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.9rem;
             cursor: pointer; transition: transform 0.2s;
-            border: none; display: flex; justify-content: center; align-items: center;
         }
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--black-btn); color: #FFF; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+        .btn-ghost { background: transparent; border: 1px solid #D0D0D0; color: var(--text-muted); }
 
-        /* Botão Preto (Principal) */
-        .btn-black { 
-            background: var(--black-btn); color: #FFF; 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        /* MODAL DE CONFIGURAÇÃO (PREMIUM) */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(242, 240, 233, 0.95); z-index: 200; 
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
-        .btn-black:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
-
-        /* Botão Outline (Secundário) */
-        .btn-outline { 
-            background: transparent; color: var(--text-muted); 
-            border: 1px solid #DDD;
+        .modal-card {
+            background: var(--surface); padding: 30px; width: 90%; max-width: 400px;
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            text-align: center;
         }
-        .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); }
-
-        /* CARDS DA LOJA */
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .shop-card {
-            background: var(--surface); padding: 30px 20px; border-radius: 24px;
-            text-align: center; box-shadow: 0 10px 30px var(--shadow);
-            transition: 0.3s; cursor: pointer;
+        .modal-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 25px; color: var(--text-main); }
+        
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; margin-left: 10px;}
+        .clean-input {
+            width: 100%; padding: 15px 20px; border-radius: 15px; border: 1px solid var(--border);
+            background: #FAFAFA; font-family: 'Outfit'; font-size: 1rem; color: var(--text-main);
         }
-        .shop-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
-        .shop-icon { font-size: 1.8rem; display: block; margin-bottom: 15px; opacity: 0.8; }
-        .shop-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
-        .shop-price { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* LOGS (Histórico Limpo) */
-        .log-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 0; border-bottom: 1px solid #EAEAEA;
+        /* GRID DE HÁBITOS */
+        .habits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
+        .habit-pill {
+            padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: 0.2s;
         }
-        .log-type { font-size: 0.85rem; color: var(--text-main); }
-        .log-date { font-size: 0.7rem; color: var(--text-muted); }
-        .log-val { font-weight: 600; font-size: 0.85rem; }
+        .habit-pill.selected { background: var(--text-main); color: #FFF; border-color: var(--text-main); }
 
-        /* MENU FLUTUANTE (Dock Branco) */
+        /* DOCK FLUTUANTE */
         .dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--surface); padding: 6px; border-radius: 100px;
-            display: flex; gap: 5px; z-index: 100;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.02);
+            display: flex; gap: 5px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.08);
         }
         .dock-item {
-            padding: 14px 28px; border-radius: 50px; cursor: pointer;
+            padding: 12px 24px; border-radius: 50px; cursor: pointer;
             color: var(--text-muted); font-size: 0.8rem; font-weight: 500; transition: 0.3s;
         }
-        .dock-item.active { background: #F5F5F0; color: var(--text-main); font-weight: 600; }
+        .dock-item.active { background: #F5F5F0; color: var(--text-main); }
 
         .screen { display: none; opacity: 0; transition: opacity 0.4s; }
         .screen.active { display: block; opacity: 1; }
-        
-        #loading { 
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: var(--bg); display:flex; align-items:center; justify-content:center; 
-            color: var(--text-muted); z-index:999; font-size: 0.8rem; letter-spacing: 2px;
-        }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:999; color:#999; font-size:0.8rem; letter-spacing:2px;}
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -153,92 +130,82 @@
 </head>
 <body>
 
-    <div id="loading">FOCUS OS</div>
+    <div id="loading">ATELIER</div>
 
     <div id="screen-focus" class="screen active">
         <div class="header">
             <div class="logo">FOCUS • OS</div>
-            <div class="user-badge" id="userDisplay">Convidado</div>
+            <div class="settings-btn" onclick="openProfile()">⚙️</div>
         </div>
 
-        <div class="timer-display">
+        <div style="text-align: center;">
+            <div class="focus-target-badge" id="targetDisplay">Foco: Geral</div>
+        </div>
+
+        <div class="timer-wrapper">
             <div class="timer-circle">
                 <div class="main-time" id="timerDisplay">00:00</div>
-                <div class="time-label">Tempo Presente</div>
+                <div class="time-label">Tempo Limpo</div>
             </div>
+        </div>
+
+        <div class="quote-box">
+            <div class="quote-text" id="quoteDisplay">"A calma é a verdadeira força."</div>
         </div>
 
         <div class="xp-container">
             <div class="xp-info">
-                <span>Estado de Fluxo</span>
+                <span>Clareza Mental</span>
                 <span id="xpDisplay">0 XP</span>
             </div>
             <div class="xp-track"><div class="xp-fill" id="xpBar"></div></div>
         </div>
 
         <div class="btn-stack">
-            <button id="btnClaim" class="btn btn-black" onclick="claimBonus()" disabled>
-                Reivindicar Sessão (+100 XP)
+            <button id="btnClaim" class="btn btn-primary" onclick="claimBonus()" disabled>
+                Registrar Vitória (+100 XP)
             </button>
-
-            <button id="btnReset" class="btn btn-outline" onclick="failProtocol()">
+            <button id="btnReset" class="btn btn-ghost" onclick="failProtocol()">
                 Reiniciar Ciclo
             </button>
-        </div>
-    </div>
-
-    <div id="screen-shop" class="screen">
-        <div class="header">
-            <div class="logo">CURADORIA</div>
-            <div class="user-badge">Essenciais</div>
-        </div>
-
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:30px; line-height:1.5;">
-            Ferramentas selecionadas para maximizar sua clareza mental e produtividade.
-        </p>
-
-        <div class="shop-grid">
-            <div class="shop-card" onclick="openLink('https://amazon.com.br/kindle')">
-                <span class="shop-icon">📖</span>
-                <div class="shop-name">Kindle Paperwhite</div>
-                <div class="shop-price">Leitura Sem Distração</div>
-            </div>
-            <div class="shop-card" onclick="openLink('https://amazon.com.br/cafeina')">
-                <span class="shop-icon">☕</span>
-                <div class="shop-name">Nootrópicos</div>
-                <div class="shop-price">Foco Limpo</div>
-            </div>
-            <div class="shop-card" onclick="openLink('https://amazon.com.br/bloqueadorazul')">
-                <span class="shop-icon">👓</span>
-                <div class="shop-name">Óculos Blue Light</div>
-                <div class="shop-price">Proteção Ocular</div>
-            </div>
-            <div class="shop-card" onclick="openLink('https://amazon.com.br/fones')">
-                <span class="shop-icon">🎧</span>
-                <div class="shop-name">Noise Cancelling</div>
-                <div class="shop-price">Silêncio Absoluto</div>
-            </div>
         </div>
     </div>
 
     <div id="screen-log" class="screen">
         <div class="header">
             <div class="logo">REGISTROS</div>
-            <div class="user-badge">Histórico</div>
         </div>
+        <div id="logList" style="margin-top:20px;">Carregando...</div>
+        <button class="btn btn-ghost" onclick="logout()" style="margin-top:30px;">Sair</button>
+    </div>
 
-        <div id="logList" style="margin-top:20px;">
-            <p style="text-align:center; color:var(--text-muted);">Sincronizando...</p>
+    <div id="modalProfile" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">Sua Intenção</div>
+            
+            <div class="input-group">
+                <label class="input-label">COMO DEVEMOS TE CHAMAR?</label>
+                <input type="text" id="inputName" class="clean-input" placeholder="Seu nome">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">O QUE VOCÊ QUER SUPERAR?</label>
+                <div class="habits-grid">
+                    <div class="habit-pill" onclick="selectHabit('Redes Sociais', this)">Redes Sociais</div>
+                    <div class="habit-pill" onclick="selectHabit('Açúcar', this)">Açúcar / Doces</div>
+                    <div class="habit-pill" onclick="selectHabit('Cigarro', this)">Cigarro</div>
+                    <div class="habit-pill" onclick="selectHabit('Jogos', this)">Jogos / Apostas</div>
+                    <div class="habit-pill" onclick="selectHabit('Procrastinação', this)">Procrastinação</div>
+                    <div class="habit-pill" onclick="selectHabit('Ansiedade', this)">Ansiedade</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveProfile()">Confirmar Identidade</button>
         </div>
-
-        <button class="btn btn-outline" onclick="logout()" style="margin-top:40px; border-color:#DDD; color:#AAA;">
-            Desconectar
-        </button>
     </div>
 
     <div class="dock">
         <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
-        <div class="dock-item" onclick="nav('shop', this)">Loja</div>
         <div class="dock-item" onclick="nav('log', this)">Dados</div>
     </div>
 
@@ -252,6 +219,17 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
+        const quotes = [
+            "Respire. Você está no controle.",
+            "Um dia de cada vez. Um passo de cada vez.",
+            "O silêncio é uma resposta poderosa.",
+            "Sua paz vale mais que qualquer prazer momentâneo.",
+            "A disciplina é a forma mais alta de amor próprio.",
+            "Você é mais forte do que a sua vontade de desistir.",
+            "O agora é o único momento que existe.",
+            "Sua mente é um santuário. Proteja-a."
+        ];
+
         try {
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
@@ -259,6 +237,7 @@
             let currentUser = null;
             let lastResetTime = null;
             let timerInterval = null;
+            let selectedHabit = "Geral";
 
             if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
 
@@ -267,7 +246,6 @@
                 else { currentUser = user; initApp(); }
             });
 
-            // NAV
             window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
@@ -276,26 +254,40 @@
             }
 
             function initApp() {
+                // Sorteia Frase
+                document.getElementById('quoteDisplay').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
                 db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
                     if(doc.exists) {
                         const d = doc.data();
                         const xp = d.coins || 0;
-                        document.getElementById('userDisplay').innerText = d.username || "Membro";
+                        selectedHabit = d.focusTarget || "Geral";
                         
-                        // XP Bar
+                        document.getElementById('targetDisplay').innerText = "Livre de: " + selectedHabit;
+                        document.getElementById('inputName').value = d.username || "";
+                        
+                        // Atualiza seleção visual no modal
+                        document.querySelectorAll('.habit-pill').forEach(p => {
+                            if(p.innerText.includes(selectedHabit)) p.classList.add('selected');
+                            else p.classList.remove('selected');
+                        });
+
                         const target = 500;
                         const pct = Math.min((xp / target) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
                         document.getElementById('xpDisplay').innerText = `${xp} XP`;
 
-                        // Timer
                         if(d.lastReset) { lastResetTime = d.lastReset.toDate(); } 
                         else { lastResetTime = new Date(); db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }); }
                         
                         startTimer();
                         document.getElementById('loading').style.display = 'none';
+
+                        // Se não tiver nome, abre modal
+                        if(!d.username) openProfile();
+
                     } else {
-                        db.collection("users").doc(currentUser.uid).set({ coins: 0, username: "Convidado", lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0, lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
                     }
                 });
 
@@ -306,16 +298,10 @@
                     snap.forEach(d => {
                         const val = d.data();
                         const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
-                        const isPos = val.value > 0;
                         list.innerHTML += `
-                            <div class="log-item">
-                                <div>
-                                    <div class="log-type">${val.type}</div>
-                                    <div class="log-date">${date}</div>
-                                </div>
-                                <div class="log-val" style="color: ${isPos ? '#1A1A1A' : '#999'}">
-                                    ${isPos ? '+' : ''}${val.value}
-                                </div>
+                            <div style="padding:15px 0; border-bottom:1px solid #E5E5E5; display:flex; justify-content:space-between;">
+                                <div><div style="font-size:0.9rem;">${val.type}</div><div style="font-size:0.7rem; color:#999;">${date}</div></div>
+                                <div style="font-weight:600;">${val.value > 0 ? '+' : ''}${val.value}</div>
                             </div>`;
                     });
                 });
@@ -326,54 +312,70 @@
                 timerInterval = setInterval(() => {
                     if(!lastResetTime) return;
                     const diff = new Date() - lastResetTime;
-                    
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const hStr = hours.toString().padStart(2, '0');
                     const mStr = mins.toString().padStart(2, '0');
-                    
                     document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}`;
-
-                    // Lógica 24h
+                    
                     const btnClaim = document.getElementById('btnClaim');
-                    // TESTE: Mude 86400000 para 10000 para testar rápido
+                    // TESTE: Mude 86400000 para 10000 (10s) para testar
                     if(diff > 86400000) { 
                         btnClaim.disabled = false;
-                        btnClaim.innerText = "Reivindicar Sessão (+100 XP)";
+                        btnClaim.innerText = "Registrar Vitória (+100 XP)";
                     } else {
                         btnClaim.disabled = true;
                     }
                 }, 1000);
             }
 
-            // AÇÕES COM ADS
+            // MODAL LOGIC
+            window.openProfile = () => document.getElementById('modalProfile').style.display = 'flex';
+            
+            window.selectHabit = (habit, el) => {
+                selectedHabit = habit;
+                document.querySelectorAll('.habit-pill').forEach(p => p.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+
+            window.saveProfile = async () => {
+                const name = document.getElementById('inputName').value;
+                if(!name) return alert("Por favor, digite seu nome.");
+                
+                document.getElementById('modalProfile').style.display = 'none';
+                
+                await db.collection("users").doc(currentUser.uid).set({
+                    username: name,
+                    focusTarget: selectedHabit
+                }, { merge: true });
+            }
+
+            // AÇÕES
             window.failProtocol = async () => {
-                if(!confirm("Deseja realmente reiniciar seu ciclo de foco?")) return;
+                if(!confirm("Reiniciar ciclo? Seja honesto.")) return;
                 window.open('https://otieu.com/4/10557860', '_blank'); // AD
                 try {
                     await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Reinício", value: 0,
+                        userId: currentUser.uid, type: "Recaída", value: 0,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
+                    // Muda frase para conforto
+                    document.getElementById('quoteDisplay').innerText = "Tudo bem recomeçar. O importante é não desistir.";
                 } catch(e) { console.error(e); }
             }
 
             window.claimBonus = async () => {
                 window.open('https://otieu.com/4/10557860', '_blank'); // AD
-                const btn = document.getElementById('btnClaim');
-                btn.innerText = "Sincronizando..."; btn.disabled = true;
                 try {
                     await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
                     await db.collection("history").add({
-                        userId: currentUser.uid, type: "Sessão Completa", value: 100,
+                        userId: currentUser.uid, type: "Ciclo Vencido", value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    alert("Sessão registrada com sucesso.");
                 } catch(e) { console.error(e); }
             }
 
-            window.openLink = (url) => window.open(url, '_blank');
             window.logout = () => auth.signOut().then(() => window.location.reload());
         } catch(e) { alert("Erro: " + e.message); }
     </script>
