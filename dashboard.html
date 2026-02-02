@@ -49,11 +49,56 @@
         .post-date { color: #888; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
         .post-value { color: var(--gold); font-weight: bold; font-size: 1rem; }
 
-        /* ADS CONTAINER */
-        .ad-container { margin: 20px 0; text-align: center; min-height: 10px; }
-        
         /* BANNER FIXO RODAPÉ */
         .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; }
+        
+        /* Debug de Erro (Caso aconteça) */
+        #error-log { display: none; color: red; text-align: center; font-size: 12px; margin-top: 20px; border: 1px solid red; padding: 10px; }
     </style>
 
-    <script src="
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info" onclick="toggleMenu()">
+            <h2 id="displayUsername">... ⚙️</h2>
+        </div>
+        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
+    </div>
+
+    <div class="level-section">
+        <span class="level-badge" id="levelTitle">Carregando...</span>
+        <h1 class="level-number" id="levelNum">-</h1>
+        <div class="progress-container">
+            <div class="progress-bar" id="levelProgress"></div>
+        </div>
+        <p style="font-size: 0.7rem; color: #555; margin-top: 8px;">Faltam <span id="pointsToNext">0</span> FC para evoluir</p>
+    </div>
+
+    <div class="card" id="cardIdentity" style="display: none;">
+        <h3>Configurações</h3>
+        <input type="text" id="username" placeholder="Seu @usuario">
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="weight" placeholder="Peso (kg)">
+            <input type="text" id="height" placeholder="Altura (cm)">
+        </div>
+        <button id="btnSalvar">Salvar Dados</button>
+        <p style="text-align: center; color: red; cursor: pointer; margin-top: 20px;" onclick="auth.signOut().then(()=>location.reload())">Sair da Conta</p>
+    </div>
+
+    <div class="card" style="border-color: var(--primary);">
+        <h3 style="color: var(--primary);">Check-in Diário</h3>
+        <button id="btnTreinar">CONFIRMAR PRESENÇA (+50 FC)</button>
+    </div>
+
+    <div class="card" style="padding: 10px;">
+        <h3 style="margin: 15px;">Meu Histórico</h3>
+        <div id="focoFeed">
+            <p style="text-align: center; color: #444;">Carregando...</p>
+        </div>
+    </div>
+    
+    <div id="error-log"></div>
