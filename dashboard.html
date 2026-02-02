@@ -9,10 +9,9 @@
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* TEMA "THE SYSTEM" (Gym Edition) */
+        /* TEMA "THE SYSTEM" */
         :root { 
-            --primary: #00ff9d; /* Verde Neon Sistema */
-            --danger: #ff3333; 
+            --primary: #00ff9d; 
             --gold: #ffd700;
             --bg: #050505; 
             --panel: #0f0f0f; 
@@ -23,75 +22,76 @@
             background-color: var(--bg); color: white; 
             font-family: 'Courier New', monospace; 
             margin: 0; padding: 20px; padding-bottom: 90px;
-            text-transform: uppercase;
+            text-transform: uppercase; user-select: none;
         }
         
         /* HUD SUPERIOR */
         .hud-header { 
-            border: 1px solid var(--primary); 
-            padding: 15px; 
-            margin-bottom: 20px; 
-            background: rgba(0, 255, 157, 0.05);
-            position: relative;
+            border: 1px solid var(--primary); padding: 15px; margin-bottom: 20px; 
+            background: rgba(0, 255, 157, 0.05); position: relative;
         }
         .hud-label { font-size: 0.6rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 5px; }
         .hud-value { font-size: 1.2rem; font-weight: bold; color: white; letter-spacing: 1px; }
         .rank-badge { 
-            position: absolute; right: 15px; top: 15px; 
-            font-size: 2rem; color: var(--primary); font-weight: 900; 
-            text-shadow: 0 0 10px var(--primary);
+            position: absolute; right: 15px; top: 15px; font-size: 2rem; 
+            color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary);
         }
 
-        /* BARRA DE PROGRESSO (HIPERTROFIA) */
+        /* BARRA DE XP */
         .stat-box { margin-bottom: 30px; }
         .bar-container { width: 100%; height: 8px; background: #111; border: 1px solid #333; margin-top: 5px; }
         .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); transition: width 0.5s ease; }
 
-        /* SELETOR DE TREINO (GRID) */
+        /* BOTOES DE TREINO */
         .workout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .workout-btn {
             background: #111; border: 1px solid #333; padding: 20px 10px;
             text-align: center; cursor: pointer; transition: 0.2s;
         }
-        .workout-btn:hover { border-color: var(--primary); background: #0a1a10; }
-        .workout-btn:active { transform: scale(0.98); }
+        .workout-btn.selected { border-color: var(--primary); background: #0a1a10; box-shadow: 0 0 10px rgba(0,255,157,0.2); }
         .muscle-icon { font-size: 1.5rem; display: block; margin-bottom: 5px; }
-        .muscle-name { font-size: 0.8rem; font-weight: bold; color: #ccc; }
 
-        /* BOTÃO DE AÇÃO PRINCIPAL */
+        /* BOTÃO DE AÇÃO (SEM POPUP) */
         .action-btn { 
             width: 100%; background: transparent; color: var(--primary); 
             font-family: 'Courier New', monospace; font-weight: bold; 
             border: 1px solid var(--primary); padding: 15px; cursor: pointer; 
             font-size: 1rem; transition: all 0.2s; margin-top: 10px;
         }
-        .action-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
-        .action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; box-shadow: none; background: transparent; }
+        .action-btn:active { transform: scale(0.98); }
+        .action-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
+        
+        /* Feedback Visual (Sucesso) */
+        .success-anim { background: var(--primary) !important; color: black !important; border-color: var(--primary) !important; }
 
-        /* CARD DE AFILIADO/AD (INTEGRADO AO SISTEMA) */
-        .system-alert {
-            border: 1px dashed var(--gold); padding: 15px; margin-top: 30px;
-            background: rgba(255, 215, 0, 0.05); text-align: center;
+        /* CALENDÁRIO (MATRIZ DE FREQUÊNCIA) */
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px;
         }
+        .calendar-day {
+            aspect-ratio: 1; background: #111; border: 1px solid #222;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; color: #444;
+        }
+        .calendar-day.active {
+            background: var(--primary); color: black; font-weight: bold;
+            box-shadow: 0 0 5px var(--primary); border-color: var(--primary);
+        }
+        .calendar-day.today { border: 1px solid white; color: white; }
 
-        /* NAVEGAÇÃO */
+        /* NAV E MODAIS */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: #000; border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 100;
+            background: #000; border-top: 1px solid #333;
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
         }
         .nav-item { text-align: center; color: #444; font-size: 0.7rem; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 2px; }
 
-        /* MODAIS */
         .screen { display: none; }
         .screen.active { display: block; }
-        
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:var(--primary); z-index:999; }
-        
-        #error-msg { display:none; color:red; font-size:0.7rem; margin-top:10px; text-align:center;}
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -100,140 +100,84 @@
 </head>
 <body>
 
-    <div id="loading">CARREGANDO DADOS BIOMÉTRICOS...</div>
-    <div id="error-msg"></div>
+    <div id="loading">SINCRONIZANDO SISTEMA...</div>
 
     <div id="screen-status" class="screen active">
-        
         <div class="hud-header">
             <div class="hud-label">ATLETA</div>
             <div class="hud-value" id="playerName">...</div>
-            
             <div style="margin-top: 15px;">
-                <div class="hud-label">CLASSIFICAÇÃO ATUAL</div>
-                <div class="hud-value" id="rankName" style="color:white">ANÁLISE...</div>
+                <div class="hud-label">CLASSIFICAÇÃO</div>
+                <div class="hud-value" id="rankName" style="color:white">...</div>
             </div>
-
-            <div class="rank-badge" id="rankLetter">F</div>
+            <div class="rank-badge" id="rankLetter">-</div>
         </div>
 
         <div class="stat-box">
             <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#888;">
-                <span>PROGRESSO FÍSICO (XP)</span>
+                <span>HIPERTROFIA (XP)</span>
                 <span id="xpText">0 / 1000</span>
             </div>
-            <div class="bar-container">
-                <div class="bar-fill" id="xpBar"></div>
-            </div>
+            <div class="bar-container"><div class="bar-fill" id="xpBar"></div></div>
         </div>
 
         <div style="border-top: 1px solid #222; padding-top: 20px;">
-            <div class="hud-label" style="margin-bottom: 15px;">INICIAR PROTOCOLO DE TREINO</div>
-            
+            <div class="hud-label" style="margin-bottom: 15px;">SELECIONAR PROTOCOLO</div>
             <div class="workout-grid">
-                <div class="workout-btn" onclick="selecionarTreino('PEITO/TRICEPS')">
-                    <span class="muscle-icon">🦍</span>
-                    <span class="muscle-name">PUSH (EMPURRAR)</span>
-                </div>
-                <div class="workout-btn" onclick="selecionarTreino('COSTAS/BICEPS')">
-                    <span class="muscle-icon">🦅</span>
-                    <span class="muscle-name">PULL (PUXAR)</span>
-                </div>
-                <div class="workout-btn" onclick="selecionarTreino('PERNAS COMPLETO')">
-                    <span class="muscle-icon">🦖</span>
-                    <span class="muscle-name">LEGS (PERNAS)</span>
-                </div>
-                <div class="workout-btn" onclick="selecionarTreino('CARDIO/ABS')">
-                    <span class="muscle-icon">⚡</span>
-                    <span class="muscle-name">CARDIO / ABS</span>
-                </div>
+                <div class="workout-btn" id="btn-push" onclick="selectW('PUSH', this)"><span class="muscle-icon">🦍</span>PUSH</div>
+                <div class="workout-btn" id="btn-pull" onclick="selectW('PULL', this)"><span class="muscle-icon">🦅</span>PULL</div>
+                <div class="workout-btn" id="btn-legs" onclick="selectW('LEGS', this)"><span class="muscle-icon">🦖</span>LEGS</div>
+                <div class="workout-btn" id="btn-cardio" onclick="selectW('CARDIO', this)"><span class="muscle-icon">⚡</span>CARDIO</div>
             </div>
-
-            <button id="btnConfirmar" class="action-btn" disabled>SELECIONE UM PROTOCOLO</button>
+            <button id="btnConfirmar" class="action-btn" disabled onclick="confirmarTreino()">SELECIONE ACIMA</button>
         </div>
 
-        <div class="system-alert" id="adBuffArea">
-            <div style="color:var(--gold); font-weight:bold; font-size:0.9rem;">⚠ SUPLEMENTAÇÃO DISPONÍVEL</div>
-            <p style="font-size:0.7rem; color:#888;">Assista ao vídeo tático para ganhar +20 XP extra.</p>
-            <button class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:10px;" onclick="ativarBuff()">RESGATAR BOOST</button>
+        <div style="margin-top: 30px; border: 1px dashed var(--gold); padding: 15px; text-align: center;">
+            <div style="color:var(--gold); font-size:0.8rem; margin-bottom:5px;">⚡ BOOST DE TESTOSTERONA</div>
+            <button id="btnBuff" class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:10px;" onclick="ativarBuff()">
+                RESGATAR (+20 XP)
+            </button>
         </div>
-
     </div>
 
     <div id="screen-shop" class="screen">
         <div class="hud-header">
-            <div class="hud-label">MERCADO DO SISTEMA</div>
-            <div class="hud-value">EQUIPAMENTOS</div>
+            <div class="hud-label">MERCADO</div>
+            <div class="hud-value">SUPRIMENTOS</div>
         </div>
-
         <div class="workout-grid">
-            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/creatina')">
-                <span class="muscle-icon">🧪</span>
-                <span class="muscle-name">CREATINA PURA</span>
-                <span style="font-size:0.6rem; color:var(--gold)">R$ 89,90</span>
-            </div>
-            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/whey')">
-                <span class="muscle-icon">🥤</span>
-                <span class="muscle-name">WHEY PROTEIN</span>
-                <span style="font-size:0.6rem; color:var(--gold)">R$ 119,90</span>
-            </div>
-            <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/pretreino')">
-                <span class="muscle-icon">☠️</span>
-                <span class="muscle-name">PRÉ-TREINO</span>
-                <span style="font-size:0.6rem; color:var(--gold)">R$ 79,90</span>
-            </div>
-             <div class="workout-btn" onclick="abrirLink('https://amazon.com.br/straps')">
-                <span class="muscle-icon">🎗️</span>
-                <span class="muscle-name">STRAPS / LUVAS</span>
-                <span style="font-size:0.6rem; color:var(--gold)">R$ 39,90</span>
-            </div>
-        </div>
-
-        <div class="system-alert">
-            <p style="font-size:0.7rem; color:#666;">
-                *Adquirir itens aumenta seus atributos na vida real.<br>
-                Links seguros de parceiros (Amazon/Growth).
-            </p>
+            <div class="workout-btn" onclick="goShop('https://amazon.com.br/creatina')"><span class="muscle-icon">🧪</span>CREATINA</div>
+            <div class="workout-btn" onclick="goShop('https://amazon.com.br/whey')"><span class="muscle-icon">🥤</span>WHEY</div>
+            <div class="workout-btn" onclick="goShop('https://amazon.com.br/pretreino')"><span class="muscle-icon">☠️</span>PRÉ-TREINO</div>
+            <div class="workout-btn" onclick="goShop('https://amazon.com.br/acessorios')"><span class="muscle-icon">🎒</span>GEAR</div>
         </div>
     </div>
 
     <div id="screen-log" class="screen">
         <div class="hud-header">
-            <div class="hud-label">HISTÓRICO DE BATALHA</div>
-            <div class="hud-value">LOGS</div>
-        </div>
-        <div id="logFeed" style="font-size:0.8rem; color:#aaa;">
-            Carregando registros...
+            <div class="hud-label">FREQUÊNCIA MENSAL</div>
+            <div class="hud-value">MATRIZ DE TREINO</div>
         </div>
         
-        <button class="action-btn" onclick="auth.signOut().then(()=>location.reload())" style="border-color:var(--danger); color:var(--danger); margin-top:30px;">
-            ENCERRAR SESSÃO
-        </button>
+        <div style="margin-bottom: 20px;">
+            <div style="text-align: center; font-size: 0.8rem; color: #666;" id="currentMonthLabel">MÊS ATUAL</div>
+            <div class="calendar-grid" id="calendarGrid">
+                </div>
+        </div>
+
+        <div class="hud-label" style="margin-top:30px;">ÚLTIMOS REGISTROS</div>
+        <div id="logList" style="font-size:0.7rem; color:#888; margin-top:10px;"></div>
+
+        <button class="action-btn" onclick="logout()" style="border-color:#ff3333; color:#ff3333; margin-top:30px;">SAIR DO SISTEMA</button>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="nav('status', this)">
-            <span class="nav-icon">📊</span>
-            STATUS
-        </div>
-        <div class="nav-item" onclick="nav('shop', this)">
-            <span class="nav-icon">🛒</span>
-            LOJA
-        </div>
-        <div class="nav-item" onclick="nav('log', this)">
-            <span class="nav-icon">📜</span>
-            LOGS
-        </div>
+        <div class="nav-item active" onclick="nav('status', this)"><span class="nav-icon">📊</span>STATUS</div>
+        <div class="nav-item" onclick="nav('shop', this)"><span class="nav-icon">🛒</span>LOJA</div>
+        <div class="nav-item" onclick="nav('log', this)"><span class="nav-icon">📅</span>AGENDA</div>
     </div>
 
     <script>
-        // TRATAMENTO DE ERROS
-        window.onerror = function(msg) {
-            document.getElementById('error-msg').style.display = 'block';
-            document.getElementById('error-msg').innerText = "ERRO: " + msg;
-        };
-
-        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -248,147 +192,197 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
             let currentUser = null;
-            let treinoSelecionado = "";
+            let treinoAtual = "";
 
-            // Limpa SW antigo
-            if(navigator.serviceWorker) { navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister())); }
+            // Limpa Service Workers
+            if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
 
             auth.onAuthStateChanged((user) => {
                 if (!user) window.location.href = "index.html";
                 else { currentUser = user; initSystem(); }
             });
 
-            // NAVEGAÇÃO
-            window.nav = (screenId, elem) => {
+            // --- NAVEGAÇÃO E UI ---
+            window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                document.getElementById('screen-' + screenId).classList.add('active');
-                elem.classList.add('active');
+                document.getElementById('screen-' + id).classList.add('active');
+                el.classList.add('active');
+                if(id === 'log') renderCalendar(); // Renderiza calendário ao abrir aba
             }
 
-            // SISTEMA DE RANKS (GYM EDITION)
-            function getRank(xp) {
-                if(xp < 1000) return { letter: "E", title: "FRANGO (INICIANTE)", next: 1000 };
-                if(xp < 3000) return { letter: "D", title: "EM CONSTRUÇÃO", next: 3000 };
-                if(xp < 6000) return { letter: "C", title: "PROJETO ATLETA", next: 6000 };
-                if(xp < 10000) return { letter: "B", title: "SHAPE INEXPLICÁVEL", next: 10000 };
-                if(xp < 20000) return { letter: "A", title: "MUTANTE", next: 20000 };
-                return { letter: "S", title: "LENDA DO OLYMPIA", next: 50000 };
-            }
-
-            function initSystem() {
-                // 1. CARREGA DADOS DO ATLETA
-                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        const xp = d.coins || 0;
-                        const nome = d.username || "Recruta";
-                        const rank = getRank(xp);
-
-                        document.getElementById('playerName').innerText = nome;
-                        document.getElementById('rankLetter').innerText = rank.letter;
-                        document.getElementById('rankName').innerText = rank.title;
-                        
-                        // Barra de XP
-                        const pct = Math.min((xp / rank.next) * 100, 100);
-                        document.getElementById('xpBar').style.width = pct + "%";
-                        document.getElementById('xpText').innerText = `${xp} / ${rank.next} XP`;
-                        
-                        document.getElementById('loading').style.display = 'none';
-                    } else {
-                        // Perfil novo
-                        db.collection("users").doc(currentUser.uid).set({ coins: 0, username: "Player" }, { merge: true });
-                    }
-                });
-
-                // 2. CARREGA LOGS (Sem travar)
-                db.collection("history")
-                  .where("userId", "==", currentUser.uid)
-                  .limit(10)
-                  .onSnapshot(snap => {
-                      const feed = document.getElementById('logFeed');
-                      feed.innerHTML = "";
-                      let logs = [];
-                      snap.forEach(d => logs.push(d.data()));
-                      logs.sort((a,b) => (b.date?.toMillis() || 0) - (a.date?.toMillis() || 0));
-
-                      logs.forEach(l => {
-                          const cor = l.type.includes("Buff") ? "var(--gold)" : "var(--primary)";
-                          feed.innerHTML += `
-                            <div style="border-left: 2px solid #333; padding-left: 10px; margin-bottom: 10px;">
-                                <div style="color:white; font-size:0.7rem;">${l.type.toUpperCase()}</div>
-                                <div style="color:${cor}; font-weight:bold;">+${l.value} XP</div>
-                            </div>
-                          `;
-                      });
-                  });
-            }
-
-            // SELEÇÃO DE TREINO
-            window.selecionarTreino = (tipo) => {
-                treinoSelecionado = tipo;
-                // Visual feedback
-                document.querySelectorAll('.workout-btn').forEach(b => b.style.borderColor = '#333');
-                event.currentTarget.style.borderColor = 'var(--primary)';
-                
+            window.selectW = (tipo, el) => {
+                treinoAtual = tipo;
+                document.querySelectorAll('.workout-btn').forEach(b => b.classList.remove('selected'));
+                el.classList.add('selected');
                 const btn = document.getElementById('btnConfirmar');
-                btn.innerText = "CONFIRMAR: " + tipo;
                 btn.disabled = false;
+                btn.innerText = "CONFIRMAR: " + tipo;
             }
 
-            // CONFIRMAR TREINO
-            document.getElementById('btnConfirmar').addEventListener('click', async () => {
+            // --- LÓGICA SEM POP-UP ---
+            window.confirmarTreino = async () => {
                 const btn = document.getElementById('btnConfirmar');
-                btn.disabled = true;
-                btn.innerText = "PROCESSANDO...";
+                const originalText = btn.innerText;
 
+                // Feedback Visual Imediato
+                btn.disabled = true;
+                btn.innerText = "REGISTRANDO...";
+                
                 try {
                     await db.collection("history").add({
-                        userId: currentUser.uid,
-                        type: "Treino: " + treinoSelecionado,
-                        value: 100,
+                        userId: currentUser.uid, type: "Treino: " + treinoAtual, value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({
-                        coins: firebase.firestore.FieldValue.increment(100)
-                    });
-                    alert("TREINO REGISTRADO! +100 XP");
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
+                    
+                    // Sucesso Visual
+                    btn.classList.add('success-anim');
+                    btn.innerText = "TREINO CONCLUÍDO!";
+                    
+                    // Reseta botão após 2 segundos
+                    setTimeout(() => {
+                        btn.classList.remove('success-anim');
+                        btn.innerText = "SELECIONE OUTRO";
+                        btn.disabled = true;
+                        document.querySelectorAll('.workout-btn').forEach(b => b.classList.remove('selected'));
+                    }, 2000);
+
                 } catch(e) { console.error(e); }
+            }
 
-                btn.innerText = "TREINO CONCLUÍDO";
-                setTimeout(() => { 
-                    btn.innerText = "SELECIONE UM PROTOCOLO"; 
-                    treinoSelecionado = "";
-                }, 3000);
-            });
-
-            // ATIVAR BUFF (AD)
             window.ativarBuff = async () => {
-                // Link do seu anúncio
-                window.open('https://otieu.com/4/10557860', '_blank');
-                
-                // Dá recompensa
+                const btn = document.getElementById('btnBuff');
+                window.open('https://otieu.com/4/10557860', '_blank'); // Seu Link
+
+                // Feedback Visual
+                btn.innerText = "ABSORVENDO...";
+                btn.disabled = true;
+
                 try {
                     await db.collection("history").add({
                         userId: currentUser.uid, type: "Buff de Sistema", value: 20,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    await db.collection("users").doc(currentUser.uid).update({
-                        coins: firebase.firestore.FieldValue.increment(20)
-                    });
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
+                    
+                    setTimeout(() => {
+                        btn.classList.add('success-anim'); // Fica verde
+                        btn.innerText = "+20 XP OBTIDO";
+                        btn.style.color = "black";
+                    }, 1000);
+                    
+                    // Libera de novo depois de um tempo
+                    setTimeout(() => {
+                        btn.classList.remove('success-anim');
+                        btn.style.color = "var(--gold)";
+                        btn.innerText = "RESGATAR NOVAMENTE";
+                        btn.disabled = false;
+                    }, 15000);
+
                 } catch(e) { console.error(e); }
             }
 
-            // LINK EXTERNO
-            window.abrirLink = (url) => {
-                // Futuramente coloque seus links de afiliado aqui
-                window.open(url, '_blank');
+            window.goShop = (url) => window.open(url, '_blank'); // Abre direto, sem alert
+
+            // --- SISTEMA DE DADOS ---
+            function getRank(xp) {
+                if(xp < 1000) return { l: "E", t: "INICIANTE", n: 1000 };
+                if(xp < 3000) return { l: "D", t: "EM CONSTRUÇÃO", n: 3000 };
+                if(xp < 6000) return { l: "C", t: "PROJETO ATLETA", n: 6000 };
+                if(xp < 10000) return { l: "B", t: "SHAPE INEXPLICÁVEL", n: 10000 };
+                if(xp < 20000) return { l: "A", t: "MUTANTE", n: 20000 };
+                return { l: "S", t: "OLYMPIA", n: 50000 };
             }
 
-        } catch(e) {
-            document.getElementById('error-msg').style.display = 'block';
-            document.getElementById('error-msg').innerText = "FATAL: " + e.message;
-        }
+            function initSystem() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const d = doc.data();
+                        const xp = d.coins || 0;
+                        const rank = getRank(xp);
+                        
+                        document.getElementById('playerName').innerText = d.username || "Atleta";
+                        document.getElementById('rankLetter').innerText = rank.l;
+                        document.getElementById('rankName').innerText = rank.t;
+                        
+                        const pct = Math.min((xp / rank.n) * 100, 100);
+                        document.getElementById('xpBar').style.width = pct + "%";
+                        document.getElementById('xpText').innerText = `${xp} / ${rank.n}`;
+                        document.getElementById('loading').style.display = 'none';
+                    } else {
+                        db.collection("users").doc(currentUser.uid).set({coins:0, username:"Player"}, {merge:true});
+                    }
+                });
+            }
+
+            // --- AGENDA / CALENDÁRIO ---
+            let userLogs = []; // Cache local dos logs
+
+            function renderCalendar() {
+                const grid = document.getElementById('calendarGrid');
+                const list = document.getElementById('logList');
+                grid.innerHTML = "";
+                list.innerHTML = "";
+
+                const now = new Date();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const today = now.getDate();
+
+                document.getElementById('currentMonthLabel').innerText = now.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+
+                // 1. Busca dados se ainda não buscou
+                db.collection("history")
+                  .where("userId", "==", currentUser.uid)
+                  .orderBy("date", "desc").limit(30)
+                  .onSnapshot(snap => {
+                      userLogs = [];
+                      snap.forEach(d => userLogs.push(d.data()));
+                      drawGrid(daysInMonth, today); // Desenha após receber dados
+                  });
+            }
+
+            function drawGrid(totalDays, today) {
+                const grid = document.getElementById('calendarGrid');
+                grid.innerHTML = "";
+                
+                // Mapeia dias que tiveram treino
+                const activeDays = new Set();
+                userLogs.forEach(log => {
+                    if(log.date) {
+                        const d = log.date.toDate();
+                        // Só marca se for do mês atual
+                        const now = new Date();
+                        if(d.getMonth() === now.getMonth()) {
+                            activeDays.add(d.getDate());
+                        }
+                    }
+                });
+
+                // Gera os quadrados
+                for(let i = 1; i <= totalDays; i++) {
+                    const dayBox = document.createElement('div');
+                    dayBox.className = 'calendar-day';
+                    dayBox.innerText = i;
+                    
+                    if(activeDays.has(i)) dayBox.classList.add('active'); // Dia Treinado (Verde)
+                    if(i === today) dayBox.classList.add('today');       // Dia Atual (Borda Branca)
+                    
+                    grid.appendChild(dayBox);
+                }
+
+                // Lista de Texto (Log simples)
+                const list = document.getElementById('logList');
+                list.innerHTML = "";
+                userLogs.slice(0, 5).forEach(log => {
+                    const d = log.date ? log.date.toDate().toLocaleDateString('pt-BR') : "-";
+                    list.innerHTML += `<div style="border-bottom:1px solid #222; padding:5px; display:flex; justify-content:space-between;"><span>${log.type}</span><span style="color:var(--primary)">${d}</span></div>`;
+                });
+            }
+
+            window.logout = () => auth.signOut().then(() => window.location.reload());
+
+        } catch(e) { alert("Erro crítico: " + e.message); }
     </script>
 </body>
 </html>
