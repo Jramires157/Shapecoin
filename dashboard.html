@@ -3,116 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROTOCOL: FOCUS</title>
+    <title>FOCUS | OS</title>
     
-    <meta name="theme-color" content="#00ff9d">
+    <meta name="theme-color" content="#050505">
     <link rel="manifest" href="manifest.json">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* TEMA "CYBERPUNK INDUSTRIAL" */
+        /* TEMA "QUIET LUXURY" */
         :root { 
-            --primary: #00ff9d; 
-            --primary-dim: rgba(0, 255, 157, 0.1);
-            --alert: #ff2a2a;
             --bg: #050505; 
-            --panel: #0a0a0a; 
-            --border: #222; 
+            --card: #121212; 
+            --text-main: #F2F2F2;
+            --text-muted: #666666;
+            --accent: #FFFFFF; /* Branco Puro para destaque */
+            --border: #222222;
         }
         
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body { 
             background-color: var(--bg); 
-            color: white; 
-            font-family: 'Courier New', monospace; 
-            margin: 0; padding: 20px; padding-bottom: 90px;
-            text-transform: uppercase; user-select: none;
-            background-image: linear-gradient(0deg, #050505 50%, #080808 50%);
-            background-size: 100% 4px; /* Efeito Scanline */
-            min-height: 100vh;
+            color: var(--text-main); 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; padding: 25px; padding-bottom: 100px;
+            overflow-x: hidden;
         }
 
-        /* HEADER */
+        /* HEADER MINIMALISTA */
         .header {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px; margin-bottom: 30px;
-            display: flex; justify-content: space-between; align-items: flex-end;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; padding-top: 10px;
         }
-        .user-label { font-size: 0.6rem; color: #666; letter-spacing: 2px; }
-        .user-val { font-size: 1rem; color: var(--primary); font-weight: bold; text-shadow: 0 0 10px var(--primary-dim); }
+        .app-logo { font-weight: 700; letter-spacing: 2px; font-size: 0.9rem; color: var(--text-muted); }
+        .user-chip { 
+            background: var(--card); border: 1px solid var(--border); 
+            padding: 8px 16px; border-radius: 50px; 
+            font-size: 0.8rem; color: var(--text-main); font-weight: 500;
+        }
 
-        /* O TIMER GIGANTE */
-        .timer-container {
-            text-align: center; margin: 40px 0;
+        /* TIMER CENTRAL (Elegância Pura) */
+        .timer-wrapper {
+            text-align: center; margin: 50px 0;
             position: relative;
         }
-        .timer-label { font-size: 0.7rem; color: #888; letter-spacing: 4px; margin-bottom: 10px; }
-        .main-timer {
-            font-size: 3.5rem; font-weight: 900; color: white;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            line-height: 1; letter-spacing: -2px;
+        .timer-ring {
+            width: 280px; height: 280px; margin: 0 auto;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: radial-gradient(circle, #0a0a0a 0%, #050505 70%);
+            box-shadow: 0 0 40px rgba(255,255,255,0.02);
         }
-        .timer-unit { font-size: 0.8rem; color: #444; margin-top: 5px; }
+        .timer-val { font-size: 3.5rem; font-weight: 300; letter-spacing: -2px; color: var(--text-main); line-height: 1; }
+        .timer-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; letter-spacing: 1px; text-transform: uppercase;}
 
-        /* XP BAR */
-        .xp-box { margin-bottom: 40px; }
-        .xp-header { display: flex; justify-content: space-between; font-size: 0.6rem; color: #666; margin-bottom: 5px; }
-        .xp-track { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; }
-        .xp-fill { height: 100%; width: 0%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.5s ease; }
+        /* BARRA DE PROGRESSO SUTIL */
+        .progress-container { margin: 40px 0; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
+        .progress-bg { width: 100%; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: width 1s ease; }
 
-        /* BOTÕES DE AÇÃO */
-        .btn-grid { display: grid; gap: 15px; margin-bottom: 40px; }
+        /* BOTÕES REDONDOS E PREMIUM */
+        .action-grid { display: grid; gap: 15px; }
         
-        .btn-action {
-            width: 100%; background: transparent; 
-            padding: 20px; cursor: pointer; border-radius: 4px;
-            font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.9rem;
-            transition: 0.2s; position: relative; overflow: hidden;
+        .btn {
+            width: 100%; padding: 22px; border-radius: 100px;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem;
+            cursor: pointer; transition: transform 0.2s, opacity 0.2s;
+            border: none; display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-
-        /* Botão Recompensa (Verde) */
-        .btn-claim {
-            border: 1px solid var(--primary); color: var(--primary);
-        }
-        .btn-claim:hover { background: var(--primary-dim); box-shadow: 0 0 20px var(--primary-dim); }
-        .btn-claim:disabled { border-color: #333; color: #333; cursor: not-allowed; box-shadow: none; }
-
-        /* Botão Falha (Vermelho) */
-        .btn-fail {
-            border: 1px solid var(--alert); color: var(--alert);
-        }
-        .btn-fail:hover { background: rgba(255, 42, 42, 0.1); box-shadow: 0 0 20px rgba(255, 42, 42, 0.1); }
-
-        /* LOJA (ARSENAL) */
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .shop-item {
-            background: #0a0a0a; border: 1px solid #222; padding: 15px; text-align: center;
-            cursor: pointer; transition: 0.2s;
-        }
-        .shop-item:hover { border-color: white; }
-        .shop-icon { font-size: 1.5rem; display: block; margin-bottom: 10px; }
-        .shop-name { font-size: 0.7rem; color: #888; }
+        .btn:active { transform: scale(0.98); }
         
-        /* LOGS */
-        .log-entry { 
-            border-left: 2px solid #333; padding-left: 10px; margin-bottom: 10px; 
-            font-size: 0.7rem; color: #666; 
+        /* Botão Principal (Branco) */
+        .btn-primary { 
+            background: var(--accent); color: #000; 
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
         }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
-        /* NAV */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(5,5,5,0.95); border-top: 1px solid #222;
-            display: flex; justify-content: space-around; align-items: center; z-index: 100;
-            backdrop-filter: blur(5px);
+        /* Botão Secundário (Outline/Ghost) - Para Falha */
+        .btn-ghost { 
+            background: transparent; color: var(--text-muted); 
+            border: 1px solid var(--border);
         }
-        .nav-item { color: #444; font-size: 0.7rem; cursor: pointer; text-align: center; }
-        .nav-item.active { color: white; text-shadow: 0 0 10px white; }
-        .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 3px; }
+        .btn-ghost:hover { border-color: #444; color: #fff; }
 
-        .screen { display: none; animation: fadeIn 0.3s; }
+        /* CARDS DA LOJA */
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .shop-card {
+            background: var(--card); border-radius: 24px; padding: 25px 15px;
+            text-align: center; border: 1px solid transparent; transition: 0.3s;
+        }
+        .shop-card:hover { border-color: #333; transform: translateY(-3px); }
+        .shop-icon { font-size: 1.8rem; display: block; margin-bottom: 15px; opacity: 0.8; }
+        .shop-title { font-size: 0.85rem; color: var(--text-main); font-weight: 500; display: block; }
+        .shop-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; display: block; }
+
+        /* LOGS LIMPOS */
+        .log-list { margin-top: 20px; }
+        .log-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid var(--border);
+            font-size: 0.85rem; color: var(--text-muted);
+        }
+        .log-val { color: var(--text-main); font-weight: 500; }
+
+        /* NAVEGAÇÃO FLUTUANTE (DOCK) */
+        .dock-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px);
+            padding: 8px 10px; border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; gap: 5px; z-index: 100;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .nav-pill {
+            padding: 12px 24px; border-radius: 50px; cursor: pointer;
+            color: #666; font-size: 0.8rem; font-weight: 500; transition: 0.3s;
+        }
+        .nav-pill.active { background: #fff; color: #000; }
+        
+        /* UTILITÁRIOS */
+        .screen { display: none; animation: fadeUp 0.4s ease; }
         .screen.active { display: block; }
-        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+        @keyframes fadeUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
         
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:white; z-index:999; flex-direction:column; gap:10px; }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); z-index:999; font-size: 0.8rem; letter-spacing: 2px;}
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -121,99 +142,94 @@
 </head>
 <body>
 
-    <div id="loading">
-        <div style="letter-spacing: 3px;">PROTOCOL: FOCUS</div>
-        <div style="font-size:0.7rem; color:#666;">SINCRONIZANDO...</div>
-    </div>
+    <div id="loading">CARREGANDO...</div>
 
     <div id="screen-focus" class="screen active">
         <div class="header">
-            <div>
-                <div class="user-label">OPERADOR</div>
-                <div class="user-val" id="playerName">...</div>
-            </div>
-            <div style="text-align: right;">
-                <div class="user-label">RANK</div>
-                <div class="user-val" id="rankDisplay">-</div>
+            <div class="app-logo">FOCUS • OS</div>
+            <div class="user-chip" id="userDisplay">...</div>
+        </div>
+
+        <div class="timer-wrapper">
+            <div class="timer-ring">
+                <div class="timer-val" id="timerDisplay">00:00</div>
+                <div class="timer-label">Tempo em Foco</div>
             </div>
         </div>
 
-        <div class="timer-container">
-            <div class="timer-label">TEMPO DE FOCO ABSOLUTO</div>
-            <div class="main-timer" id="timerDisplay">00:00:00</div>
-            <div class="timer-unit">HORAS : MIN : SEG</div>
-        </div>
-
-        <div class="xp-box">
-            <div class="xp-header">
-                <span>MENTALIDADE (XP)</span>
-                <span id="xpText">0 / 500</span>
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Nível de Clareza</span>
+                <span id="xpDisplay">0 / 500</span>
             </div>
-            <div class="xp-track"><div class="xp-fill" id="xpBar"></div></div>
+            <div class="progress-bg">
+                <div class="progress-fill" id="xpBar"></div>
+            </div>
         </div>
 
-        <div class="btn-grid">
-            <button id="btnClaim" class="btn-action btn-claim" disabled onclick="claimBonus()">
-                RESGATAR NEURO-XP (+100)
-                <div style="font-size:0.6rem; margin-top:5px; opacity:0.7;">DISPONÍVEL A CADA 24H</div>
+        <div class="action-grid">
+            <button id="btnClaim" class="btn btn-primary" onclick="claimBonus()" disabled>
+                <span>Resgatar Consciência</span>
+                <span style="opacity:0.5; font-size:0.7rem;">(+100 XP)</span>
             </button>
 
-            <button id="btnReset" class="btn-action btn-fail" onclick="failProtocol()">
-                ⚠️ RELATAR FALHA / RECAÍDA
-                <div style="font-size:0.6rem; margin-top:5px; opacity:0.7;">REINICIA O CONTADOR</div>
+            <button id="btnReset" class="btn btn-ghost" onclick="failProtocol()">
+                Reiniciar Ciclo
             </button>
         </div>
     </div>
 
     <div id="screen-shop" class="screen">
         <div class="header">
-            <div class="user-label">ARSENAL</div>
-            <div class="user-val">BIO-HACKING</div>
+            <div class="app-logo">ESSENCIAIS</div>
+            <div class="user-chip">Loja</div>
         </div>
         
+        <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">Ferramentas curadas para maximizar seu desempenho cognitivo.</p>
+
         <div class="shop-grid">
-            <div class="shop-item" onclick="openLink('https://amazon.com.br/kindle')">
-                <span class="shop-icon">📚</span>
-                <span class="shop-name">KINDLE (LEITURA)</span>
+            <div class="shop-card" onclick="openLink('https://amazon.com.br/kindle')">
+                <span class="shop-icon">📖</span>
+                <span class="shop-title">Kindle</span>
+                <span class="shop-sub">Leitura Profunda</span>
             </div>
-            <div class="shop-item" onclick="openLink('https://amazon.com.br/cafeina')">
-                <span class="shop-icon">💊</span>
-                <span class="shop-name">NOOTRÓPICOS</span>
+            <div class="shop-card" onclick="openLink('https://amazon.com.br/cafeina')">
+                <span class="shop-icon">☕</span>
+                <span class="shop-title">Nootrópicos</span>
+                <span class="shop-sub">Energia Limpa</span>
             </div>
-            <div class="shop-item" onclick="openLink('https://amazon.com.br/bloqueadorazul')">
+            <div class="shop-card" onclick="openLink('https://amazon.com.br/bloqueadorazul')">
                 <span class="shop-icon">👓</span>
-                <span class="shop-name">ÓCULOS BLUE-LIGHT</span>
+                <span class="shop-title">Blue Light</span>
+                <span class="shop-sub">Proteção Ocular</span>
             </div>
-            <div class="shop-item" onclick="openLink('https://amazon.com.br/fones')">
+            <div class="shop-card" onclick="openLink('https://amazon.com.br/fones')">
                 <span class="shop-icon">🎧</span>
-                <span class="shop-name">NOISE CANCELLING</span>
+                <span class="shop-title">Silêncio</span>
+                <span class="shop-sub">Cancelamento de Ruído</span>
             </div>
-        </div>
-        
-        <div style="text-align:center; margin-top:30px; border:1px dashed #333; padding:15px;">
-            <div style="color:#666; font-size:0.7rem; margin-bottom:10px;">SUPORTE O DESENVOLVEDOR</div>
-            <button class="btn-action btn-claim" onclick="openLink('https://otieu.com/4/10557860')">
-                DOAR VISUALIZAÇÃO (AD)
-            </button>
         </div>
     </div>
 
     <div id="screen-log" class="screen">
         <div class="header">
-            <div class="user-label">BANCO DE DADOS</div>
-            <div class="user-val">HISTÓRICO</div>
+            <div class="app-logo">JORNADA</div>
+            <div class="user-chip">Histórico</div>
         </div>
-        <div id="logList">Carregando dados...</div>
-        
-        <button class="btn-action btn-fail" onclick="logout()" style="margin-top:30px; border-color:#333; color:#666;">
-            DESCONECTAR SISTEMA
+
+        <div id="logList" class="log-list">
+            <div style="text-align:center; color:#444; margin-top:50px;">Carregando dados...</div>
+        </div>
+
+        <button class="btn btn-ghost" onclick="logout()" style="margin-top:40px; border-color: rgba(255,0,0,0.2); color: #888;">
+            Desconectar
         </button>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="nav('focus', this)"><span class="nav-icon">◉</span>FOCO</div>
-        <div class="nav-item" onclick="nav('shop', this)"><span class="nav-icon">⚡</span>ARSENAL</div>
-        <div class="nav-item" onclick="nav('log', this)"><span class="nav-icon">≡</span>LOGS</div>
+    <div class="dock-nav">
+        <div class="nav-pill active" onclick="nav('focus', this)">Foco</div>
+        <div class="nav-pill" onclick="nav('shop', this)">Shop</div>
+        <div class="nav-pill" onclick="nav('log', this)">Dados</div>
     </div>
 
     <script>
@@ -231,86 +247,73 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
             let currentUser = null;
-            let lastResetTime = null; // Timestamp do último reset
+            let lastResetTime = null;
             let timerInterval = null;
 
-            // Remove SW antigo
             if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(r => r.forEach(i => i.unregister()));
 
             auth.onAuthStateChanged((user) => {
                 if (!user) window.location.href = "index.html";
-                else { currentUser = user; initProtocol(); }
+                else { currentUser = user; initApp(); }
             });
 
-            // --- NAVEGAÇÃO ---
+            // NAV
             window.nav = (id, el) => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.nav-pill').forEach(i => i.classList.remove('active'));
                 document.getElementById('screen-' + id).classList.add('active');
                 el.classList.add('active');
             }
 
-            // --- SISTEMA DE RANKS (MENTAL) ---
-            function getRank(xp) {
-                if(xp < 500) return { t: "NOVIÇO", n: 500 };
-                if(xp < 1500) return { t: "DISCIPLINADO", n: 1500 };
-                if(xp < 3000) return { t: "ESTOICO", n: 3000 };
-                if(xp < 6000) return { t: "SOBERANO", n: 6000 };
-                return { t: "ILUMINADO", n: 10000 };
-            }
-
-            // --- CORE LOGIC ---
-            function initProtocol() {
+            function initApp() {
                 db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
                     if(doc.exists) {
                         const d = doc.data();
-                        const xp = d.coins || 0; // Usando 'coins' como XP Mental
-                        const rank = getRank(xp);
+                        const xp = d.coins || 0;
                         
-                        document.getElementById('playerName').innerText = d.username || "USER_01";
-                        document.getElementById('rankDisplay').innerText = rank.t;
+                        document.getElementById('userDisplay').innerText = d.username || "Membro";
                         
                         // XP Bar
-                        const pct = Math.min((xp / rank.n) * 100, 100);
+                        const target = 500; // Meta fixa para visual
+                        const pct = Math.min((xp / target) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
-                        document.getElementById('xpText').innerText = `${xp} / ${rank.n}`;
+                        document.getElementById('xpDisplay').innerText = `${xp} pts`;
 
-                        // Timer Logic
+                        // Timer
                         if(d.lastReset) {
                             lastResetTime = d.lastReset.toDate();
                         } else {
-                            // Se nunca resetou, marca agora como inicio
                             lastResetTime = new Date();
-                            db.collection("users").doc(currentUser.uid).update({ 
-                                lastReset: firebase.firestore.FieldValue.serverTimestamp() 
-                            });
+                            db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                         }
                         
                         startTimer();
                         document.getElementById('loading').style.display = 'none';
                     } else {
-                        db.collection("users").doc(currentUser.uid).set({
-                            coins: 0, 
-                            username: "INICIADO",
-                            lastReset: firebase.firestore.FieldValue.serverTimestamp()
-                        }, {merge:true});
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0, username: "Convidado", lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
                     }
                 });
 
-                // Carrega Logs
-                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(10).onSnapshot(snap => {
+                // Logs (Clean)
+                db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(8).onSnapshot(snap => {
                     const list = document.getElementById('logList');
                     list.innerHTML = "";
+                    if(snap.empty) {
+                        list.innerHTML = "<div style='text-align:center; color:#444; margin-top:20px;'>Nenhum registro ainda.</div>";
+                        return;
+                    }
                     snap.forEach(d => {
                         const val = d.data();
                         const date = val.date ? val.date.toDate().toLocaleDateString('pt-BR') : "-";
-                        const cor = val.type.includes("FALHA") ? "#ff2a2a" : "#00ff9d";
+                        const isGood = val.value > 0;
                         list.innerHTML += `
-                            <div class="log-entry" style="border-color:${cor}">
-                                <div style="color:white; font-weight:bold;">${val.type}</div>
-                                <div style="display:flex; justify-content:space-between;">
-                                    <span>${date}</span>
-                                    <span style="color:${cor}">${val.value > 0 ? '+' + val.value + ' XP' : 'RESET'}</span>
+                            <div class="log-item">
+                                <div>
+                                    <div style="color:var(--text-main); margin-bottom:2px;">${val.type}</div>
+                                    <div style="font-size:0.7rem; opacity:0.6;">${date}</div>
+                                </div>
+                                <div class="log-val" style="color: ${isGood ? '#fff' : '#666'}">
+                                    ${isGood ? '+' : ''}${val.value}
                                 </div>
                             </div>`;
                     });
@@ -319,106 +322,67 @@
 
             function startTimer() {
                 if(timerInterval) clearInterval(timerInterval);
-                
                 timerInterval = setInterval(() => {
                     if(!lastResetTime) return;
-                    
-                    const now = new Date();
-                    const diff = now - lastResetTime; // milisegundos
+                    const diff = new Date() - lastResetTime;
                     
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-                    // Formatação com Zeros (01:05:09)
+                    // Simplificado para H:MM para ser mais elegante
                     const hStr = hours.toString().padStart(2, '0');
                     const mStr = mins.toString().padStart(2, '0');
-                    const sStr = secs.toString().padStart(2, '0');
+                    
+                    document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}`;
 
-                    document.getElementById('timerDisplay').innerText = `${hStr}:${mStr}:${sStr}`;
-
-                    // Lógica do Botão Claim (Só libera após 24h = 86400000ms)
-                    // Para testes, vamos deixar 10 segundos (10000ms)
-                    // Na versão final mude 10000 para 86400000
+                    // Botão Claim ativa após 24h
                     const btnClaim = document.getElementById('btnClaim');
+                    // TESTE: Mude 86400000 para 10000 (10 seg) para testar agora
                     if(diff > 86400000) { 
                         btnClaim.disabled = false;
-                        btnClaim.style.opacity = "1";
+                        btnClaim.innerHTML = "<span>Resgatar Consciência</span>";
                     } else {
                         btnClaim.disabled = true;
-                        btnClaim.style.opacity = "0.5";
+                        // Mostra quanto falta se quiser, ou deixa estático
                     }
-
                 }, 1000);
             }
 
-            // --- AÇÕES DO USUÁRIO ---
-
-            // 1. FALHA (REINICIAR) - Onde entra o Ad Punitivo
+            // AÇÕES
             window.failProtocol = async () => {
-                if(!confirm("CONFIRMAR FALHA DE PROTOCOLO?\nIsso vai zerar seu contador e exibir um anúncio punitivo.")) return;
+                if(!confirm("Reiniciar seu ciclo de foco?")) return;
                 
-                // Abre o Ad (Punição)
+                // AD PUNITIVO
                 window.open('https://otieu.com/4/10557860', '_blank');
 
-                const btn = document.getElementById('btnReset');
-                btn.innerText = "REINICIANDO SISTEMA...";
-                
                 try {
-                    // Reseta o Tempo no Banco
-                    await db.collection("users").doc(currentUser.uid).update({
-                        lastReset: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    // Registra a Vergonha no Histórico
+                    await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                     await db.collection("history").add({
-                        userId: currentUser.uid,
-                        type: "⚠️ FALHA DE DISCIPLINA",
-                        value: 0,
+                        userId: currentUser.uid, type: "Reinício de Ciclo", value: 0,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
                 } catch(e) { console.error(e); }
-                
-                btn.innerText = "⚠️ RELATAR FALHA / RECAÍDA";
             }
 
-            // 2. RECOMPENSA (24H)
             window.claimBonus = async () => {
                 const btn = document.getElementById('btnClaim');
                 
-                // Abre Ad (Recompensa)
+                // AD RECOMPENSA
                 window.open('https://otieu.com/4/10557860', '_blank');
 
-                btn.innerText = "SINTONIZANDO...";
-                btn.disabled = true;
-
+                btn.innerText = "Processando..."; btn.disabled = true;
                 try {
-                    // Dá XP
-                    await db.collection("users").doc(currentUser.uid).update({
-                        coins: firebase.firestore.FieldValue.increment(100),
-                        // Opcional: Se quiser resetar o timer a cada 24h para forçar novo ciclo, descomente abaixo:
-                        // lastReset: firebase.firestore.FieldValue.serverTimestamp() 
-                    });
-
+                    await db.collection("users").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(100) });
                     await db.collection("history").add({
-                        userId: currentUser.uid,
-                        type: "✅ CICLO 24H COMPLETO",
-                        value: 100,
+                        userId: currentUser.uid, type: "Ciclo Completo", value: 100,
                         date: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    alert("XP ADICIONADO. MANTENHA O FOCO.");
-
+                    alert("Foco recompensado.");
                 } catch(e) { console.error(e); }
-
-                btn.innerText = "RESGATAR NEURO-XP (+100)";
             }
 
             window.openLink = (url) => window.open(url, '_blank');
             window.logout = () => auth.signOut().then(() => window.location.reload());
-
-        } catch(e) { alert("ERRO: " + e.message); }
+        } catch(e) { alert("Erro: " + e.message); }
     </script>
 </body>
 </html>
