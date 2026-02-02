@@ -12,9 +12,17 @@
         /* TEMA FOCO PREMIUM */
         :root { --primary: #00ff9d; --gold: #ffd700; --bg: #050505; --card-bg: #111111; --border: #333; }
         
+        /* FORÇAR VISIBILIDADE (CORREÇÃO TELA PRETA) */
         body { 
-            background-color: var(--bg); color: white; font-family: sans-serif; 
-            margin: 0; padding: 20px; padding-bottom: 120px; 
+            background-color: var(--bg); 
+            color: white; 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            padding-bottom: 120px;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
         /* HEADER */
@@ -35,4 +43,270 @@
         h3 { color: #fff; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top: 0; }
 
         /* BOTÕES & INPUTS */
-        button { width: 100%; background: var
+        button { width: 100%; background: var(--primary); color: #000; font-weight: 800; border: none; padding: 18px; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        button:disabled { opacity: 0.5; }
+        input { width: 100%; padding: 16px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; }
+
+        /* HISTÓRICO */
+        .feed-post { 
+            background: #111; border-bottom: 1px solid #222; 
+            padding: 15px 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .feed-post:last-child { border-bottom: none; }
+        .post-date { color: #888; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .post-value { color: var(--gold); font-weight: bold; font-size: 1rem; }
+
+        /* BANNER FIXO RODAPÉ */
+        .sticky-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: #1a1a1a; border: 1px solid #333; border-radius: 50px; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 999; }
+        
+        #error-log { display: none; color: #ff5555; text-align: center; border: 1px solid #ff5555; padding: 10px; margin-top: 20px; font-size: 12px; border-radius: 10px; background: rgba(255,0,0,0.1); }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info" onclick="toggleMenu()">
+            <h2 id="displayUsername">... ⚙️</h2>
+        </div>
+        <div class="coin-badge">💎 <span id="coinBalance">0</span></div>
+    </div>
+
+    <div class="level-section">
+        <span class="level-badge" id="levelTitle">Carregando...</span>
+        <h1 class="level-number" id="levelNum">-</h1>
+        <div class="progress-container">
+            <div class="progress-bar" id="levelProgress"></div>
+        </div>
+        <p style="font-size: 0.7rem; color: #555; margin-top: 8px;">Faltam <span id="pointsToNext">...</span> FC para evoluir</p>
+    </div>
+
+    <div class="card" style="border: 1px solid #ff0055;">
+        <h3 style="color: #ff0055; border-color: #ff0055;">Bônus Extra</h3>
+        <p style="color:#aaa; font-size: 0.9rem;">Apoie o projeto e ganhe +10 moedas.</p>
+        <button id="btnBonus" style="background: linear-gradient(135deg, #ff0055, #ff00aa); color: white;">🎁 RESGATAR (+10 FC)</button>
+    </div>
+
+    <div class="card" style="border-color: var(--primary);">
+        <h3 style="color: var(--primary);">Check-in Diário</h3>
+        <button id="btnTreinar">CONFIRMAR PRESENÇA (+50 FC)</button>
+    </div>
+
+    <div class="card" id="cardIdentity" style="display: none;">
+        <h3>Configurações</h3>
+        <input type="text" id="username" placeholder="Seu @usuario">
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="weight" placeholder="Peso (kg)">
+            <input type="text" id="height" placeholder="Altura (cm)">
+        </div>
+        <button id="btnSalvar">Salvar Dados</button>
+        <p style="text-align: center; color: red; cursor: pointer; margin-top: 20px;" onclick="auth.signOut().then(()=>location.reload())">Sair da Conta</p>
+    </div>
+
+    <div class="card" style="padding: 10px;">
+        <h3 style="margin: 15px;">Meu Histórico</h3>
+        <div id="focoFeed">
+            <p style="text-align: center; color: #444;">Carregando...</p>
+        </div>
+    </div>
+
+    <div id="error-log"></div>
+
+    <div class="sticky-banner" onclick="window.open('https://google.com', '_blank')">
+        <span style="color: #fff; font-size: 0.8rem; font-weight: bold;">🔥 Creatina em Promoção</span>
+        <div style="background: var(--primary); color: #000; padding: 5px 15px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;">VER</div>
+    </div>
+
+    <script>
+        // --- 1. LIMPEZA DE ERROS (ANTI-TELA PRETA) ---
+        if(window.navigator && navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) { registration.unregister(); }
+            });
+        }
+        window.onerror = function(message) {
+            document.getElementById('error-log').style.display = 'block';
+            document.getElementById('error-log').innerText = "Sistema: " + message;
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
+            authDomain: "shapecoin.firebaseapp.com",
+            projectId: "shapecoin",
+            storageBucket: "shapecoin.firebasestorage.app",
+            messagingSenderId: "365582210645",
+            appId: "1:365582210645:web:8bf24f3809815340be66dc"
+        };
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            let currentUser = null;
+
+            auth.onAuthStateChanged((user) => {
+                if (!user) window.location.href = "index.html";
+                else { currentUser = user; carregarDados(); }
+            });
+
+            // --- LÓGICA DO BÔNUS (SMARTLINK) ---
+            document.getElementById('btnBonus').addEventListener('click', async () => {
+                const btn = document.getElementById('btnBonus');
+                
+                // Abre o Link
+                window.open('https://otieu.com/4/10557860', '_blank');
+
+                btn.disabled = true;
+                btn.innerText = "VALIDANDO...";
+
+                try {
+                    await db.collection("history").add({
+                        userId: currentUser.uid,
+                        username: "Bônus",
+                        type: "Bônus Extra",
+                        value: 10,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(10)
+                    });
+                    
+                    setTimeout(() => { alert("BÔNUS RESGATADO! +10 FC"); }, 1000);
+                } catch(e) { console.error(e); }
+
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "🎁 RESGATAR (+10 FC)";
+                }, 10000);
+            });
+
+            // --- FUNÇÕES PADRÃO ---
+            function atualizarNivel(coins) {
+                const pontosPorNivel = 1000; 
+                const level = Math.floor(coins / pontosPorNivel) + 1;
+                const progress = ((coins % pontosPorNivel) / pontosPorNivel) * 100;
+                document.getElementById('levelNum').innerText = level;
+                document.getElementById('levelProgress').style.width = progress + "%";
+                document.getElementById('pointsToNext').innerText = pontosPorNivel - (coins % pontosPorNivel);
+                const patentes = ["Iniciante", "Focado", "Atleta", "Brabo", "Elite", "Mestre", "Lenda"];
+                document.getElementById('levelTitle').innerText = patentes[Math.min(level - 1, patentes.length - 1)];
+            }
+
+            document.getElementById('btnSalvar').addEventListener('click', async () => {
+                const btn = document.getElementById('btnSalvar');
+                const user = document.getElementById('username').value.trim();
+                if(!user) return alert("Preencha o nome!");
+                
+                btn.disabled = true;
+                await db.collection("users").doc(currentUser.uid).set({
+                    username: user.replace('@', ''),
+                    weight: document.getElementById('weight').value,
+                    height: document.getElementById('height').value
+                }, { merge: true });
+                
+                alert("Salvo!");
+                btn.disabled = false;
+                toggleMenu();
+            });
+
+            document.getElementById('btnTreinar').addEventListener('click', async () => {
+                const btn = document.getElementById('btnTreinar');
+                const displayUser = document.getElementById('displayUsername').innerText;
+                if(displayUser.includes("Configurar") || displayUser.includes("...")) {
+                    toggleMenu(); return alert("Configure seu perfil antes!");
+                }
+                btn.disabled = true; btn.innerText = "REGISTRANDO...";
+
+                try {
+                    const docUser = await db.collection("users").doc(currentUser.uid).get();
+                    const myName = docUser.data().username || "Atleta";
+                    await db.collection("history").add({
+                        userId: currentUser.uid, username: myName, type: "Check-in", value: 50,
+                        date: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await db.collection("users").doc(currentUser.uid).update({
+                        coins: firebase.firestore.FieldValue.increment(50)
+                    });
+                    alert("CHECK-IN FEITO!");
+                } catch(e) { alert("Erro: " + e.message); }
+                btn.disabled = false; btn.innerText = "CONFIRMAR PRESENÇA (+50 FC)";
+            });
+
+            function carregarDados() {
+                db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        const coins = d.coins || 0;
+                        document.getElementById('coinBalance').innerText = coins.toLocaleString();
+                        document.getElementById('displayUsername').innerText = d.username ? "@" + d.username + " ⚙️" : "Configurar Perfil ⚙️";
+                        
+                        if(d.username) document.getElementById('username').value = d.username;
+                        if(d.weight) document.getElementById('weight').value = d.weight;
+                        if(d.height) document.getElementById('height').value = d.height;
+                        atualizarNivel(coins);
+                    } else {
+                        db.collection("users").doc(currentUser.uid).set({ coins: 0 }, { merge: true });
+                    }
+                });
+
+                db.collection("history")
+                  .where("userId", "==", currentUser.uid)
+                  .limit(20)
+                  .onSnapshot(snap => {
+                    const div = document.getElementById('focoFeed');
+                    div.innerHTML = "";
+                    if(snap.empty) { div.innerHTML = "<p style='text-align:center; color:#555;'>Nenhum histórico.</p>"; return; }
+
+                    let docs = [];
+                    snap.forEach(doc => docs.push(doc.data()));
+                    docs.sort((a, b) => (b.date ? b.date.toMillis() : 0) - (a.date ? a.date.toMillis() : 0));
+
+                    docs.forEach(d => {
+                        let dataStr = "Hoje";
+                        if(d.date) {
+                            const dateObj = d.date.toDate();
+                            const dia = dateObj.getDate().toString().padStart(2, '0');
+                            const mes = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                            const hora = dateObj.getHours().toString().padStart(2, '0');
+                            const min = dateObj.getMinutes().toString().padStart(2, '0');
+                            dataStr = `${dia}/${mes} - ${hora}:${min}`;
+                        }
+                        let corValor = d.type.includes("Bônus") ? "#ff0055" : "var(--gold)";
+                        div.innerHTML += `
+                            <div class="feed-post">
+                                <div class="post-date">
+                                    <span>${d.type.includes("Bônus") ? '🎁' : '📅'}</span>
+                                    <span>${dataStr}</span>
+                                </div>
+                                <span class="post-value" style="color: ${corValor}">+${d.value} FC</span>
+                            </div>`;
+                    });
+                });
+            }
+
+            window.toggleMenu = function() {
+                const m = document.getElementById('cardIdentity');
+                m.style.display = (m.style.display === "none") ? "block" : "none";
+            }
+
+        } catch (e) {
+            alert("Erro Fatal: " + e.message);
+        }
+
+        // --- CARREGAMENTO SEGURO DO ANÚNCIO (FINAL DO CÓDIGO) ---
+        // Só carrega depois de 4 segundos para garantir que a tela apareceu
+        setTimeout(function() {
+            try {
+                var s = document.createElement('script');
+                s.dataset.zone = '10556905';
+                s.src = 'https://gizokraijaw.net/vignette.min.js';
+                document.body.appendChild(s);
+            } catch(e) { console.log("Erro no anúncio, mas o app segue normal."); }
+        }, 4000);
+    </script>
+</body>
+</html>
