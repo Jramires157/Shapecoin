@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* TEMA "THE SYSTEM" - PREMIUM EDITION */
+        /* TEMA "THE SYSTEM" - ULTIMATE LUXURY */
         :root { 
             --primary: #00ff9d; 
             --primary-dim: rgba(0, 255, 157, 0.1);
@@ -29,149 +29,120 @@
             min-height: 100vh;
         }
         
-        /* HUD HEADER COM EFEITO DE VIDRO */
+        /* HEADER HUD REORGANIZADO */
         .hud-header { 
             border: 1px solid var(--primary); 
-            padding: 20px; margin-bottom: 25px; 
-            background: linear-gradient(135deg, rgba(0, 255, 157, 0.05) 0%, rgba(0,0,0,0) 100%);
+            padding: 25px; margin-bottom: 25px; 
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.03) 0%, rgba(0,0,0,0.5) 100%);
             position: relative;
-            border-radius: 4px;
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.05);
+            border-radius: 6px;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.02);
+            overflow: hidden; /* Garante que nada saia do card */
         }
-        .hud-label { font-size: 0.65rem; color: var(--primary); letter-spacing: 3px; margin-bottom: 5px; opacity: 0.8; }
-        .hud-value { font-size: 1.3rem; font-weight: bold; color: white; letter-spacing: 1px; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
-        .rank-badge { 
-            position: absolute; right: 20px; top: 20px; font-size: 2.5rem; 
-            color: var(--primary); font-weight: 900; 
-            text-shadow: 0 0 15px var(--primary);
-            opacity: 0.9;
+        /* Efeito de Scanline no fundo */
+        .hud-header::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 0; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        /* GRID DE ATRIBUTOS (PREMIUM) */
+        .hud-content { position: relative; z-index: 1; } /* Conteúdo acima do efeito */
+
+        .hud-label { font-size: 0.6rem; color: var(--primary); letter-spacing: 3px; margin-bottom: 5px; opacity: 0.7; }
+        .hud-value { font-size: 1.4rem; font-weight: bold; color: white; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.1); margin-bottom: 5px; }
+        
+        /* RANK (POSICIONAMENTO ABSOLUTO NA DIREITA) */
+        .rank-badge { 
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            font-size: 3.5rem; color: var(--primary); font-weight: 900; 
+            text-shadow: 0 0 20px var(--primary);
+            opacity: 0.9;
+            z-index: 2;
+        }
+
+        /* BOTÃO EDITAR (NOVO ESTILO - TEXTO PEQUENO) */
+        .edit-btn {
+            font-size: 0.6rem; color: #666; cursor: pointer; 
+            border: 1px solid #333; padding: 4px 10px; display: inline-block;
+            border-radius: 4px; transition: 0.3s; letter-spacing: 1px;
+            background: rgba(0,0,0,0.5);
+        }
+        .edit-btn:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 5px var(--primary-dim); }
+
+        /* GRID DE ATRIBUTOS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
         .stat-card { 
             background: #0f0f0f; border: 1px solid #333; padding: 15px 5px; text-align: center;
-            cursor: pointer; transition: all 0.3s ease; border-radius: 8px;
+            cursor: pointer; transition: all 0.3s ease; border-radius: 8px; position: relative;
         }
-        .stat-card:hover { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-dim); transform: translateY(-2px); }
+        .stat-card:hover { border-color: var(--primary); transform: translateY(-2px); }
         .stat-val { font-size: 1.1rem; font-weight: bold; color: white; }
         .stat-lbl { font-size: 0.55rem; color: #888; margin-top: 5px; letter-spacing: 1px; }
 
-        /* XP BAR - GLOW */
+        /* XP BAR */
         .stat-box { margin-bottom: 35px; }
-        .bar-container { width: 100%; height: 6px; background: #222; border-radius: 10px; margin-top: 8px; overflow: hidden; }
-        .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 15px var(--primary); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bar-container { width: 100%; height: 4px; background: #222; margin-top: 8px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
 
-        /* --- BOTÕES DE TREINO (A GRANDE MUDANÇA) --- */
-        .workout-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; 
-        }
+        /* BOTÕES DE TREINO (PREMIUM GLOW) */
+        .workout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .workout-btn {
-            position: relative;
-            background: linear-gradient(145deg, #151515, #0a0a0a);
-            border: 1px solid #333;
-            border-radius: 16px;
-            padding: 25px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
+            position: relative; background: #0e0e0e; border: 1px solid #222; border-radius: 12px;
+            padding: 25px 15px; text-align: center; cursor: pointer; transition: 0.3s; overflow: hidden;
         }
-        /* Efeito de luz ao passar o mouse */
-        .workout-btn::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
-            opacity: 0; transition: 0.3s;
-        }
-        .workout-btn:hover {
-            border-color: #555;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .workout-btn:hover::before { opacity: 1; }
-        
-        /* Ícones Grandes */
-        .muscle-icon { font-size: 2.2rem; display: block; margin-bottom: 10px; filter: grayscale(100%); transition: 0.3s; }
-        .muscle-name { font-size: 0.85rem; font-weight: bold; color: #888; letter-spacing: 1px; transition: 0.3s; }
-
-        /* ESTADO SELECIONADO (LUXO) */
+        .workout-btn:hover { border-color: #444; background: #111; }
         .workout-btn.selected {
-            background: rgba(0, 255, 157, 0.08);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.15), inset 0 0 10px rgba(0, 255, 157, 0.05);
+            border-color: var(--primary); background: rgba(0, 255, 157, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.05);
         }
-        .workout-btn.selected .muscle-icon {
-            filter: grayscale(0%) drop-shadow(0 0 5px var(--primary));
-            transform: scale(1.1);
-        }
-        .workout-btn.selected .muscle-name {
-            color: var(--primary);
-            text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
-        }
-        /* Indicador de Status (Ponto verde) */
-        .workout-btn::after {
-            content: ''; position: absolute; top: 10px; right: 10px;
-            width: 6px; height: 6px; border-radius: 50%; background: #333;
-            transition: 0.3s;
-        }
-        .workout-btn.selected::after {
-            background: var(--primary);
-            box-shadow: 0 0 8px var(--primary);
-        }
+        .workout-btn.selected .muscle-icon { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--primary)); }
+        .workout-btn.selected .muscle-name { color: var(--primary); }
+        
+        .muscle-icon { font-size: 2rem; display: block; margin-bottom: 10px; transition: 0.3s; }
+        .muscle-name { font-size: 0.8rem; font-weight: bold; color: #666; letter-spacing: 1px; transition: 0.3s; }
 
         /* ACTION BTN */
         .action-btn { 
             width: 100%; background: transparent; color: var(--primary); 
             font-family: 'Courier New', monospace; font-weight: bold; 
             border: 1px solid var(--primary); padding: 18px; cursor: pointer; 
-            font-size: 1rem; transition: all 0.2s; margin-top: 15px;
-            letter-spacing: 2px; border-radius: 8px;
+            font-size: 0.9rem; transition: all 0.2s; margin-top: 15px;
+            letter-spacing: 2px; border-radius: 6px;
             text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
         }
         .action-btn:active { transform: scale(0.98); }
-        .action-btn:disabled { 
-            border-color: #333; color: #444; cursor: not-allowed; 
-            box-shadow: none; text-shadow: none; 
-        }
-        .success-anim { 
-            background: var(--primary) !important; color: black !important; 
-            border-color: var(--primary) !important; 
-            box-shadow: 0 0 30px var(--primary) !important;
-        }
+        .action-btn:disabled { border-color: #333; color: #444; cursor: not-allowed; text-shadow: none; }
+        .success-anim { background: var(--primary) !important; color: black !important; box-shadow: 0 0 20px var(--primary) !important; }
 
         /* MODAL */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
         .modal-box {
             background: #0a0a0a; border: 1px solid var(--primary); padding: 30px; width: 85%; max-width: 400px;
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.1); border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.1); border-radius: 8px;
         }
         .modal-input {
             width: 100%; background: #151515; border: 1px solid #333; color: white;
-            padding: 15px; margin-bottom: 12px; font-family: monospace; box-sizing: border-box; border-radius: 6px;
+            padding: 15px; margin-bottom: 12px; font-family: monospace; box-sizing: border-box;
         }
-        .modal-input:focus { border-color: var(--primary); outline: none; }
 
         /* CALENDÁRIO */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
         .calendar-day {
-            aspect-ratio: 1; background: #111; border: 1px solid #222; border-radius: 6px;
+            aspect-ratio: 1; background: #111; border: 1px solid #222; border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.75rem; color: #444; transition: 0.2s;
         }
-        .calendar-day.active { background: var(--primary); color: black; font-weight: bold; box-shadow: 0 0 10px var(--primary); border-color: var(--primary); }
+        .calendar-day.active { background: var(--primary); color: black; font-weight: bold; box-shadow: 0 0 8px var(--primary); border-color: var(--primary); }
         .calendar-day.today { border: 1px solid white; color: white; }
 
         /* NAV */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
             background: rgba(0,0,0,0.95); border-top: 1px solid #222;
-            display: flex; justify-content: space-around; align-items: center; z-index: 100;
-            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; align-items: center; z-index: 100; backdrop-filter: blur(10px);
         }
         .nav-item { text-align: center; color: #555; font-size: 0.65rem; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--primary); transform: translateY(-2px); }
@@ -181,9 +152,6 @@
         .screen { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .screen.active { display: block; opacity: 1; }
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:black; display:flex; align-items:center; justify-content:center; color:var(--primary); z-index:999; flex-direction: column; gap: 10px;}
-        .loading-bar { width: 100px; height: 2px; background: #222; overflow: hidden; }
-        .loading-fill { width: 100%; height: 100%; background: var(--primary); animation: load 1.5s infinite; }
-        @keyframes load { 0% {transform: translateX(-100%);} 100% {transform: translateX(100%);} }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -193,24 +161,25 @@
 <body>
 
     <div id="loading">
-        <div style="letter-spacing: 2px;">SYSTEM BOOT</div>
-        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <div style="letter-spacing: 2px; font-weight:bold;">SYSTEM BOOT</div>
     </div>
 
     <div id="screen-status" class="screen active">
+        
         <div class="hud-header">
-            <div style="display:flex; justify-content:space-between;">
-                <div>
-                    <div class="hud-label">IDENTIFICAÇÃO</div>
+            <div class="hud-content">
+                <div style="padding-right: 60px;"> <div class="hud-label">IDENTIFICAÇÃO</div>
                     <div class="hud-value" id="playerName">...</div>
+                    
+                    <div class="edit-btn" onclick="abrirModal()">[ EDITAR DADOS ]</div>
+
+                    <div style="margin-top: 25px;">
+                        <div class="hud-label">CLASSIFICAÇÃO</div>
+                        <div class="hud-value" id="rankName" style="color:white; font-size:1rem;">...</div>
+                    </div>
                 </div>
-                <div onclick="abrirModal()" style="cursor:pointer; color:#444; font-size:1.2rem; transition:0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#444'">⚙️</div>
             </div>
-            
-            <div style="margin-top: 20px;">
-                <div class="hud-label">CLASSIFICAÇÃO ATUAL</div>
-                <div class="hud-value" id="rankName" style="color:white; font-size:1rem;">...</div>
-            </div>
+
             <div class="rank-badge" id="rankLetter">-</div>
         </div>
 
@@ -226,12 +195,12 @@
             </div>
             <div class="stat-card" onclick="abrirModal()">
                 <div class="stat-val" id="dispAge">--</div>
-                <div class="stat-lbl">IDADE (NVL)</div>
+                <div class="stat-lbl">IDADE</div>
             </div>
         </div>
         
         <div style="text-align:center; margin-bottom:25px; font-size:0.7rem; color:#666; letter-spacing: 1px;">
-            ANÁLISE CORPORAL: <span id="imcVal" style="color:var(--primary); font-weight:bold;">CALCULANDO...</span>
+            IMC: <span id="imcVal" style="color:var(--primary); font-weight:bold;">CALCULANDO...</span>
         </div>
 
         <div class="stat-box">
@@ -247,20 +216,16 @@
             
             <div class="workout-grid">
                 <div class="workout-btn" id="btn-push" onclick="selectW('PUSH', this)">
-                    <span class="muscle-icon">🦍</span>
-                    <span class="muscle-name">PUSH</span>
+                    <span class="muscle-icon">🦍</span><span class="muscle-name">PUSH</span>
                 </div>
                 <div class="workout-btn" id="btn-pull" onclick="selectW('PULL', this)">
-                    <span class="muscle-icon">🦅</span>
-                    <span class="muscle-name">PULL</span>
+                    <span class="muscle-icon">🦅</span><span class="muscle-name">PULL</span>
                 </div>
                 <div class="workout-btn" id="btn-legs" onclick="selectW('LEGS', this)">
-                    <span class="muscle-icon">🦖</span>
-                    <span class="muscle-name">LEGS</span>
+                    <span class="muscle-icon">🦖</span><span class="muscle-name">LEGS</span>
                 </div>
                 <div class="workout-btn" id="btn-cardio" onclick="selectW('CARDIO', this)">
-                    <span class="muscle-icon">⚡</span>
-                    <span class="muscle-name">CARDIO</span>
+                    <span class="muscle-icon">⚡</span><span class="muscle-name">CARDIO</span>
                 </div>
             </div>
 
@@ -269,7 +234,7 @@
 
         <div style="margin-top: 40px; border: 1px dashed var(--gold); padding: 20px; text-align: center; border-radius: 12px; background: rgba(255, 215, 0, 0.02);">
             <div style="color:var(--gold); font-size:0.8rem; margin-bottom:8px; letter-spacing: 1px;">⚡ BOOST DE TESTOSTERONA</div>
-            <button id="btnBuff" class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:12px; font-size: 0.8rem; margin-top: 5px;" onclick="ativarBuff()">
+            <button id="btnBuff" class="action-btn" style="border-color:var(--gold); color:var(--gold); padding:10px; font-size: 0.8rem;" onclick="ativarBuff()">
                 RESGATAR (+20 XP)
             </button>
         </div>
@@ -388,7 +353,6 @@
             window.abrirModal = () => document.getElementById('modalProfile').style.display = 'flex';
             window.fecharModal = () => document.getElementById('modalProfile').style.display = 'none';
 
-            // RANKS
             function getRank(xp) {
                 if(xp < 1000) return { l: "E", t: "INICIANTE", n: 1000 };
                 if(xp < 3000) return { l: "D", t: "EM CONSTRUÇÃO", n: 3000 };
@@ -398,13 +362,12 @@
                 return { l: "S", t: "OLYMPIA", n: 50000 };
             }
 
-            // IMC
             function calcIMC(weight, height) {
                 if(!weight || !height) return "PENDENTE";
                 const hM = height / 100;
                 const imc = weight / (hM * hM);
                 if(imc < 18.5) return "ABAIXO DO PESO";
-                if(imc < 24.9) return "EUTRÓFICO (NORMAL)";
+                if(imc < 24.9) return "EUTRÓFICO";
                 if(imc < 29.9) return "SOBREPESO";
                 return "OBESIDADE";
             }
@@ -423,13 +386,12 @@
                         document.getElementById('dispWeight').innerText = d.weight || "--";
                         document.getElementById('dispHeight').innerText = d.height || "--";
                         document.getElementById('dispAge').innerText = d.age || "--";
-                        
+                        document.getElementById('imcVal').innerText = calcIMC(d.weight, d.height);
+
                         document.getElementById('editName').value = d.username || "";
                         document.getElementById('editWeight').value = d.weight || "";
                         document.getElementById('editHeight').value = d.height || "";
                         document.getElementById('editAge').value = d.age || "";
-
-                        document.getElementById('imcVal').innerText = calcIMC(d.weight, d.height);
 
                         const pct = Math.min((xp / rank.n) * 100, 100);
                         document.getElementById('xpBar').style.width = pct + "%";
@@ -442,7 +404,6 @@
                 });
             }
 
-            // AÇÕES (SILENT)
             window.confirmarTreino = async () => {
                 const btn = document.getElementById('btnConfirmar');
                 btn.disabled = true;
@@ -471,7 +432,6 @@
             window.salvarPerfil = async () => {
                 const btn = document.getElementById('btnSalvar');
                 btn.innerText = "SALVANDO...";
-                
                 const name = document.getElementById('editName').value;
                 const w = parseFloat(document.getElementById('editWeight').value);
                 const h = parseFloat(document.getElementById('editHeight').value);
@@ -507,18 +467,15 @@
 
             window.goShop = (url) => window.open(url, '_blank');
 
-            // CALENDÁRIO
             let userLogs = [];
             function renderCalendar() {
                 const grid = document.getElementById('calendarGrid');
                 const list = document.getElementById('logList');
                 grid.innerHTML = ""; list.innerHTML = "";
-
                 const now = new Date();
                 const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
                 const today = now.getDate();
                 document.getElementById('currentMonthLabel').innerText = now.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-
                 db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(30).onSnapshot(snap => {
                     userLogs = [];
                     snap.forEach(d => userLogs.push(d.data()));
@@ -536,7 +493,6 @@
                         if(d.getMonth() === new Date().getMonth()) activeDays.add(d.getDate());
                     }
                 });
-
                 for(let i = 1; i <= totalDays; i++) {
                     const dayBox = document.createElement('div');
                     dayBox.className = 'calendar-day';
@@ -545,7 +501,6 @@
                     if(i === today) dayBox.classList.add('today');
                     grid.appendChild(dayBox);
                 }
-
                 const list = document.getElementById('logList');
                 list.innerHTML = "";
                 userLogs.slice(0, 5).forEach(log => {
