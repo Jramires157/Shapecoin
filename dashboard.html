@@ -2,105 +2,287 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOCUS | Atelier OS</title>
+    
     <meta name="theme-color" content="#F2F0E9">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
 
     <style>
-        :root { --bg: #F2F0E9; --surface: #FFFFFF; --text: #1A1A1A; --muted: #8E8E8E; --gold: #C5A059; }
+        :root { 
+            --bg: #F2F0E9; --surface: #FFFFFF; --text-main: #1A1A1A; 
+            --text-muted: #8E8E8E; --border: #E5E5E5; --gold: #C5A059;
+        }
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; margin: 0; padding: 25px 25px 110px; }
+        body { background: var(--bg); color: var(--text-main); font-family: 'Outfit', sans-serif; margin: 0; padding: 25px; padding-bottom: 110px; user-select: none; }
 
+        /* HEADER & MEDALHAS */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .logo { font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+        .logo { font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
         
-        .timer-circle { width: 260px; height: 260px; margin: 0 auto 30px; border-radius: 50%; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 30px 60px rgba(0,0,0,0.04); }
-        .main-time { font-size: 3.8rem; font-weight: 300; letter-spacing: -2px; }
-        
-        .btn-victory { width: 100%; padding: 22px; border-radius: 100px; background: #050505; color: #FFF; border: none; font-family: 'Outfit'; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .btn-victory:disabled { background: #E0DDD5; color: #A09E96; cursor: not-allowed; box-shadow: none; border: 1px solid #D1CFC7; }
-        .btn-text { background: none; border: none; color: #999; font-size: 0.7rem; text-transform: uppercase; margin-top: 25px; cursor: pointer; letter-spacing: 1px; }
+        .medals-row { display: flex; gap: 8px; }
+        .medal { width: 24px; height: 24px; border-radius: 50%; background: #E0E0E0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #FFF; opacity: 0.4; transition: 0.3s; }
+        .medal.active { opacity: 1; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .medal.copper { background: #B87333; }
+        .medal.silver { background: #C0C0C0; }
+        .medal.gold { background: #FFD700; color: #555; }
+        .medal.obsidian { background: #111; }
 
-        .white-card { background: #FFF; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 15px; cursor: pointer; border: 1px solid transparent; }
-        .section-title { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; margin: 30px 0 15px; text-transform: uppercase; }
+        /* TIMER CIRCLE (Com botão de som) */
+        .timer-circle {
+            width: 280px; height: 280px; margin: 0 auto 30px; border-radius: 50%;
+            background: var(--surface); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            box-shadow: 0 40px 80px rgba(0,0,0,0.05); /* Sombra mais difusa */
+            position: relative;
+        }
+        .main-time { font-size: 4rem; font-weight: 200; letter-spacing: -3px; line-height: 1; color: var(--text-main); }
+        .time-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
         
-        .dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--surface); padding: 6px; border-radius: 100px; display: flex; box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 100; }
-        .dock-item { padding: 12px 24px; border-radius: 50px; cursor: pointer; color: var(--muted); font-size: 0.8rem; }
-        .dock-item.active { background: #F5F5F0; color: var(--text); font-weight: 600; }
+        /* Botão de Som Discreto */
+        .sound-toggle {
+            position: absolute; bottom: 40px;
+            background: #F5F5F0; padding: 6px 16px; border-radius: 20px;
+            font-size: 0.7rem; color: var(--text-muted); cursor: pointer;
+            border: 1px solid transparent; transition: 0.3s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .sound-toggle.active { background: var(--text-main); color: #FFF; }
+        .sound-wave { display: flex; gap: 2px; height: 10px; align-items: flex-end; }
+        .bar { width: 2px; background: currentColor; animation: none; height: 4px;}
+        .sound-toggle.active .bar { animation: eq 1s infinite ease-in-out; }
+        .bar:nth-child(1) { animation-delay: 0.1s; }
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes eq { 0%, 100% { height: 4px; } 50% { height: 10px; } }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; align-items: center; justify-content: center; }
-        .modal-content { max-width: 500px; margin: 0 auto; width: 100%; text-align: center; }
-        .breath-circle { width: 100px; height: 100px; background: var(--gold); border-radius: 50%; margin: 50px auto; animation: breathe 8s infinite ease-in-out; opacity: 0.5; }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(2.5); opacity: 0.2; } }
+        /* BOTÃO DE PARTILHA */
+        .share-container { text-align: center; margin-bottom: 30px; }
+        .share-btn {
+            background: transparent; border: 1px solid #D0D0D0; padding: 8px 20px;
+            border-radius: 50px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .share-btn:hover { border-color: var(--text-main); color: var(--text-main); }
+
+        /* BOTÕES DE AÇÃO */
+        .btn-stack { display:flex; flex-direction:column; align-items: center; width: 100%; }
         
-        #share-template { position: absolute; left: -9999px; width: 1080px; height: 1920px; background: #F2F0E9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .btn-victory {
+            width: 100%; padding: 22px; border-radius: 100px;
+            background: #050505; color: #FFFFFF; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem;
+            letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .btn-victory:active { transform: scale(0.98); }
+        .btn-victory:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+        .btn-text-link {
+            background: none; border: none; color: #999;
+            font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
+            margin-top: 25px; cursor: pointer; padding: 10px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* LOJA GRID */
+        .section-title { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; margin: 30px 0 15px; }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .ebook-card {
+            background: var(--surface); border-radius: 20px; padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02); position: relative; cursor: pointer;
+            border: 1px solid transparent; transition: 0.3s;
+        }
+        .ebook-card:active { transform: scale(0.98); }
+        .ebook-tag { font-size: 0.6rem; background: #000; color: #fff; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; display: inline-block; }
+        .ebook-tag.premium { background: var(--gold); }
+        .ebook-name { font-size: 0.85rem; font-weight: 600; line-height: 1.2; margin-bottom: 5px; }
         
-        .screen { display: none; }
-        .screen.active { display: block; }
+        /* GRÁFICO NA ABA DADOS (NOVO) */
+        .stats-chart {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            height: 100px; padding: 0 10px; margin-bottom: 30px;
+        }
+        .chart-bar {
+            width: 8px; background: #E5E5E5; border-radius: 10px;
+            height: 20%; transition: height 1s ease, background 0.3s;
+        }
+        .chart-bar.active { background: var(--text-main); }
+        
+        /* DOCK */
+        .dock {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            padding: 6px; border-radius: 100px;
+            display: flex; gap: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); z-index: 100;
+        }
+        .dock-item { padding: 12px 24px; border-radius: 50px; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; transition: 0.3s; }
+        .dock-item.active { background: #F2F0E9; color: var(--text-main); font-weight: 600; }
+
+        /* MODAIS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; }
+        .modal-content { max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        
+        #share-template {
+            position: absolute; left: -9999px; width: 1080px; height: 1920px;
+            background: #F2F0E9; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 100px; color: #1A1A1A; text-align: center;
+        }
+
+        .breath-circle {
+            width: 100px; height: 100px; background: #C5A059; border-radius: 50%;
+            margin: 40px auto; opacity: 0.8; animation: breathe 8s infinite ease-in-out;
+        }
+        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(2.5); opacity: 0.2; } }
+
+        .screen { display: none; opacity: 0; transition: opacity 0.4s; }
+        .screen.active { display: block; opacity: 1; }
     </style>
 </head>
 <body>
+
+    <!-- AUDIO PLAYER (Brown Noise para Foco) -->
+    <audio id="focusAudio" loop>
+        <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- TEMPLATE PARA INSTAGRAM -->
     <div id="share-template">
-        <h1 style="font-size: 40px; color: #888;">FOCUS | OS</h1>
+        <h1 style="font-size: 40px; letter-spacing: 10px; color: #888;">FOCUS | OS</h1>
         <div style="margin: 100px 0; border: 3px solid #E5E5E5; padding: 100px; border-radius: 50%; width: 600px; height: 600px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <span id="share-days" style="font-size: 200px; font-weight: 300;">00</span>
-            <div style="font-size: 30px; letter-spacing: 5px;">DIAS LIMPOS</div>
+            <span id="share-days" style="font-size: 200px; font-weight: 300; line-height:1;">00</span>
+            <div style="font-size: 30px; letter-spacing: 5px; margin-top:20px;">DIAS LIMPOS</div>
         </div>
+        <p style="font-size: 30px; color: #666; font-style: italic;">"A disciplina é a liberdade."</p>
     </div>
 
+    <!-- TELA 1: FOCO -->
     <div id="screen-focus" class="screen active">
-        <div class="header"><div class="logo">FOCUS • OS</div></div>
+        <div class="header">
+            <div class="logo">FOCUS • OS</div>
+            <div class="medals-row">
+                <div class="medal copper" id="medal1">1</div>
+                <div class="medal silver" id="medal3">3</div>
+                <div class="medal gold" id="medal7">7</div>
+                <div class="medal obsidian" id="medal30">30</div>
+            </div>
+        </div>
+
         <div class="timer-circle">
             <div class="main-time" id="timerDisplay">00:00</div>
-            <div style="font-size: 0.7rem; color: var(--muted); margin-top: 15px;">TEMPO PRESENTE</div>
+            <div class="time-label">Tempo Limpo</div>
+            
+            <!-- NOVO: Botão de Som -->
+            <div class="sound-toggle" onclick="toggleSound(this)">
+                <div class="sound-wave">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+                <span>FOCUS MODE</span>
+            </div>
         </div>
-        <div style="text-align: center; margin-bottom: 30px;">
-            <button onclick="generateShareImage()" style="background:none; border:1px solid #D0D0D0; padding:8px 20px; border-radius:50px; font-size:0.7rem; color:var(--muted); cursor:pointer;">PARTILHAR EVOLUÇÃO</button>
+
+        <div class="share-container">
+            <button class="share-btn" onclick="generateShareImage()">PARTILHAR EVOLUÇÃO</button>
         </div>
-        <div style="display:flex; flex-direction:column; align-items:center;">
-            <button id="btnClaim" class="btn-victory" onclick="openJournal()" disabled>Em andamento (0%)</button>
-            <button class="btn-text" onclick="openBreathing()">Reiniciar Ciclo</button>
+
+        <div class="btn-stack">
+            <button id="btnClaim" class="btn-victory" onclick="openJournal()" disabled>
+                REGISTRAR VITÓRIA
+            </button>
+            <button class="btn-text-link" onclick="openBreathing()">
+                REINICIAR CICLO
+            </button>
         </div>
     </div>
 
+    <!-- TELA 2: BIBLIOTECA -->
     <div id="screen-shop" class="screen">
-        <div class="logo">Biblioteca</div>
-        <div class="section-title">E-books Gratuitos</div>
-        <div class="white-card" onclick="alert('Abra o console para ver o resumo científico.')"><b>Jejum de Dopamina</b><br><small>Neurociência do tédio</small></div>
-        <div class="section-title">Premium</div>
-        <div class="white-card" style="border:1px solid var(--gold)" onclick="window.open('https://hotmart.com','_blank')">
-            <span style="font-size:0.6rem; background:var(--gold); color:#FFF; padding:2px 6px; border-radius:4px;">REBOOT TOTAL</span><br>
-            <b>Protocolo 90 dias: PMO</b><br><small>R$ 19,90 - Ciência da Recuperação</small>
+        <div class="logo" style="margin-bottom: 20px;">BIBLIOTECA</div>
+        
+        <div class="section-title">GUIAS GRATUITOS</div>
+        <div class="shop-grid">
+            <div class="ebook-card" onclick="openEbook('dopamina')">
+                <span class="ebook-tag">LER AGORA</span>
+                <div class="ebook-name">O Jejum de Dopamina</div>
+                <div style="font-size:0.6rem; color:#888;">Neurociência Básica</div>
+            </div>
+            <div class="ebook-card" onclick="openEbook('social')">
+                <span class="ebook-tag">LER AGORA</span>
+                <div class="ebook-name">Mente Digital</div>
+                <div style="font-size:0.6rem; color:#888;">Controle de Telas</div>
+            </div>
+        </div>
+
+        <div class="section-title">PROTOCOLOS PREMIUM</div>
+        <div class="ebook-card" style="width: 100%; margin-bottom: 15px; border: 1px solid var(--gold);">
+            <span class="ebook-tag premium">CURSO COMPLETO</span>
+            <div class="ebook-name" style="font-size: 1.1rem;">Protocolo 90 Dias: Reboot</div>
+            <p style="font-size:0.75rem; color:#666; margin-top:5px;">O guia definitivo para ressensibilizar seus receptores dopaminérgicos.</p>
+            <button class="share-btn" style="background:var(--gold); border:none; color:white; margin-top:15px; width:100%;" onclick="buyProtocol()">DESBLOQUEAR (R$ 19,90)</button>
         </div>
     </div>
 
+    <!-- TELA 3: DADOS (Com Gráfico) -->
     <div id="screen-log" class="screen">
-        <div class="logo">Histórico</div>
-        <div id="logList" style="background:#FFF; border-radius:20px; padding:20px; margin-top:20px;"></div>
+        <div class="logo" style="margin-bottom: 20px;">DADOS</div>
+        
+        <div class="section-title">CONSISTÊNCIA (ÚLTIMOS 7 DIAS)</div>
+        <!-- Gráfico Visual -->
+        <div class="stats-chart">
+            <div class="chart-bar" style="height:30%"></div>
+            <div class="chart-bar" style="height:50%"></div>
+            <div class="chart-bar" style="height:20%"></div>
+            <div class="chart-bar" style="height:80%"></div>
+            <div class="chart-bar active" style="height:100%"></div>
+            <div class="chart-bar" style="height:40%"></div>
+            <div class="chart-bar" style="height:60%"></div>
+        </div>
+
+        <div class="logo" style="margin-bottom: 20px;">HISTÓRICO</div>
+        <div id="logList"></div>
     </div>
 
-    <div id="modalBreath" class="modal" style="background:#050505; color:#FFF;">
+    <!-- MODAIS -->
+    <div id="modalReader" class="modal">
         <div class="modal-content">
-            <h2>Respire profundamente</h2>
-            <div class="breath-circle"></div>
-            <button class="btn-text" onclick="closeModal()" style="color:#FFF; border:1px solid #333; padding:10px 30px; border-radius:50px;">Estou melhor</button>
-            <br><br><button class="btn-text" onclick="failProtocol()" style="color:#FF4444;">Ainda quero desistir</button>
+            <div id="ebookContent"></div>
+            <button class="btn-victory" onclick="closeModal()" style="margin-top:30px;">FECHAR</button>
         </div>
     </div>
 
     <div id="modalJournal" class="modal">
-        <div class="modal-content">
-            <h2>Vitória Confirmada</h2>
-            <textarea id="journalInput" style="width:100%; height:100px; border-radius:15px; border:1px solid #DDD; padding:15px; margin:20px 0;" placeholder="Como foi o dia de hoje?"></textarea>
-            <button class="btn-victory" onclick="confirmClaim()">Salvar Registro</button>
+        <div class="modal-content" style="text-align:center;">
+            <h2>Diário de Bordo</h2>
+            <p style="color:#888; margin-bottom:20px;">Como você se sente hoje?</p>
+            <textarea id="journalInput" style="width:100%; padding:15px; border:1px solid #ddd; border-radius:15px; font-family:'Outfit'; margin-bottom:20px;" placeholder="Escreva aqui..."></textarea>
+            <button class="btn-victory" onclick="confirmClaim()">SALVAR</button>
+            <button class="btn-text-link" onclick="closeModal()">CANCELAR</button>
         </div>
     </div>
 
+    <div id="modalBreath" class="modal" style="background:#050505; color:white;">
+        <div class="modal-content" style="text-align:center; padding-top:50px;">
+            <h2>Respire</h2>
+            <p style="color:#888;">Não tome decisões permanentes baseadas em emoções temporárias.</p>
+            <div class="breath-circle"></div>
+            <button class="btn-text-link" onclick="closeModal()" style="color:white; border:1px solid #333; border-radius:50px; margin-top:40px;">ESTOU MELHOR</button>
+            <button class="btn-text-link" onclick="failProtocol()" style="color:#D64545; margin-top:20px;">AINDA QUERO DESISTIR</button>
+        </div>
+    </div>
+
+    <!-- DOCK -->
     <div class="dock">
         <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
         <div class="dock-item" onclick="nav('shop', this)">Loja</div>
@@ -108,6 +290,12 @@
     </div>
 
     <script>
+        // CONTEÚDO
+        const ebooks = {
+            'dopamina': `<h1>Jejum de Dopamina</h1><p>A dopamina é o neurotransmissor do desejo. O excesso de estímulos digitais cria resistência...</p>`,
+            'social': `<h1>Mente Digital</h1><p>A recompensa variável das redes sociais vicia seu cérebro exatamente como um caça-níqueis...</p>`
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyANh5g4EathHhB0cY4he_CTmdyLUm_TFuE",
             authDomain: "shapecoin.firebaseapp.com",
@@ -118,123 +306,111 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
         const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentUser = null;
         let lastReset = null;
 
         auth.onAuthStateChanged(user => {
-            if(!user) location.href='index.html';
-            else initApp(user);
+            if (!user) window.location.href = "index.html";
+            else { currentUser = user; initApp(); }
         });
 
-        function initApp(user) {
-            db.collection("users").doc(user.uid).onSnapshot(doc => {
-                const data = doc.data();
-                if(data && data.lastReset) {
-                    lastReset = data.lastReset.toDate();
+        function initApp() {
+            db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+                const d = doc.data();
+                if(d.lastReset) {
+                    lastReset = d.lastReset.toDate();
+                    updateTimer();
+                    updateMedals(lastReset);
                 } else {
                     lastReset = new Date();
-                    db.collection("users").doc(user.uid).set({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                    db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                 }
-                updateTimer();
             });
-            loadLogs(user.uid);
-            setInterval(updateTimer, 60000);
+            loadLogs();
         }
 
         function updateTimer() {
-            if(!lastReset) return;
             const diff = new Date() - lastReset;
-            const hours = Math.floor(diff / 3600000);
-            const mins = Math.floor((diff % 3600000) / 60000);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             document.getElementById('timerDisplay').innerText = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
-            
-            const btn = document.getElementById('btnClaim');
-            const pct = Math.min(Math.floor((diff / 86400000) * 100), 100);
-            if(diff >= 86400000) {
-                btn.disabled = false;
-                btn.innerText = "REGISTRAR VITÓRIA DIÁRIA";
+            if(diff > 10000) document.getElementById('btnClaim').disabled = false;
+        }
+
+        function updateMedals(date) {
+            const days = Math.floor((new Date() - date) / (86400000));
+            if(days >= 1) document.getElementById('medal1').classList.add('active');
+            if(days >= 3) document.getElementById('medal3').classList.add('active');
+            if(days >= 7) document.getElementById('medal7').classList.add('active');
+            if(days >= 30) document.getElementById('medal30').classList.add('active');
+        }
+
+        function loadLogs() {
+            db.collection("history").where("userId", "==", currentUser.uid).orderBy("date", "desc").limit(5).onSnapshot(snap => {
+                const list = document.getElementById('logList');
+                list.innerHTML = "";
+                snap.forEach(d => {
+                    const v = d.data();
+                    const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
+                    list.innerHTML += `<div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; font-size:0.8rem;">
+                        <span>${v.type}</span><span style="color:#888;">${dt}</span>
+                    </div>`;
+                });
+            });
+        }
+
+        // AUDIO TOGGLE
+        function toggleSound(btn) {
+            const audio = document.getElementById('focusAudio');
+            if(audio.paused) {
+                audio.play();
+                btn.classList.add('active');
             } else {
-                btn.disabled = true;
-                btn.innerText = `EM ANDAMENTO (${pct}%)`;
+                audio.pause();
+                btn.classList.remove('active');
             }
         }
 
         async function generateShareImage() {
-            const days = Math.floor((new Date() - lastReset) / 86400000);
+            const target = document.getElementById('share-template');
+            const diff = new Date() - lastReset;
+            const days = Math.floor(diff / 86400000);
             document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
-            const canvas = await html2canvas(document.getElementById('share-template'));
+            const canvas = await html2canvas(target);
             const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click();
         }
 
-        function openJournal() { document.getElementById('modalJournal').style.display='flex'; }
-        
-        async function confirmClaim() {
-            window.open('https://otieu.com/4/10557860','_blank');
-            await db.collection("history").add({ 
-                userId: auth.currentUser.uid, 
-                type: "Vitória Diária", 
-                note: document.getElementById('journalInput').value, 
-                date: firebase.firestore.FieldValue.serverTimestamp() 
-            });
+        window.openJournal = () => document.getElementById('modalJournal').style.display = 'block';
+        window.confirmClaim = async () => {
             closeModal();
+            window.open('https://otieu.com/4/10557860', '_blank'); // AD
+            const note = document.getElementById('journalInput').value;
+            await db.collection("history").add({ userId: currentUser.uid, type: "Vitória Diária", note, date: firebase.firestore.FieldValue.serverTimestamp() });
         }
 
-        async function failProtocol() {
-            window.open('https://otieu.com/4/10557860','_blank');
-            await db.collection("users").doc(auth.currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
-            await db.collection("history").add({ 
-                userId: auth.currentUser.uid, 
-                type: "Recaída", 
-                date: firebase.firestore.FieldValue.serverTimestamp() 
-            });
+        window.openBreathing = () => document.getElementById('modalBreath').style.display = 'block';
+        window.failProtocol = async () => {
             closeModal();
+            window.open('https://otieu.com/4/10557860', '_blank'); // AD
+            await db.collection("users").doc(currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
+            await db.collection("history").add({ userId: currentUser.uid, type: "Recaída", date: firebase.firestore.FieldValue.serverTimestamp() });
         }
 
-        function loadLogs(uid) {
-    const list = document.getElementById('logList');
-    
-    // Tentativa de carregar com ordenação (pode exigir criação de índice no Firebase)
-    db.collection("history")
-        .where("userId", "==", uid)
-        .orderBy("date", "desc")
-        .limit(10)
-        .onSnapshot(snap => {
-            if (snap.empty) {
-                list.innerHTML = "<div style='text-align:center; color:#999; font-size:0.8rem;'>Sem registros ainda.</div>";
-                return;
-            }
-            list.innerHTML = snap.docs.map(d => {
-                const data = d.data();
-                const dataFormatada = data.date ? data.date.toDate().toLocaleDateString('pt-BR') : "Recente";
-                return `
-                    <div style="border-bottom:1px solid #EEE; padding:12px 0; font-size:0.8rem; display:flex; justify-content:space-between;">
-                        <div>
-                            <b style="color:#333;">${data.type}</b><br>
-                            <small style="color:#999;">${data.note || ''}</small>
-                        </div>
-                        <span style="color:#BBB;">${dataFormatada}</span>
-                    </div>`;
-            }).join('');
-        }, error => {
-            console.error("Erro no Histórico:", error);
-            // Fallback: se o orderBy falhar (falta de índice), tenta carregar sem ordem
-            db.collection("history").where("userId", "==", uid).limit(10).get().then(snap => {
-                 list.innerHTML = "<div style='color:orange; font-size:0.7rem; margin-bottom:10px;'>Dica: Crie um índice no Firebase para ordenar por data.</div>" + 
-                 snap.docs.map(d => `<div style="padding:5px 0;">${d.data().type}</div>`).join('');
-            });
-        });
-}
+        window.openEbook = (k) => {
+            document.getElementById('ebookContent').innerHTML = ebooks[k];
+            document.getElementById('modalReader').style.display = 'block';
+        }
+        window.buyProtocol = () => window.open('https://hotmart.com', '_blank'); // Link Pagamento
 
-        function nav(id, el) {
-            document.querySelectorAll('.screen').forEach(s => s.style.display='none');
-            document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
-            document.getElementById('screen-'+id).style.display='block';
+        window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        window.nav = (id, el) => {
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('screen-' + id).style.display = 'block';
             el.classList.add('active');
         }
-        function openBreathing() { document.getElementById('modalBreath').style.display='flex'; }
-        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     </script>
 </body>
 </html>
-
