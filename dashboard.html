@@ -138,6 +138,17 @@
         
         .breath-circle { width: 100px; height: 100px; background: var(--gold); border-radius: 50%; margin: 50px auto; opacity: 0.5; animation: breathe 8s infinite ease-in-out; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(2.5); opacity: 0.2; } }
+
+        /* ESTILOS DO TUTORIAL */
+        .tutorial-step { display: none; animation: fadeIn 0.5s ease; }
+        .tutorial-step.active { display: block; }
+        .tutorial-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--text-main); }
+        .tutorial-text { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 40px; }
+        .tutorial-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #DDD; transition: 0.3s; }
+        .dot.active { background: var(--text-main); width: 20px; border-radius: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -205,7 +216,7 @@
         </div>
     </div>
 
-    <!-- TELA 2: LOJA (CORRIGIDA) -->
+    <!-- TELA 2: LOJA -->
     <div id="screen-shop" class="screen">
         <div class="logo" style="margin-bottom: 20px;">BIBLIOTECA</div>
         
@@ -229,7 +240,7 @@
         </div>
     </div>
 
-    <!-- TELA 3: DADOS (CORRIGIDA) -->
+    <!-- TELA 3: DADOS -->
     <div id="screen-log" class="screen">
         <div class="logo" style="margin-bottom: 20px;">HISTÓRICO</div>
         <div id="logList">
@@ -238,6 +249,50 @@
     </div>
 
     <!-- MODAIS -->
+    
+    <!-- TUTORIAL MODAL (NOVO) -->
+    <div id="modalTutorial" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            
+            <!-- Passo 1 -->
+            <div id="tutStep1" class="tutorial-step active">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🧠</div>
+                <h2 class="tutorial-title">O Propósito</h2>
+                <p class="tutorial-text">
+                    Este não é apenas um contador.<br>
+                    É um sistema para recalibrar seu cérebro e vencer a dependência de dopamina barata.
+                </p>
+                <div class="tutorial-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+                <button class="btn-victory" onclick="nextTutorial(2)">CONTINUAR</button>
+            </div>
+
+            <!-- Passo 2 -->
+            <div id="tutStep2" class="tutorial-step">
+                <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
+                <h2 class="tutorial-title">A Mecânica</h2>
+                <p class="tutorial-text">
+                    O timer mostra seu "Tempo Limpo".<br>
+                    Se a ansiedade bater, use o <b>Modo Zen</b> para respirar antes de desistir. A consistência é a chave.
+                </p>
+                <div class="tutorial-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+                <button class="btn-victory" onclick="nextTutorial(3)">ENTENDIDO</button>
+            </div>
+
+            <!-- Passo 3 -->
+            <div id="tutStep3" class="tutorial-step">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🏆</div>
+                <h2 class="tutorial-title">A Recompensa</h2>
+                <p class="tutorial-text">
+                    A cada 24 horas, você desbloqueia a <b>Vitória Diária</b>.<br>
+                    Acumule dias para ganhar Medalhas de Honra e recuperar o controle da sua vida.
+                </p>
+                <div class="tutorial-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+                <button class="btn-victory" onclick="finishTutorial()">COMEÇAR JORNADA</button>
+            </div>
+
+        </div>
+    </div>
+
     <div id="modalReader" class="modal">
         <div class="modal-content">
             <div id="ebookContent" style="text-align:left; font-size:0.9rem; line-height:1.6;"></div>
@@ -299,17 +354,24 @@
             function initApp(user) {
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     const d = doc.data();
-                    if(d && d.lastReset) {
-                        lastReset = d.lastReset.toDate();
-                        updateTimer();
-                        updateMedals(lastReset);
-                    } else {
-                        lastReset = new Date();
-                        db.collection("users").doc(user.uid).set({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                    if(d) {
+                        // Verifica se já viu o tutorial
+                        if (!d.tutorialSeen) {
+                            openTutorial();
+                        }
+
+                        if(d.lastReset) {
+                            lastReset = d.lastReset.toDate();
+                            updateTimer();
+                            updateMedals(lastReset);
+                        } else {
+                            lastReset = new Date();
+                            db.collection("users").doc(user.uid).set({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+                        }
                     }
                 });
                 loadLogs(user.uid);
-                setInterval(updateTimer, 1000); // Atualiza a cada segundo para a barra fluir
+                setInterval(updateTimer, 1000); 
             }
 
             function updateTimer() {
@@ -317,19 +379,15 @@
                 const now = new Date();
                 const diff = now - lastReset;
                 
-                // Texto do Timer
                 const hours = Math.floor(diff / 3600000);
                 const mins = Math.floor((diff % 3600000) / 60000);
                 document.getElementById('timerDisplay').innerText = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
                 
-                // Nova Barra de Ciclo (Baseado em 24h)
                 const msInDay = 86400000;
                 const progress = Math.min((diff % msInDay) / msInDay * 100, 100);
                 document.getElementById('cycleFill').style.width = `${progress}%`;
                 document.getElementById('cycleText').innerText = `PRÓXIMA VITÓRIA (${Math.floor(progress)}%)`;
 
-                // Botão de Vitória (Só libera a cada 24h)
-                // Se passou mais de 24h desde o último reset, ou se é um novo dia
                 const btn = document.getElementById('btnClaim');
                 if(diff >= msInDay) {
                     btn.disabled = false;
@@ -357,7 +415,6 @@
                     snap.forEach(d => {
                         const v = d.data();
                         const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
-                        // Card Branco para Log
                         list.innerHTML += `
                         <div class="white-card" style="padding:15px; margin-bottom:10px; cursor:default;">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -368,6 +425,22 @@
                         </div>`;
                     });
                 });
+            }
+
+            // --- TUTORIAL LOGIC ---
+            window.openTutorial = () => {
+                document.getElementById('modalTutorial').style.display = 'flex';
+            }
+
+            window.nextTutorial = (step) => {
+                document.querySelectorAll('.tutorial-step').forEach(el => el.classList.remove('active'));
+                document.getElementById('tutStep' + step).classList.add('active');
+            }
+
+            window.finishTutorial = async () => {
+                document.getElementById('modalTutorial').style.display = 'none';
+                // Salva que viu o tutorial
+                await db.collection("users").doc(auth.currentUser.uid).set({ tutorialSeen: true }, { merge: true });
             }
 
             // FUNÇÕES DE UI
@@ -397,13 +470,13 @@
             function nav(id, el) {
                 document.querySelectorAll('.screen').forEach(s => {
                     s.classList.remove('active');
-                    s.style.display = 'none'; // Garante que some
+                    s.style.display = 'none'; 
                 });
                 document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
                 
                 const screen = document.getElementById('screen-'+id);
                 screen.style.display = 'block';
-                setTimeout(() => screen.classList.add('active'), 10); // Fade in
+                setTimeout(() => screen.classList.add('active'), 10); 
                 el.classList.add('active');
             }
 
