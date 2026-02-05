@@ -25,8 +25,18 @@
         body { background: var(--bg); color: var(--text-main); font-family: 'Outfit', sans-serif; margin: 0; padding: 25px; padding-bottom: 110px; user-select: none; }
 
         /* HEADER & MEDALHAS */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+        .brand-container { display: flex; flex-direction: column; }
         .logo { font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
+        
+        /* NOVA TAG DE BATALHA SUTIL */
+        .battle-tag {
+            font-size: 0.65rem; color: var(--text-main); opacity: 0.7; 
+            letter-spacing: 1px; margin-top: 4px; font-weight: 500;
+            text-transform: uppercase; cursor: pointer; border-bottom: 1px dotted transparent;
+            transition: 0.3s; width: fit-content;
+        }
+        .battle-tag:hover { opacity: 1; border-color: var(--text-muted); }
         
         .medals-row { display: flex; gap: 8px; }
         .medal { width: 24px; height: 24px; border-radius: 50%; background: #E0E0E0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #FFF; opacity: 0.4; transition: 0.3s; }
@@ -47,16 +57,10 @@
         .main-time { font-size: 4rem; font-weight: 200; letter-spacing: -3px; line-height: 1; color: var(--text-main); }
         .time-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
         
-        /* NOVA BARRA DE CICLO (PROGRESSO DIÁRIO) */
-        .cycle-container {
-            width: 200px; margin: 0 auto 30px; text-align: center;
-        }
-        .cycle-track {
-            width: 100%; height: 4px; background: #EAEAEA; border-radius: 10px; overflow: hidden; margin-top: 10px;
-        }
-        .cycle-fill {
-            height: 100%; width: 0%; background: var(--text-main); border-radius: 10px; transition: width 1s ease;
-        }
+        /* BARRA DE CICLO */
+        .cycle-container { width: 200px; margin: 0 auto 30px; text-align: center; }
+        .cycle-track { width: 100%; height: 4px; background: #EAEAEA; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .cycle-fill { height: 100%; width: 0%; background: var(--text-main); border-radius: 10px; transition: width 1s ease; }
         .cycle-text { font-size: 0.6rem; color: var(--text-muted); margin-top: 5px; letter-spacing: 1px; }
 
         /* SOM BUTTON */
@@ -97,10 +101,7 @@
             transition: transform 0.2s;
         }
         .btn-victory:active { transform: scale(0.98); }
-        .btn-victory:disabled { 
-            background: #E0DDD5; color: #AAA; 
-            cursor: not-allowed; box-shadow: none; 
-        }
+        .btn-victory:disabled { background: #E0DDD5; color: #AAA; cursor: not-allowed; box-shadow: none; }
 
         .btn-text-link {
             background: none; border: none; color: #999;
@@ -109,7 +110,7 @@
             font-family: 'Outfit', sans-serif;
         }
 
-        /* LOJA & DADOS (FIXED VISIBILITY) */
+        /* LOJA & DADOS */
         .white-card {
             background: var(--surface); border-radius: 20px; padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; cursor: pointer;
@@ -131,7 +132,7 @@
         .screen { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .screen.active { display: block; opacity: 1; }
 
-        /* MODAIS & EXTRAS */
+        /* MODAIS */
         .modal { display: none; position: fixed; inset: 0; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; align-items: center; justify-content: center; }
         .modal-content { max-width: 500px; margin: 0 auto; width: 100%; text-align: center; }
         #share-template { position: absolute; left: -9999px; }
@@ -139,26 +140,31 @@
         .breath-circle { width: 100px; height: 100px; background: var(--gold); border-radius: 50%; margin: 50px auto; opacity: 0.5; animation: breathe 8s infinite ease-in-out; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(2.5); opacity: 0.2; } }
 
-        /* ESTILOS DO TUTORIAL */
+        /* TUTORIAL & INPUTS */
         .tutorial-step { display: none; animation: fadeIn 0.5s ease; }
         .tutorial-step.active { display: block; }
         .tutorial-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--text-main); }
-        .tutorial-text { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 40px; }
+        .tutorial-text { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 30px; }
         .tutorial-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #DDD; transition: 0.3s; }
         .dot.active { background: var(--text-main); width: 20px; border-radius: 10px; }
         
+        .clean-input {
+            width: 100%; border: none; border-bottom: 1px solid #CCC; background: transparent;
+            padding: 10px; font-family: 'Outfit'; font-size: 1.2rem; color: var(--text-main);
+            text-align: center; margin-bottom: 30px;
+        }
+        .clean-input:focus { outline: none; border-color: var(--text-main); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <!-- SOM BINAURAL -->
     <audio id="focusAudio" loop>
         <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3" type="audio/mp3">
     </audio>
 
-    <!-- TEMPLATE SHARE -->
     <div id="share-template" style="width: 1080px; height: 1920px; background: #F2F0E9; text-align: center; color: #1A1A1A; padding-top: 200px;">
         <h1 style="font-size: 50px; letter-spacing: 15px; color: #888; text-transform: uppercase;">Focus • OS</h1>
         <div style="margin: 100px auto; border: 5px solid #E5E5E5; background: #FFF; border-radius: 50%; width: 700px; height: 700px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
@@ -168,12 +174,19 @@
             <span id="share-hours" style="font-size: 100px; font-weight: 300; line-height:1; color: #666;">00</span>
             <span style="font-size: 20px; letter-spacing: 5px; color: #AAA;">HORAS</span>
         </div>
+        <!-- Exibe o nome da batalha na imagem de partilha também -->
+        <div id="share-battle" style="font-size: 35px; color: #333; letter-spacing: 4px; text-transform: uppercase; margin-top: 50px;">LIVRE DE VÍCIOS</div>
     </div>
 
     <!-- TELA 1: FOCO -->
     <div id="screen-focus" class="screen active">
         <div class="header">
-            <div class="logo">FOCUS • OS</div>
+            <div class="brand-container">
+                <div class="logo">FOCUS • OS</div>
+                <!-- ONDE APARECE O NOME DA BATALHA -->
+                <div id="battleDisplay" class="battle-tag" onclick="editBattle()">Livre de: ...</div>
+            </div>
+            
             <div class="medals-row">
                 <div class="medal copper" id="medal1">1</div>
                 <div class="medal silver" id="medal3">3</div>
@@ -194,7 +207,6 @@
             </div>
         </div>
 
-        <!-- NOVA BARRA DE CICLO DIÁRIO -->
         <div class="cycle-container">
             <div class="cycle-track">
                 <div class="cycle-fill" id="cycleFill"></div>
@@ -250,29 +262,30 @@
 
     <!-- MODAIS -->
     
-    <!-- TUTORIAL MODAL (NOVO) -->
+    <!-- TUTORIAL MODAL -->
     <div id="modalTutorial" class="modal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             
-            <!-- Passo 1 -->
+            <!-- Passo 1: DEFINIR BATALHA -->
             <div id="tutStep1" class="tutorial-step active">
-                <div style="font-size: 3rem; margin-bottom: 20px;">🧠</div>
-                <h2 class="tutorial-title">O Propósito</h2>
+                <div style="font-size: 3rem; margin-bottom: 10px;">⚔️</div>
+                <h2 class="tutorial-title">Sua Batalha</h2>
                 <p class="tutorial-text">
-                    Este não é apenas um contador.<br>
-                    É um sistema para recalibrar seu cérebro e vencer a dependência de dopamina barata.
+                    O primeiro passo para a vitória é nomear o inimigo. Contra o que você está lutando?
                 </p>
+                <input type="text" id="battleInput" class="clean-input" placeholder="Ex: Pornografia, Açúcar..." autocomplete="off">
+                
                 <div class="tutorial-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
-                <button class="btn-victory" onclick="nextTutorial(2)">CONTINUAR</button>
+                <button class="btn-victory" onclick="saveBattleAndNext()">CONTINUAR</button>
             </div>
 
             <!-- Passo 2 -->
             <div id="tutStep2" class="tutorial-step">
                 <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
-                <h2 class="tutorial-title">A Mecânica</h2>
+                <h2 class="tutorial-title">O Tempo</h2>
                 <p class="tutorial-text">
-                    O timer mostra seu "Tempo Limpo".<br>
-                    Se a ansiedade bater, use o <b>Modo Zen</b> para respirar antes de desistir. A consistência é a chave.
+                    O timer marca seu "Tempo Limpo".<br>
+                    Se a ansiedade bater, use o botão <b>Modo Zen</b> para respirar antes de tomar uma decisão.
                 </p>
                 <div class="tutorial-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
                 <button class="btn-victory" onclick="nextTutorial(3)">ENTENDIDO</button>
@@ -281,15 +294,13 @@
             <!-- Passo 3 -->
             <div id="tutStep3" class="tutorial-step">
                 <div style="font-size: 3rem; margin-bottom: 20px;">🏆</div>
-                <h2 class="tutorial-title">A Recompensa</h2>
+                <h2 class="tutorial-title">A Vitória</h2>
                 <p class="tutorial-text">
-                    A cada 24 horas, você desbloqueia a <b>Vitória Diária</b>.<br>
-                    Acumule dias para ganhar Medalhas de Honra e recuperar o controle da sua vida.
+                    A cada 24 horas limpo, você desbloqueia o botão para registrar sua vitória. A constância gera liberdade.
                 </p>
                 <div class="tutorial-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
                 <button class="btn-victory" onclick="finishTutorial()">COMEÇAR JORNADA</button>
             </div>
-
         </div>
     </div>
 
@@ -345,6 +356,7 @@
             const db = firebase.firestore();
             const auth = firebase.auth();
             let lastReset = null;
+            let currentBattle = "";
 
             auth.onAuthStateChanged(user => {
                 if(!user) location.href='index.html';
@@ -355,9 +367,18 @@
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     const d = doc.data();
                     if(d) {
-                        // Verifica se já viu o tutorial
+                        // Verifica tutorial
                         if (!d.tutorialSeen) {
-                            openTutorial();
+                            document.getElementById('modalTutorial').style.display = 'flex';
+                        }
+                        
+                        // Carrega Batalha
+                        if (d.battleTitle) {
+                            currentBattle = d.battleTitle;
+                            document.getElementById('battleDisplay').innerText = "LIVRE DE: " + d.battleTitle;
+                            document.getElementById('share-battle').innerText = "LIVRE DE: " + d.battleTitle;
+                        } else {
+                            document.getElementById('battleDisplay').innerText = "DEFINIR FOCO";
                         }
 
                         if(d.lastReset) {
@@ -427,9 +448,25 @@
                 });
             }
 
-            // --- TUTORIAL LOGIC ---
-            window.openTutorial = () => {
-                document.getElementById('modalTutorial').style.display = 'flex';
+            // --- TUTORIAL & BATTLE LOGIC ---
+            window.saveBattleAndNext = () => {
+                const battle = document.getElementById('battleInput').value;
+                if(!battle) { alert("Por favor, nomeie sua batalha."); return; }
+                
+                // Salva temporariamente no visual, depois salva no DB ao finalizar
+                currentBattle = battle;
+                
+                // Salva logo no DB para garantir
+                db.collection("users").doc(auth.currentUser.uid).set({ battleTitle: battle }, { merge: true });
+                
+                nextTutorial(2);
+            }
+
+            window.editBattle = () => {
+                const newBattle = prompt("Qual é o seu novo foco?", currentBattle);
+                if(newBattle) {
+                    db.collection("users").doc(auth.currentUser.uid).set({ battleTitle: newBattle }, { merge: true });
+                }
             }
 
             window.nextTutorial = (step) => {
@@ -439,11 +476,10 @@
 
             window.finishTutorial = async () => {
                 document.getElementById('modalTutorial').style.display = 'none';
-                // Salva que viu o tutorial
                 await db.collection("users").doc(auth.currentUser.uid).set({ tutorialSeen: true }, { merge: true });
             }
 
-            // FUNÇÕES DE UI
+            // UI HELPERS
             function toggleSound(btn) {
                 const audio = document.getElementById('focusAudio');
                 if(audio.paused) {
@@ -462,25 +498,21 @@
                 
                 document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
                 document.getElementById('share-hours').innerText = hours.toString().padStart(2,'0');
-                
+                if(currentBattle) document.getElementById('share-battle').innerText = "LIVRE DE: " + currentBattle;
+
                 const canvas = await html2canvas(target);
                 const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click();
             }
 
             function nav(id, el) {
-                document.querySelectorAll('.screen').forEach(s => {
-                    s.classList.remove('active');
-                    s.style.display = 'none'; 
-                });
+                document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
                 document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
-                
                 const screen = document.getElementById('screen-'+id);
                 screen.style.display = 'block';
                 setTimeout(() => screen.classList.add('active'), 10); 
                 el.classList.add('active');
             }
 
-            // MODAIS & AÇÕES
             window.openJournal = () => document.getElementById('modalJournal').style.display='flex';
             window.openBreathing = () => document.getElementById('modalBreath').style.display='flex';
             window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
