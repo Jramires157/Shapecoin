@@ -12,6 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Biblioteca Leve de Confete -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
 
@@ -29,14 +31,21 @@
         .brand-container { display: flex; flex-direction: column; }
         .logo { font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
         
-        /* NOVA TAG DE BATALHA SUTIL */
+        /* TAGS DE BATALHA E STATUS */
         .battle-tag {
-            font-size: 0.65rem; color: var(--text-main); opacity: 0.7; 
-            letter-spacing: 1px; margin-top: 4px; font-weight: 500;
+            font-size: 0.75rem; color: var(--text-main); opacity: 0.9; 
+            letter-spacing: 1px; margin-top: 5px; font-weight: 600;
             text-transform: uppercase; cursor: pointer; border-bottom: 1px dotted transparent;
             transition: 0.3s; width: fit-content;
         }
         .battle-tag:hover { opacity: 1; border-color: var(--text-muted); }
+
+        /* NOVO: STATUS DE EVOLUÇÃO */
+        .status-tag {
+            font-size: 0.6rem; color: var(--gold); 
+            letter-spacing: 2px; margin-top: 4px; text-transform: uppercase;
+            font-weight: 500;
+        }
         
         .medals-row { display: flex; gap: 8px; }
         .medal { width: 24px; height: 24px; border-radius: 50%; background: #E0E0E0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #FFF; opacity: 0.4; transition: 0.3s; }
@@ -174,7 +183,6 @@
             <span id="share-hours" style="font-size: 100px; font-weight: 300; line-height:1; color: #666;">00</span>
             <span style="font-size: 20px; letter-spacing: 5px; color: #AAA;">HORAS</span>
         </div>
-        <!-- Exibe o nome da batalha na imagem de partilha também -->
         <div id="share-battle" style="font-size: 35px; color: #333; letter-spacing: 4px; text-transform: uppercase; margin-top: 50px;">LIVRE DE VÍCIOS</div>
     </div>
 
@@ -183,8 +191,9 @@
         <div class="header">
             <div class="brand-container">
                 <div class="logo">FOCUS • OS</div>
-                <!-- ONDE APARECE O NOME DA BATALHA -->
                 <div id="battleDisplay" class="battle-tag" onclick="editBattle()">Livre de: ...</div>
+                <!-- STATUS DA PATENTE DO USUÁRIO -->
+                <div id="statusDisplay" class="status-tag">STATUS: INICIADO</div>
             </div>
             
             <div class="medals-row">
@@ -316,7 +325,7 @@
             <h2>Vitória Confirmada</h2>
             <p style="color:#888; font-size:0.8rem;">Salve este momento.</p>
             <textarea id="journalInput" style="width:100%; height:100px; border-radius:15px; border:1px solid #DDD; padding:15px; margin:20px 0; font-family:'Outfit';" placeholder="Como se sente?"></textarea>
-            <button class="btn-victory" onclick="confirmClaim()">SALVAR</button>
+            <button class="btn-victory" onclick="confirmClaim()">SALVAR E CELEBRAR</button>
         </div>
     </div>
 
@@ -409,12 +418,21 @@
                 document.getElementById('cycleFill').style.width = `${progress}%`;
                 document.getElementById('cycleText').innerText = `PRÓXIMA VITÓRIA (${Math.floor(progress)}%)`;
 
+                // Botão de Vitória
                 const btn = document.getElementById('btnClaim');
                 if(diff >= msInDay) {
                     btn.disabled = false;
                 } else {
                     btn.disabled = true;
                 }
+
+                // Atualizar Status (Patente)
+                const days = Math.floor(diff / msInDay);
+                let status = "INICIADO";
+                if(days >= 3) status = "FOCADO";
+                if(days >= 7) status = "GUERREIRO";
+                if(days >= 30) status = "SOBERANO";
+                document.getElementById('statusDisplay').innerText = `STATUS: ${status}`;
             }
 
             function updateMedals(date) {
@@ -452,13 +470,8 @@
             window.saveBattleAndNext = () => {
                 const battle = document.getElementById('battleInput').value;
                 if(!battle) { alert("Por favor, nomeie sua batalha."); return; }
-                
-                // Salva temporariamente no visual, depois salva no DB ao finalizar
                 currentBattle = battle;
-                
-                // Salva logo no DB para garantir
                 db.collection("users").doc(auth.currentUser.uid).set({ battleTitle: battle }, { merge: true });
-                
                 nextTutorial(2);
             }
 
@@ -517,7 +530,31 @@
             window.openBreathing = () => document.getElementById('modalBreath').style.display='flex';
             window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
             
+            // LÓGICA DE REGISTRO DE VITÓRIA COM CONFETE
             window.confirmClaim = async () => {
+                // Efeito Confete
+                var duration = 3 * 1000;
+                var end = Date.now() + duration;
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#C5A059', '#FFFFFF', '#000000'] // Cores da paleta Atelier
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#C5A059', '#FFFFFF', '#000000']
+                    });
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+
                 closeModal();
                 window.open('https://otieu.com/4/10557860', '_blank'); // AD
                 const note = document.getElementById('journalInput').value;
