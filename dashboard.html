@@ -40,7 +40,6 @@
         }
         .battle-tag:hover { opacity: 1; border-color: var(--text-muted); }
 
-        /* NOVO: STATUS DE EVOLUÇÃO */
         .status-tag {
             font-size: 0.6rem; color: var(--gold); 
             letter-spacing: 2px; margin-top: 4px; text-transform: uppercase;
@@ -123,10 +122,18 @@
         .white-card {
             background: var(--surface); border-radius: 20px; padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03); transition: 0.2s;
         }
+        .white-card:active { transform: scale(0.98); background: #F9F9F9; }
+        
         .section-title { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; margin: 30px 0 15px; text-transform: uppercase; }
         
+        .locked-badge {
+            font-size: 0.6rem; color: var(--text-main); background: #EAEAEA;
+            padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;
+            margin-bottom: 8px; letter-spacing: 1px;
+        }
+
         /* DOCK */
         .dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -174,6 +181,7 @@
         <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3" type="audio/mp3">
     </audio>
 
+    <!-- SHARE TEMPLATE -->
     <div id="share-template" style="width: 1080px; height: 1920px; background: #F2F0E9; text-align: center; color: #1A1A1A; padding-top: 200px;">
         <h1 style="font-size: 50px; letter-spacing: 15px; color: #888; text-transform: uppercase;">Focus • OS</h1>
         <div style="margin: 100px auto; border: 5px solid #E5E5E5; background: #FFF; border-radius: 50%; width: 700px; height: 700px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
@@ -192,7 +200,6 @@
             <div class="brand-container">
                 <div class="logo">FOCUS • OS</div>
                 <div id="battleDisplay" class="battle-tag" onclick="editBattle()">Livre de: ...</div>
-                <!-- STATUS DA PATENTE DO USUÁRIO -->
                 <div id="statusDisplay" class="status-tag">STATUS: INICIADO</div>
             </div>
             
@@ -237,27 +244,49 @@
         </div>
     </div>
 
-    <!-- TELA 2: LOJA -->
+    <!-- TELA 2: LOJA (ARQUIVOS) -->
     <div id="screen-shop" class="screen">
-        <div class="logo" style="margin-bottom: 20px;">BIBLIOTECA</div>
-        
-        <div class="section-title">GUIAS GRATUITOS</div>
-        <div class="white-card" onclick="openEbook('dopamina')">
-            <div style="font-size:0.6rem; background:#EEE; padding:2px 6px; border-radius:4px; display:inline-block; margin-bottom:5px;">LER AGORA</div>
-            <div style="font-weight:600;">O Jejum de Dopamina</div>
-            <div style="font-size:0.7rem; color:#888;">Neurociência Básica</div>
+        <div class="logo" style="margin-bottom: 20px;">ARQUIVOS CONFIDENCIAIS</div>
+        <div style="font-size: 0.7rem; color: #888; margin-bottom: 30px;">
+            Acesso concedido mediante patrocínio. Assista para desbloquear o conhecimento.
         </div>
-        <div class="white-card" onclick="openEbook('social')">
-            <div style="font-size:0.6rem; background:#EEE; padding:2px 6px; border-radius:4px; display:inline-block; margin-bottom:5px;">LER AGORA</div>
-            <div style="font-weight:600;">Mente Digital</div>
-            <div style="font-size:0.7rem; color:#888;">Controle de Telas</div>
+        
+        <div class="section-title">DOSSIÊS NEUROCIENTÍFICOS</div>
+        
+        <!-- GUIA 1 -->
+        <div class="white-card" onclick="unlockAndRead('dopamina')">
+            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
+            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">O Protocolo Dopamina</div>
+            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
+                Técnica de 24h para ressensibilizar receptores D2. O guia essencial de "reset".
+            </div>
+            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
+                DESBLOQUEAR (AD) →
+            </div>
         </div>
 
-        <div class="section-title">PREMIUM</div>
-        <div class="white-card" style="border:1px solid var(--gold)" onclick="window.open('https://hotmart.com','_blank')">
-            <span style="font-size:0.6rem; background:var(--gold); color:#FFF; padding:2px 6px; border-radius:4px;">REBOOT TOTAL</span><br>
-            <b style="font-size:1.1rem; display:block; margin:5px 0;">Protocolo 90 Dias</b>
-            <small style="color:#666;">O guia definitivo para recuperação. (R$ 19,90)</small>
+        <!-- GUIA 2 -->
+        <div class="white-card" onclick="unlockAndRead('social')">
+            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
+            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">A Mente Monocromática</div>
+            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
+                Como quebrar o ciclo de recompensa variável das redes sociais usando a escala de cinza.
+            </div>
+            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
+                DESBLOQUEAR (AD) →
+            </div>
+        </div>
+
+        <!-- GUIA 3 (NOVO) -->
+        <div class="white-card" onclick="unlockAndRead('urgency')">
+            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
+            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">Surfando a Urgência</div>
+            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
+                A técnica "Urge Surfing" para observar o desejo sem agir sobre ele. Controle de impulso avançado.
+            </div>
+            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
+                DESBLOQUEAR (AD) →
+            </div>
         </div>
     </div>
 
@@ -271,11 +300,9 @@
 
     <!-- MODAIS -->
     
-    <!-- TUTORIAL MODAL -->
+    <!-- TUTORIAL -->
     <div id="modalTutorial" class="modal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
-            
-            <!-- Passo 1: DEFINIR BATALHA -->
             <div id="tutStep1" class="tutorial-step active">
                 <div style="font-size: 3rem; margin-bottom: 10px;">⚔️</div>
                 <h2 class="tutorial-title">Sua Batalha</h2>
@@ -283,12 +310,10 @@
                     O primeiro passo para a vitória é nomear o inimigo. Contra o que você está lutando?
                 </p>
                 <input type="text" id="battleInput" class="clean-input" placeholder="Ex: Pornografia, Açúcar..." autocomplete="off">
-                
                 <div class="tutorial-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
                 <button class="btn-victory" onclick="saveBattleAndNext()">CONTINUAR</button>
             </div>
 
-            <!-- Passo 2 -->
             <div id="tutStep2" class="tutorial-step">
                 <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
                 <h2 class="tutorial-title">O Tempo</h2>
@@ -300,7 +325,6 @@
                 <button class="btn-victory" onclick="nextTutorial(3)">ENTENDIDO</button>
             </div>
 
-            <!-- Passo 3 -->
             <div id="tutStep3" class="tutorial-step">
                 <div style="font-size: 3rem; margin-bottom: 20px;">🏆</div>
                 <h2 class="tutorial-title">A Vitória</h2>
@@ -313,13 +337,28 @@
         </div>
     </div>
 
-    <div id="modalReader" class="modal">
-        <div class="modal-content">
-            <div id="ebookContent" style="text-align:left; font-size:0.9rem; line-height:1.6;"></div>
-            <button class="btn-victory" onclick="closeModal()" style="margin-top:30px;">FECHAR</button>
+    <!-- AD ALERT MODAL -->
+    <div id="modalAdAlert" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
+            <h2 style="font-family: 'Playfair Display'; margin-bottom: 10px;">Acesso Restrito</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">
+                Este dossiê contém conhecimento avançado. Para acessá-lo gratuitamente, você precisa assistir a uma mensagem do nosso patrocinador.
+            </p>
+            <button class="btn-victory" id="btnConfirmAd">DESBLOQUEAR AGORA</button>
+            <button class="btn-text-link" onclick="closeModal()">CANCELAR</button>
         </div>
     </div>
 
+    <!-- EBOOK READER -->
+    <div id="modalReader" class="modal">
+        <div class="modal-content">
+            <div id="ebookContent" style="text-align:left; font-size:0.95rem; line-height:1.7; color: #333;"></div>
+            <button class="btn-victory" onclick="closeModal()" style="margin-top:30px;">FECHAR ARQUIVO</button>
+        </div>
+    </div>
+
+    <!-- JOURNAL & BREATH MODALS -->
     <div id="modalJournal" class="modal">
         <div class="modal-content">
             <h2>Vitória Confirmada</h2>
@@ -341,7 +380,7 @@
     <!-- DOCK -->
     <div class="dock">
         <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
-        <div class="dock-item" onclick="nav('shop', this)">Loja</div>
+        <div class="dock-item" onclick="nav('shop', this)">Arquivos</div>
         <div class="dock-item" onclick="nav('log', this)">Dados</div>
     </div>
 
@@ -355,9 +394,43 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
+        // CONTEÚDO INCREMENTADO DOS GUIAS
         const ebooks = {
-            'dopamina': '<h2>Jejum de Dopamina</h2><br><p>A dopamina não é prazer, é desejo. Ao limitar estímulos artificiais por 24h, você reseta a sensibilidade dos seus receptores.</p>',
-            'social': '<h2>Mente Digital</h2><br><p>Redes sociais usam recompensa variável. Mude seu celular para preto e branco para quebrar o ciclo visual.</p>'
+            'dopamina': `
+                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">O Protocolo Dopamina</h2>
+                <p><strong>A Biologia do Vício:</strong> A dopamina não é a molécula do prazer, mas sim a do <em>desejo</em> e da <em>antecipação</em>. Quando você inunda seu cérebro com estímulos supernormais (telas, açúcar, pornografia), seus receptores sofrem "downregulation" (diminuem em número para se proteger).</p>
+                <p>O resultado? O mundo normal parece cinza e sem graça (anhedonia).</p>
+                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
+                <p><strong>O Protocolo de 24h:</strong></p>
+                <ul>
+                    <li>Zero redes sociais, zero streaming.</li>
+                    <li>Alimentação simples (sem açúcar/processados).</li>
+                    <li>Sem música (apenas sons ambientes).</li>
+                    <li>Permitido: Escrever, caminhar, meditar, beber água.</li>
+                </ul>
+                <p>Isso força o sistema a recalibrar a sensibilidade. O tédio é o remédio.</p>
+            `,
+            'social': `
+                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">A Mente Monocromática</h2>
+                <p>As redes sociais são desenhadas como máquinas de caça-níqueis. Cores vibrantes (vermelho de notificação, gradientes) são gatilhos biológicos de atenção.</p>
+                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
+                <p><strong>A Técnica Grayscale:</strong></p>
+                <p>Vá nas configurações de Acessibilidade do seu celular e ative o "Filtro de Cor" para Escala de Cinza.</p>
+                <p><strong>Por que funciona?</strong></p>
+                <p>Sem cor, o Instagram e TikTok parecem "mortos". Seu cérebro para de receber a micro-recompensa visual a cada scroll. O ato de usar o celular torna-se utilitário, não recreativo.</p>
+            `,
+            'urgency': `
+                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">Surfando a Urgência</h2>
+                <p>Um "Urge" (desejo intenso) é como uma onda. Ele sobe, atinge um pico e <em>sempre</em> quebra e desaparece. O erro é tentar parar a onda (lutar contra o pensamento).</p>
+                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
+                <p><strong>A Técnica:</strong></p>
+                <ol>
+                    <li>Reconheça o desejo: "Estou sentindo vontade de X".</li>
+                    <li>Não julgue. Não diga "não posso". Apenas observe.</li>
+                    <li>Note onde você sente isso no corpo (tensão no peito? mãos suando?).</li>
+                    <li>Respire através da sensação e espere 10 minutos. A onda vai passar sozinha.</li>
+                </ol>
+            `
         };
 
         try {
@@ -366,6 +439,7 @@
             const auth = firebase.auth();
             let lastReset = null;
             let currentBattle = "";
+            let pendingEbookKey = null;
 
             auth.onAuthStateChanged(user => {
                 if(!user) location.href='index.html';
@@ -376,12 +450,8 @@
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     const d = doc.data();
                     if(d) {
-                        // Verifica tutorial
-                        if (!d.tutorialSeen) {
-                            document.getElementById('modalTutorial').style.display = 'flex';
-                        }
+                        if (!d.tutorialSeen) document.getElementById('modalTutorial').style.display = 'flex';
                         
-                        // Carrega Batalha
                         if (d.battleTitle) {
                             currentBattle = d.battleTitle;
                             document.getElementById('battleDisplay').innerText = "LIVRE DE: " + d.battleTitle;
@@ -408,7 +478,6 @@
                 if(!lastReset) return;
                 const now = new Date();
                 const diff = now - lastReset;
-                
                 const hours = Math.floor(diff / 3600000);
                 const mins = Math.floor((diff % 3600000) / 60000);
                 document.getElementById('timerDisplay').innerText = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
@@ -418,15 +487,9 @@
                 document.getElementById('cycleFill').style.width = `${progress}%`;
                 document.getElementById('cycleText').innerText = `PRÓXIMA VITÓRIA (${Math.floor(progress)}%)`;
 
-                // Botão de Vitória
                 const btn = document.getElementById('btnClaim');
-                if(diff >= msInDay) {
-                    btn.disabled = false;
-                } else {
-                    btn.disabled = true;
-                }
+                btn.disabled = diff < msInDay;
 
-                // Atualizar Status (Patente)
                 const days = Math.floor(diff / msInDay);
                 let status = "INICIADO";
                 if(days >= 3) status = "FOCADO";
@@ -464,6 +527,25 @@
                         </div>`;
                     });
                 });
+            }
+
+            // --- UNLOCK CONTENT LOGIC ---
+            window.unlockAndRead = (key) => {
+                pendingEbookKey = key;
+                document.getElementById('modalAdAlert').style.display = 'flex';
+            }
+
+            document.getElementById('btnConfirmAd').onclick = () => {
+                document.getElementById('modalAdAlert').style.display = 'none';
+                
+                // Abre o Ad
+                window.open('https://otieu.com/4/10557860', '_blank');
+                
+                // Abre o conteúdo (com pequeno delay para dar tempo da aba abrir)
+                setTimeout(() => {
+                    document.getElementById('ebookContent').innerHTML = ebooks[pendingEbookKey];
+                    document.getElementById('modalReader').style.display = 'flex';
+                }, 500);
             }
 
             // --- TUTORIAL & BATTLE LOGIC ---
@@ -530,49 +612,27 @@
             window.openBreathing = () => document.getElementById('modalBreath').style.display='flex';
             window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
             
-            // LÓGICA DE REGISTRO DE VITÓRIA COM CONFETE
             window.confirmClaim = async () => {
-                // Efeito Confete
                 var duration = 3 * 1000;
                 var end = Date.now() + duration;
                 (function frame() {
-                    confetti({
-                        particleCount: 5,
-                        angle: 60,
-                        spread: 55,
-                        origin: { x: 0 },
-                        colors: ['#C5A059', '#FFFFFF', '#000000'] // Cores da paleta Atelier
-                    });
-                    confetti({
-                        particleCount: 5,
-                        angle: 120,
-                        spread: 55,
-                        origin: { x: 1 },
-                        colors: ['#C5A059', '#FFFFFF', '#000000']
-                    });
-                    if (Date.now() < end) {
-                        requestAnimationFrame(frame);
-                    }
+                    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#C5A059', '#FFFFFF', '#000000'] });
+                    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#C5A059', '#FFFFFF', '#000000'] });
+                    if (Date.now() < end) requestAnimationFrame(frame);
                 }());
 
                 closeModal();
-                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                window.open('https://otieu.com/4/10557860', '_blank'); 
                 const note = document.getElementById('journalInput').value;
                 await db.collection("history").add({ userId: auth.currentUser.uid, type: "Vitória Diária", note, date: firebase.firestore.FieldValue.serverTimestamp() });
             };
 
             window.failProtocol = async () => {
                 closeModal();
-                window.open('https://otieu.com/4/10557860', '_blank'); // AD
+                window.open('https://otieu.com/4/10557860', '_blank'); 
                 await db.collection("users").doc(auth.currentUser.uid).update({ lastReset: firebase.firestore.FieldValue.serverTimestamp() });
                 await db.collection("history").add({ userId: auth.currentUser.uid, type: "Recaída", date: firebase.firestore.FieldValue.serverTimestamp() });
             };
-
-            window.openEbook = (k) => {
-                document.getElementById('ebookContent').innerHTML = ebooks[k];
-                document.getElementById('modalReader').style.display = 'flex';
-            };
-            window.buyProtocol = () => window.open('https://hotmart.com', '_blank');
 
         } catch(e) { alert("Erro de Sistema: " + e.message); }
     </script>
