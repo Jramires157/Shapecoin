@@ -6,6 +6,13 @@
     <title>FOCUS | Atelier OS</title>
     
     <meta name="theme-color" content="#F2F0E9">
+    <meta name="description" content="Sistema Operacional para Foco e Soberania Mental">
+    
+    <!-- PWA & Store Metadata -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -179,6 +186,13 @@
 
         .clean-input { width: 100%; border: none; border-bottom: 1px solid #CCC; background: transparent; padding: 10px; font-family: 'Outfit'; font-size: 1.2rem; color: var(--text-main); text-align: center; margin-bottom: 30px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* FOOTER / PRIVACY */
+        .store-footer {
+            text-align: center; margin-top: 40px; padding-bottom: 20px;
+            font-size: 0.6rem; color: var(--text-muted); letter-spacing: 1px;
+        }
+        .store-footer a { color: var(--text-muted); text-decoration: underline; margin: 0 5px; }
     </style>
 </head>
 <body>
@@ -306,7 +320,6 @@
     <div id="screen-log" class="screen">
         <div class="logo" style="margin-bottom: 10px;">ANÁLISE DE DADOS</div>
         
-        <!-- CORRIGIDO: GRÁFICO DE CLAREZA MENTAL -->
         <div class="section-title">ÍNDICE DE CLAREZA MENTAL</div>
         <div class="white-card" style="padding: 15px 20px;">
             <div class="chart-wrapper">
@@ -320,6 +333,13 @@
         <div class="section-title">HISTÓRICO RECENTE</div>
         <div id="logList" style="margin-top: 10px;">
             <div style="text-align:center; padding:20px; color:#999; font-size:0.8rem;">Carregando...</div>
+        </div>
+
+        <div class="store-footer">
+            <a href="#" onclick="alert('Política de Privacidade: Seus dados são salvos localmente e no Firebase de forma anônima.')">Privacidade</a> • 
+            <a href="#" onclick="alert('Termos: Este app é uma ferramenta de auxílio e não substitui acompanhamento médico.')">Termos de Uso</a>
+            <br><br>
+            FOCUS • OS V1.0.4
         </div>
     </div>
 
@@ -432,7 +452,6 @@
                     }
                 });
                 loadLogs(user.uid);
-                // Render chart only once or when needed, but here we init
                 updateCommunityCount();
                 setInterval(updateTimer, 1000); 
             }
@@ -442,12 +461,10 @@
                 document.getElementById('liveUsers').innerText = base;
             }
 
-            // CORRIGIDO: RENDERIZAÇÃO DO GRÁFICO
             function renderChart() {
                 const chart = document.getElementById('chartContainer');
                 if(!chart) return;
                 chart.innerHTML = "";
-                // Simula dados (pode ser substituído por dados reais do firebase se tiver)
                 const heights = [20, 35, 45, 30, 60, 75, 90]; 
                 
                 let html = '';
@@ -460,7 +477,6 @@
                 });
                 chart.innerHTML = html;
 
-                // Animação com pequeno delay para garantir que o DOM renderizou
                 setTimeout(() => {
                     const bars = chart.querySelectorAll('.chart-bar');
                     bars.forEach(bar => {
@@ -549,10 +565,9 @@
                 else audio.pause() || btn.classList.remove('active');
             }
 
-            // MELHORADO: PARTILHA DE IMAGEM
             async function generateShareImage() {
                 const btn = document.querySelector('.share-btn');
-                const originalText = btn.innerHTML; // Salva o ícone e texto
+                const originalText = btn.innerHTML;
                 btn.innerText = "GERANDO...";
                 btn.disabled = true;
 
@@ -567,17 +582,15 @@
                     document.getElementById('share-hours').innerText = hours.toString().padStart(2,'0');
                     if(currentBattle) document.getElementById('share-battle').innerText = "LIVRE DE: " + currentBattle;
 
-                    // Melhora a qualidade da imagem
                     const canvas = await html2canvas(template, {
-                        scale: 2, // Retina quality
+                        scale: 2,
                         backgroundColor: '#F2F0E9',
-                        useCORS: true // Permite carregar recursos externos se necessário
+                        useCORS: true
                     });
 
                     canvas.toBlob(async (blob) => {
                         const file = new File([blob], "focus-evolution.png", { type: "image/png" });
                         
-                        // Tenta partilha nativa (iOS/Android)
                         if (navigator.share && navigator.canShare({ files: [file] })) {
                             try {
                                 await navigator.share({
@@ -586,11 +599,10 @@
                                     text: `Estou há ${days} dias focado. Junte-se a mim.`
                                 });
                             } catch (err) {
-                                console.log('Share failed or cancelled', err);
-                                downloadImage(canvas); // Fallback se cancelar ou falhar
+                                downloadImage(canvas);
                             }
                         } else {
-                            downloadImage(canvas); // Fallback para PC
+                            downloadImage(canvas);
                         }
                         
                         btn.innerHTML = originalText;
@@ -619,7 +631,6 @@
                 setTimeout(() => screen.classList.add('active'), 10); 
                 el.classList.add('active');
 
-                // Se for para a aba de log, renderiza o gráfico
                 if(id === 'log') {
                     renderChart();
                 }
