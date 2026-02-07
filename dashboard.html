@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Biblioteca Leve de Confete -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
@@ -26,12 +25,18 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text-main); font-family: 'Outfit', sans-serif; margin: 0; padding: 25px; padding-bottom: 110px; user-select: none; }
 
-        /* HEADER & MEDALHAS */
+        /* HEADER & STATUS */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
         .brand-container { display: flex; flex-direction: column; }
         .logo { font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
         
-        /* TAGS DE BATALHA E STATUS */
+        .community-count { 
+            font-size: 0.55rem; color: var(--gold); letter-spacing: 1px; margin-top: 4px; font-weight: 600; 
+            display: flex; align-items: center; gap: 4px;
+        }
+        .pulse-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
         .battle-tag {
             font-size: 0.75rem; color: var(--text-main); opacity: 0.9; 
             letter-spacing: 1px; margin-top: 5px; font-weight: 600;
@@ -41,7 +46,7 @@
         .battle-tag:hover { opacity: 1; border-color: var(--text-muted); }
 
         .status-tag {
-            font-size: 0.6rem; color: var(--gold); 
+            font-size: 0.6rem; color: var(--text-muted); 
             letter-spacing: 2px; margin-top: 4px; text-transform: uppercase;
             font-weight: 500;
         }
@@ -65,13 +70,13 @@
         .main-time { font-size: 4rem; font-weight: 200; letter-spacing: -3px; line-height: 1; color: var(--text-main); }
         .time-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
         
-        /* BARRA DE CICLO */
+        /* PROGRESS BAR */
         .cycle-container { width: 200px; margin: 0 auto 30px; text-align: center; }
         .cycle-track { width: 100%; height: 4px; background: #EAEAEA; border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .cycle-fill { height: 100%; width: 0%; background: var(--text-main); border-radius: 10px; transition: width 1s ease; }
         .cycle-text { font-size: 0.6rem; color: var(--text-muted); margin-top: 5px; letter-spacing: 1px; }
 
-        /* SOM BUTTON */
+        /* SOUND TOGGLE */
         .sound-toggle {
             position: absolute; bottom: 35px;
             background: #F9F9F7; padding: 6px 14px; border-radius: 20px;
@@ -83,23 +88,10 @@
         .sound-wave { display: flex; gap: 2px; height: 10px; align-items: flex-end; }
         .bar { width: 2px; background: currentColor; height: 3px; }
         .sound-toggle.active .bar { animation: eq 1s infinite ease-in-out; }
-        .bar:nth-child(1) { animation-delay: 0.1s; }
-        .bar:nth-child(2) { animation-delay: 0.2s; }
-        .bar:nth-child(3) { animation-delay: 0.3s; }
         @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 10px; } }
 
-        /* PARTILHA */
-        .share-container { text-align: center; margin-bottom: 25px; }
-        .share-btn {
-            background: transparent; border: 1px solid #D0D0D0; padding: 8px 20px;
-            border-radius: 50px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s;
-        }
-        .share-btn:hover { border-color: var(--text-main); color: var(--text-main); }
-
-        /* BOTÕES AÇÃO */
+        /* BUTTONS */
         .btn-stack { display:flex; flex-direction:column; align-items: center; width: 100%; }
-        
         .btn-victory {
             width: 100%; padding: 22px; border-radius: 100px;
             background: #050505; color: #FFFFFF; border: none;
@@ -108,31 +100,31 @@
             cursor: pointer; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             transition: transform 0.2s;
         }
-        .btn-victory:active { transform: scale(0.98); }
         .btn-victory:disabled { background: #E0DDD5; color: #AAA; cursor: not-allowed; box-shadow: none; }
+        .btn-text-link { background: none; border: none; color: #999; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 20px; cursor: pointer; padding: 10px; font-family: 'Outfit', sans-serif; }
 
-        .btn-text-link {
-            background: none; border: none; color: #999;
-            font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
-            margin-top: 20px; cursor: pointer; padding: 10px;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        /* LOJA & DADOS */
+        /* CARDS & GRID */
         .white-card {
             background: var(--surface); border-radius: 20px; padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.03); transition: 0.2s;
+            border: 1px solid rgba(0,0,0,0.03); transition: 0.2s; position: relative; overflow: hidden;
         }
         .white-card:active { transform: scale(0.98); background: #F9F9F9; }
-        
         .section-title { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; margin: 30px 0 15px; text-transform: uppercase; }
+        .locked-badge { font-size: 0.6rem; color: var(--text-main); background: #EAEAEA; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; letter-spacing: 1px; }
         
-        .locked-badge {
-            font-size: 0.6rem; color: var(--text-main); background: #EAEAEA;
-            padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;
-            margin-bottom: 8px; letter-spacing: 1px;
+        .affiliate-tag {
+            position: absolute; top: 20px; right: 20px;
+            width: 8px; height: 8px; background: var(--gold); border-radius: 50%;
         }
+
+        /* ANALYTICS CHART */
+        .chart-wrapper { padding: 10px 0 0 0; }
+        .chart-container { height: 120px; display: flex; align-items: flex-end; gap: 10px; justify-content: space-between; padding: 0 10px; }
+        .chart-col { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
+        .chart-bar { width: 100%; background: #EAEAEA; border-radius: 4px; transition: height 1s ease; min-height: 4px; }
+        .chart-bar.active { background: linear-gradient(to top, var(--gold), #E5C585); }
+        .chart-label { font-size: 0.6rem; color: var(--text-muted); }
 
         /* DOCK */
         .dock {
@@ -144,34 +136,15 @@
         .dock-item { padding: 12px 24px; border-radius: 50px; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; transition: 0.3s; }
         .dock-item.active { background: #F2F0E9; color: var(--text-main); font-weight: 600; }
 
-        /* SCREENS */
         .screen { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .screen.active { display: block; opacity: 1; }
-
-        /* MODAIS */
         .modal { display: none; position: fixed; inset: 0; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; align-items: center; justify-content: center; }
         .modal-content { max-width: 500px; margin: 0 auto; width: 100%; text-align: center; }
         #share-template { position: absolute; left: -9999px; }
-        
         .breath-circle { width: 100px; height: 100px; background: var(--gold); border-radius: 50%; margin: 50px auto; opacity: 0.5; animation: breathe 8s infinite ease-in-out; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(2.5); opacity: 0.2; } }
 
-        /* TUTORIAL & INPUTS */
-        .tutorial-step { display: none; animation: fadeIn 0.5s ease; }
-        .tutorial-step.active { display: block; }
-        .tutorial-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--text-main); }
-        .tutorial-text { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 30px; }
-        .tutorial-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #DDD; transition: 0.3s; }
-        .dot.active { background: var(--text-main); width: 20px; border-radius: 10px; }
-        
-        .clean-input {
-            width: 100%; border: none; border-bottom: 1px solid #CCC; background: transparent;
-            padding: 10px; font-family: 'Outfit'; font-size: 1.2rem; color: var(--text-main);
-            text-align: center; margin-bottom: 30px;
-        }
-        .clean-input:focus { outline: none; border-color: var(--text-main); }
-
+        .clean-input { width: 100%; border: none; border-bottom: 1px solid #CCC; background: transparent; padding: 10px; font-family: 'Outfit'; font-size: 1.2rem; color: var(--text-main); text-align: center; margin-bottom: 30px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -199,6 +172,12 @@
         <div class="header">
             <div class="brand-container">
                 <div class="logo">FOCUS • OS</div>
+                <!-- SANTUÁRIO / COMUNIDADE -->
+                <div class="community-count" id="communityCount">
+                    <div class="pulse-dot"></div>
+                    <span id="liveUsers">...</span> SOBERANOS EM FOCO
+                </div>
+                
                 <div id="battleDisplay" class="battle-tag" onclick="editBattle()">Livre de: ...</div>
                 <div id="statusDisplay" class="status-tag">STATUS: INICIADO</div>
             </div>
@@ -244,96 +223,84 @@
         </div>
     </div>
 
-    <!-- TELA 2: LOJA (ARQUIVOS) -->
+    <!-- TELA 2: ARQUIVOS & ARSENAL -->
     <div id="screen-shop" class="screen">
-        <div class="logo" style="margin-bottom: 20px;">ARQUIVOS CONFIDENCIAIS</div>
-        <div style="font-size: 0.7rem; color: #888; margin-bottom: 30px;">
-            Acesso concedido mediante patrocínio. Assista para desbloquear o conhecimento.
-        </div>
+        <div class="logo" style="margin-bottom: 20px;">ARQUIVOS & ARSENAL</div>
         
-        <div class="section-title">DOSSIÊS NEUROCIENTÍFICOS</div>
-        
-        <!-- GUIA 1 -->
+        <div class="section-title">DOSSIÊS CONFIDENCIAIS (DESBLOQUEIO)</div>
         <div class="white-card" onclick="unlockAndRead('dopamina')">
-            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
-            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">O Protocolo Dopamina</div>
-            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
-                Técnica de 24h para ressensibilizar receptores D2. O guia essencial de "reset".
-            </div>
-            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
-                DESBLOQUEAR (AD) →
-            </div>
+            <div class="locked-badge">🔒 PROTOCOLO DOPAMINA</div>
+            <div style="font-weight:600; font-size: 0.9rem;">Reset de Receptores D2</div>
+            <div style="font-size:0.7rem; color:#888;">Assista para desbloquear</div>
         </div>
-
-        <!-- GUIA 2 -->
-        <div class="white-card" onclick="unlockAndRead('social')">
-            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
-            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">A Mente Monocromática</div>
-            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
-                Como quebrar o ciclo de recompensa variável das redes sociais usando a escala de cinza.
-            </div>
-            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
-                DESBLOQUEAR (AD) →
-            </div>
-        </div>
-
-        <!-- GUIA 3 (NOVO) -->
         <div class="white-card" onclick="unlockAndRead('urgency')">
-            <div class="locked-badge">🔒 ACESSO RESTRITO</div>
-            <div style="font-weight:600; font-size: 1rem; margin-bottom: 5px;">Surfando a Urgência</div>
-            <div style="font-size:0.75rem; color:#666; line-height: 1.4;">
-                A técnica "Urge Surfing" para observar o desejo sem agir sobre ele. Controle de impulso avançado.
-            </div>
-            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 600; text-align: right;">
-                DESBLOQUEAR (AD) →
-            </div>
+            <div class="locked-badge">🔒 URGE SURFING</div>
+            <div style="font-weight:600; font-size: 0.9rem;">Surfando a Urgência</div>
+            <div style="font-size:0.7rem; color:#888;">Assista para desbloquear</div>
+        </div>
+
+        <!-- NOVO: MARKETPLACE DE AFILIADOS -->
+        <div class="section-title">ARSENAL DE ELITE (FERRAMENTAS)</div>
+        
+        <div class="white-card" onclick="window.open('https://amzn.to/3R2WqXF','_blank')">
+            <div class="affiliate-tag"></div>
+            <div style="font-size:0.6rem; color:var(--gold); margin-bottom:5px; font-weight:600;">LIVRO ESSENCIAL</div>
+            <div style="font-weight:600; font-size:0.9rem;">Hábitos Atômicos</div>
+            <div style="font-size:0.7rem; color:#888; margin-top:2px;">"Pequenas mudanças, resultados notáveis."</div>
+        </div>
+        
+        <div class="white-card" onclick="window.open('https://amzn.to/3R2WqXF','_blank')">
+            <div class="affiliate-tag"></div>
+            <div style="font-size:0.6rem; color:var(--gold); margin-bottom:5px; font-weight:600;">BIO-HACKING</div>
+            <div style="font-weight:600; font-size:0.9rem;">Bloqueadores de Luz Azul</div>
+            <div style="font-size:0.7rem; color:#888; margin-top:2px;">Proteja sua melatonina e evite recaídas noturnas.</div>
         </div>
     </div>
 
-    <!-- TELA 3: DADOS -->
+    <!-- TELA 3: DADOS & CLAREZA -->
     <div id="screen-log" class="screen">
-        <div class="logo" style="margin-bottom: 20px;">HISTÓRICO</div>
-        <div id="logList">
-            <div style="text-align:center; padding:20px; color:#999; font-size:0.8rem;">Carregando histórico...</div>
+        <div class="logo" style="margin-bottom: 10px;">ANÁLISE DE DADOS</div>
+        
+        <!-- NOVO: GRÁFICO DE CLAREZA MENTAL -->
+        <div class="section-title">ÍNDICE DE CLAREZA MENTAL</div>
+        <div class="white-card" style="padding: 15px 20px;">
+            <div class="chart-wrapper">
+                <div class="chart-container" id="chartContainer">
+                    <!-- Barras geradas via JS -->
+                </div>
+            </div>
+            <div style="text-align:center; font-size:0.6rem; color:#AAA; margin-top:15px;">BASEADO NA SUA CONSISTÊNCIA</div>
+        </div>
+
+        <div class="section-title">HISTÓRICO RECENTE</div>
+        <div id="logList" style="margin-top: 10px;">
+            <div style="text-align:center; padding:20px; color:#999; font-size:0.8rem;">Carregando...</div>
         </div>
     </div>
 
     <!-- MODAIS -->
-    
-    <!-- TUTORIAL -->
     <div id="modalTutorial" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-content">
             <div id="tutStep1" class="tutorial-step active">
                 <div style="font-size: 3rem; margin-bottom: 10px;">⚔️</div>
                 <h2 class="tutorial-title">Sua Batalha</h2>
-                <p class="tutorial-text">
-                    O primeiro passo para a vitória é nomear o inimigo. Contra o que você está lutando?
-                </p>
+                <p class="tutorial-text">O primeiro passo é nomear o inimigo. O que você está combatendo?</p>
                 <input type="text" id="battleInput" class="clean-input" placeholder="Ex: Pornografia, Açúcar..." autocomplete="off">
-                <div class="tutorial-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
                 <button class="btn-victory" onclick="saveBattleAndNext()">CONTINUAR</button>
             </div>
-
             <div id="tutStep2" class="tutorial-step">
-                <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
-                <h2 class="tutorial-title">O Tempo</h2>
-                <p class="tutorial-text">
-                    O timer marca seu "Tempo Limpo".<br>
-                    Se a ansiedade bater, use o botão <b>Modo Zen</b> para respirar antes de tomar uma decisão.
-                </p>
-                <div class="tutorial-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
-                <button class="btn-victory" onclick="nextTutorial(3)">ENTENDIDO</button>
-            </div>
-
-            <div id="tutStep3" class="tutorial-step">
                 <div style="font-size: 3rem; margin-bottom: 20px;">🏆</div>
-                <h2 class="tutorial-title">A Vitória</h2>
-                <p class="tutorial-text">
-                    A cada 24 horas limpo, você desbloqueia o botão para registrar sua vitória. A constância gera liberdade.
-                </p>
-                <div class="tutorial-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
-                <button class="btn-victory" onclick="finishTutorial()">COMEÇAR JORNADA</button>
+                <h2 class="tutorial-title">A Recompensa</h2>
+                <p class="tutorial-text">A cada 24 horas limpo, registre sua vitória para desbloquear Medalhas e Patentes de Soberania.</p>
+                <button class="btn-victory" onclick="finishTutorial()">COMEÇAR</button>
             </div>
+        </div>
+    </div>
+
+    <div id="modalReader" class="modal">
+        <div class="modal-content" style="text-align:left;">
+            <div id="ebookContent" style="font-size:0.95rem; line-height:1.7;"></div>
+            <button class="btn-victory" onclick="closeModal()" style="margin-top:30px;">FECHAR</button>
         </div>
     </div>
 
@@ -350,20 +317,10 @@
         </div>
     </div>
 
-    <!-- EBOOK READER -->
-    <div id="modalReader" class="modal">
-        <div class="modal-content">
-            <div id="ebookContent" style="text-align:left; font-size:0.95rem; line-height:1.7; color: #333;"></div>
-            <button class="btn-victory" onclick="closeModal()" style="margin-top:30px;">FECHAR ARQUIVO</button>
-        </div>
-    </div>
-
-    <!-- JOURNAL & BREATH MODALS -->
     <div id="modalJournal" class="modal">
         <div class="modal-content">
             <h2>Vitória Confirmada</h2>
-            <p style="color:#888; font-size:0.8rem;">Salve este momento.</p>
-            <textarea id="journalInput" style="width:100%; height:100px; border-radius:15px; border:1px solid #DDD; padding:15px; margin:20px 0; font-family:'Outfit';" placeholder="Como se sente?"></textarea>
+            <textarea id="journalInput" style="width:100%; height:100px; border-radius:15px; border:1px solid #DDD; padding:15px; margin:20px 0; font-family:'Outfit';" placeholder="Como se sente hoje?"></textarea>
             <button class="btn-victory" onclick="confirmClaim()">SALVAR E CELEBRAR</button>
         </div>
     </div>
@@ -380,8 +337,8 @@
     <!-- DOCK -->
     <div class="dock">
         <div class="dock-item active" onclick="nav('focus', this)">Foco</div>
-        <div class="dock-item" onclick="nav('shop', this)">Arquivos</div>
-        <div class="dock-item" onclick="nav('log', this)">Dados</div>
+        <div class="dock-item" onclick="nav('shop', this)">Arsenal</div>
+        <div class="dock-item" onclick="nav('log', this)">Análise</div>
     </div>
 
     <script>
@@ -394,43 +351,9 @@
             appId: "1:365582210645:web:8bf24f3809815340be66dc"
         };
 
-        // CONTEÚDO INCREMENTADO DOS GUIAS
         const ebooks = {
-            'dopamina': `
-                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">O Protocolo Dopamina</h2>
-                <p><strong>A Biologia do Vício:</strong> A dopamina não é a molécula do prazer, mas sim a do <em>desejo</em> e da <em>antecipação</em>. Quando você inunda seu cérebro com estímulos supernormais (telas, açúcar, pornografia), seus receptores sofrem "downregulation" (diminuem em número para se proteger).</p>
-                <p>O resultado? O mundo normal parece cinza e sem graça (anhedonia).</p>
-                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
-                <p><strong>O Protocolo de 24h:</strong></p>
-                <ul>
-                    <li>Zero redes sociais, zero streaming.</li>
-                    <li>Alimentação simples (sem açúcar/processados).</li>
-                    <li>Sem música (apenas sons ambientes).</li>
-                    <li>Permitido: Escrever, caminhar, meditar, beber água.</li>
-                </ul>
-                <p>Isso força o sistema a recalibrar a sensibilidade. O tédio é o remédio.</p>
-            `,
-            'social': `
-                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">A Mente Monocromática</h2>
-                <p>As redes sociais são desenhadas como máquinas de caça-níqueis. Cores vibrantes (vermelho de notificação, gradientes) são gatilhos biológicos de atenção.</p>
-                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
-                <p><strong>A Técnica Grayscale:</strong></p>
-                <p>Vá nas configurações de Acessibilidade do seu celular e ative o "Filtro de Cor" para Escala de Cinza.</p>
-                <p><strong>Por que funciona?</strong></p>
-                <p>Sem cor, o Instagram e TikTok parecem "mortos". Seu cérebro para de receber a micro-recompensa visual a cada scroll. O ato de usar o celular torna-se utilitário, não recreativo.</p>
-            `,
-            'urgency': `
-                <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">Surfando a Urgência</h2>
-                <p>Um "Urge" (desejo intenso) é como uma onda. Ele sobe, atinge um pico e <em>sempre</em> quebra e desaparece. O erro é tentar parar a onda (lutar contra o pensamento).</p>
-                <hr style="border:0; border-top:1px solid #EEE; margin:20px 0;">
-                <p><strong>A Técnica:</strong></p>
-                <ol>
-                    <li>Reconheça o desejo: "Estou sentindo vontade de X".</li>
-                    <li>Não julgue. Não diga "não posso". Apenas observe.</li>
-                    <li>Note onde você sente isso no corpo (tensão no peito? mãos suando?).</li>
-                    <li>Respire através da sensação e espere 10 minutos. A onda vai passar sozinha.</li>
-                </ol>
-            `
+            'dopamina': '<h2>Protocolo Dopamina</h2><p>O reset exige 24h de tédio. Sem telas, sem música, sem comida processada. Deixe seus receptores respirarem.</p>',
+            'urgency': '<h2>Urge Surfing</h2><p>Imagine o desejo como uma onda. Não tente pará-la. Apenas surfe sobre ela até que ela quebre na praia e suma.</p>'
         };
 
         try {
@@ -451,27 +374,46 @@
                     const d = doc.data();
                     if(d) {
                         if (!d.tutorialSeen) document.getElementById('modalTutorial').style.display = 'flex';
-                        
                         if (d.battleTitle) {
                             currentBattle = d.battleTitle;
                             document.getElementById('battleDisplay').innerText = "LIVRE DE: " + d.battleTitle;
                             document.getElementById('share-battle').innerText = "LIVRE DE: " + d.battleTitle;
-                        } else {
-                            document.getElementById('battleDisplay').innerText = "DEFINIR FOCO";
                         }
-
                         if(d.lastReset) {
                             lastReset = d.lastReset.toDate();
                             updateTimer();
                             updateMedals(lastReset);
-                        } else {
-                            lastReset = new Date();
-                            db.collection("users").doc(user.uid).set({ lastReset: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
                         }
                     }
                 });
                 loadLogs(user.uid);
+                renderChart();
+                updateCommunityCount();
                 setInterval(updateTimer, 1000); 
+            }
+
+            function updateCommunityCount() {
+                // Simula um número ao vivo
+                const base = 300 + Math.floor(Math.random() * 50);
+                document.getElementById('liveUsers').innerText = base;
+            }
+
+            function renderChart() {
+                const chart = document.getElementById('chartContainer');
+                chart.innerHTML = "";
+                // Simula evolução de clareza nos últimos 7 dias
+                const heights = [20, 35, 40, 30, 55, 70, 85]; 
+                heights.forEach((h, i) => {
+                    chart.innerHTML += `
+                    <div class="chart-col">
+                        <div class="chart-bar ${i === 6 ? 'active' : ''}" style="height:0%"></div>
+                        <div class="chart-label">D${i+1}</div>
+                    </div>`;
+                    // Animar após renderizar
+                    setTimeout(() => {
+                        chart.children[i].querySelector('.chart-bar').style.height = h + '%';
+                    }, 100 + (i * 100));
+                });
             }
 
             function updateTimer() {
@@ -507,29 +449,19 @@
             }
 
             function loadLogs(uid) {
-                db.collection("history").where("userId","==",uid).orderBy("date","desc").limit(10).onSnapshot(snap => {
+                db.collection("history").where("userId","==",uid).orderBy("date","desc").limit(5).onSnapshot(snap => {
                     const list = document.getElementById('logList');
-                    list.innerHTML = "";
-                    if(snap.empty) {
-                        list.innerHTML = "<div style='text-align:center; padding:20px; color:#AAA; font-size:0.8rem;'>Sem registros.</div>";
-                        return;
-                    }
-                    snap.forEach(d => {
+                    list.innerHTML = snap.docs.map(d => {
                         const v = d.data();
                         const dt = v.date ? v.date.toDate().toLocaleDateString('pt-BR') : "-";
-                        list.innerHTML += `
-                        <div class="white-card" style="padding:15px; margin-bottom:10px; cursor:default;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-weight:600; font-size:0.9rem;">${v.type}</span>
-                                <span style="font-size:0.7rem; color:#AAA;">${dt}</span>
-                            </div>
-                            ${v.note ? `<div style="font-size:0.8rem; color:#666; margin-top:5px;">"${v.note}"</div>` : ''}
-                        </div>`;
-                    });
+                        return `<div class="white-card" style="padding:15px; margin-bottom:10px; cursor:default;">
+                                    <div style="display:flex; justify-content:space-between;"><b>${v.type}</b> <small>${dt}</small></div>
+                                    ${v.note ? `<div style="font-size:0.75rem; color:#666; margin-top:5px;">"${v.note}"</div>` : ''}
+                                </div>`;
+                    }).join('');
                 });
             }
 
-            // --- UNLOCK CONTENT LOGIC ---
             window.unlockAndRead = (key) => {
                 pendingEbookKey = key;
                 document.getElementById('modalAdAlert').style.display = 'flex';
@@ -537,36 +469,20 @@
 
             document.getElementById('btnConfirmAd').onclick = () => {
                 document.getElementById('modalAdAlert').style.display = 'none';
-                
-                // Abre o Ad
                 window.open('https://otieu.com/4/10557860', '_blank');
-                
-                // Abre o conteúdo (com pequeno delay para dar tempo da aba abrir)
                 setTimeout(() => {
                     document.getElementById('ebookContent').innerHTML = ebooks[pendingEbookKey];
                     document.getElementById('modalReader').style.display = 'flex';
                 }, 500);
             }
 
-            // --- TUTORIAL & BATTLE LOGIC ---
             window.saveBattleAndNext = () => {
                 const battle = document.getElementById('battleInput').value;
-                if(!battle) { alert("Por favor, nomeie sua batalha."); return; }
+                if(!battle) return;
                 currentBattle = battle;
                 db.collection("users").doc(auth.currentUser.uid).set({ battleTitle: battle }, { merge: true });
-                nextTutorial(2);
-            }
-
-            window.editBattle = () => {
-                const newBattle = prompt("Qual é o seu novo foco?", currentBattle);
-                if(newBattle) {
-                    db.collection("users").doc(auth.currentUser.uid).set({ battleTitle: newBattle }, { merge: true });
-                }
-            }
-
-            window.nextTutorial = (step) => {
-                document.querySelectorAll('.tutorial-step').forEach(el => el.classList.remove('active'));
-                document.getElementById('tutStep' + step).classList.add('active');
+                document.getElementById('tutStep1').classList.remove('active');
+                document.getElementById('tutStep2').classList.add('active');
             }
 
             window.finishTutorial = async () => {
@@ -574,37 +490,25 @@
                 await db.collection("users").doc(auth.currentUser.uid).set({ tutorialSeen: true }, { merge: true });
             }
 
-            // UI HELPERS
             function toggleSound(btn) {
                 const audio = document.getElementById('focusAudio');
-                if(audio.paused) {
-                    audio.play().then(() => btn.classList.add('active')).catch(e => alert("Toque na tela primeiro!"));
-                } else {
-                    audio.pause();
-                    btn.classList.remove('active');
-                }
+                if(audio.paused) audio.play().then(() => btn.classList.add('active'));
+                else audio.pause() || btn.classList.remove('active');
             }
 
             async function generateShareImage() {
-                const target = document.getElementById('share-template');
                 const diff = new Date() - lastReset;
-                const days = Math.floor(diff / 86400000);
-                const hours = Math.floor((diff % 86400000) / 3600000);
-                
-                document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
-                document.getElementById('share-hours').innerText = hours.toString().padStart(2,'0');
-                if(currentBattle) document.getElementById('share-battle').innerText = "LIVRE DE: " + currentBattle;
-
-                const canvas = await html2canvas(target);
+                document.getElementById('share-days').innerText = Math.floor(diff / 86400000).toString().padStart(2,'0');
+                document.getElementById('share-hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2,'0');
+                const canvas = await html2canvas(document.getElementById('share-template'));
                 const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click();
             }
 
             function nav(id, el) {
-                document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active') || (s.style.display = 'none'));
                 document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
-                const screen = document.getElementById('screen-'+id);
-                screen.style.display = 'block';
-                setTimeout(() => screen.classList.add('active'), 10); 
+                document.getElementById('screen-'+id).style.display = 'block';
+                setTimeout(() => document.getElementById('screen-'+id).classList.add('active'), 10); 
                 el.classList.add('active');
             }
 
@@ -613,14 +517,7 @@
             window.closeModal = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
             
             window.confirmClaim = async () => {
-                var duration = 3 * 1000;
-                var end = Date.now() + duration;
-                (function frame() {
-                    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#C5A059', '#FFFFFF', '#000000'] });
-                    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#C5A059', '#FFFFFF', '#000000'] });
-                    if (Date.now() < end) requestAnimationFrame(frame);
-                }());
-
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#C5A059', '#000', '#FFF'] });
                 closeModal();
                 window.open('https://otieu.com/4/10557860', '_blank'); 
                 const note = document.getElementById('journalInput').value;
@@ -634,7 +531,7 @@
                 await db.collection("history").add({ userId: auth.currentUser.uid, type: "Recaída", date: firebase.firestore.FieldValue.serverTimestamp() });
             };
 
-        } catch(e) { alert("Erro de Sistema: " + e.message); }
+        } catch(e) { alert("Erro: " + e.message); }
     </script>
 </body>
 </html>
