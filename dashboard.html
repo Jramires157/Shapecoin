@@ -103,6 +103,14 @@
         .btn-victory:disabled { background: #E0DDD5; color: #AAA; cursor: not-allowed; box-shadow: none; }
         .btn-text-link { background: none; border: none; color: #999; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 20px; cursor: pointer; padding: 10px; font-family: 'Outfit', sans-serif; }
 
+        .share-container { text-align: center; margin-bottom: 25px; }
+        .share-btn {
+            background: transparent; border: 1px solid #D0D0D0; padding: 10px 24px;
+            border-radius: 50px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .share-btn:hover { border-color: var(--text-main); color: var(--text-main); }
+
         /* CARDS & GRID */
         .white-card {
             background: var(--surface); border-radius: 20px; padding: 25px;
@@ -119,12 +127,35 @@
         }
 
         /* ANALYTICS CHART */
-        .chart-wrapper { padding: 10px 0 0 0; }
-        .chart-container { height: 120px; display: flex; align-items: flex-end; gap: 10px; justify-content: space-between; padding: 0 10px; }
-        .chart-col { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
-        .chart-bar { width: 100%; background: #EAEAEA; border-radius: 4px; transition: height 1s ease; min-height: 4px; }
-        .chart-bar.active { background: linear-gradient(to top, var(--gold), #E5C585); }
-        .chart-label { font-size: 0.6rem; color: var(--text-muted); }
+        .chart-wrapper { padding: 10px 0 0 0; width: 100%; }
+        .chart-container { 
+            height: 140px; 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: space-between; 
+            padding: 0 10px; 
+        }
+        .chart-col { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-end;
+            gap: 8px; 
+            width: 100%; 
+            height: 100%; 
+        }
+        .chart-bar { 
+            width: 12px; 
+            background: #EAEAEA; 
+            border-radius: 10px; 
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); 
+            min-height: 6px; 
+        }
+        .chart-bar.active { 
+            background: var(--gold);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+        }
+        .chart-label { font-size: 0.6rem; color: var(--text-muted); font-weight: 500; }
 
         /* DOCK */
         .dock {
@@ -140,7 +171,9 @@
         .screen.active { display: block; opacity: 1; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(242,240,233,0.98); z-index: 200; padding: 40px; overflow-y: auto; align-items: center; justify-content: center; }
         .modal-content { max-width: 500px; margin: 0 auto; width: 100%; text-align: center; }
-        #share-template { position: absolute; left: -9999px; }
+        
+        #share-template { position: absolute; left: -9999px; font-family: 'Outfit'; }
+        
         .breath-circle { width: 100px; height: 100px; background: var(--gold); border-radius: 50%; margin: 50px auto; opacity: 0.5; animation: breathe 8s infinite ease-in-out; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(2.5); opacity: 0.2; } }
 
@@ -154,17 +187,26 @@
         <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3" type="audio/mp3">
     </audio>
 
-    <!-- SHARE TEMPLATE -->
-    <div id="share-template" style="width: 1080px; height: 1920px; background: #F2F0E9; text-align: center; color: #1A1A1A; padding-top: 200px;">
-        <h1 style="font-size: 50px; letter-spacing: 15px; color: #888; text-transform: uppercase;">Focus • OS</h1>
-        <div style="margin: 100px auto; border: 5px solid #E5E5E5; background: #FFF; border-radius: 50%; width: 700px; height: 700px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <span id="share-days" style="font-size: 250px; font-weight: 300; line-height:1; font-family: 'Outfit';">00</span>
-            <span style="font-size: 30px; letter-spacing: 8px; color: #999; margin-top: 20px;">DIAS LIMPOS</span>
-            <div style="width: 200px; height: 2px; background: #EEE; margin: 40px 0;"></div>
-            <span id="share-hours" style="font-size: 100px; font-weight: 300; line-height:1; color: #666;">00</span>
-            <span style="font-size: 20px; letter-spacing: 5px; color: #AAA;">HORAS</span>
+    <!-- SHARE TEMPLATE (Improved) -->
+    <div id="share-template" style="width: 1080px; height: 1920px; background: #F2F0E9; text-align: center; color: #1A1A1A; padding-top: 220px; display:flex; flex-direction:column; align-items:center;">
+        <h1 style="font-size: 50px; letter-spacing: 15px; color: #888; text-transform: uppercase; margin-bottom: 80px;">Focus • OS</h1>
+        
+        <div style="margin: 0; border: 6px solid #E5E5E5; background: #FFF; border-radius: 50%; width: 750px; height: 750px; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow: 0 40px 100px rgba(0,0,0,0.05);">
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 40px;">
+                <span id="share-days" style="font-size: 260px; font-weight: 300; line-height:0.8; font-family: 'Outfit'; color: #1A1A1A;">00</span>
+                <span style="font-size: 28px; letter-spacing: 10px; color: #AAA; margin-top: 30px; text-transform: uppercase;">Dias Limpos</span>
+            </div>
+            
+            <div style="width: 150px; height: 2px; background: #F0F0F0; margin: 20px 0;"></div>
+            
+            <div style="display:flex; flex-direction:column; align-items:center; margin-top: 30px;">
+                <span id="share-hours" style="font-size: 120px; font-weight: 300; line-height:0.8; color: #666; font-family: 'Outfit';">00</span>
+                <span style="font-size: 24px; letter-spacing: 8px; color: #BBB; margin-top: 15px; text-transform: uppercase;">Horas</span>
+            </div>
         </div>
-        <div id="share-battle" style="font-size: 35px; color: #333; letter-spacing: 4px; text-transform: uppercase; margin-top: 50px;">LIVRE DE VÍCIOS</div>
+        
+        <div id="share-battle" style="font-size: 40px; color: #333; letter-spacing: 5px; text-transform: uppercase; margin-top: 100px; font-weight: 600;">LIVRE DE VÍCIOS</div>
+        <div style="font-size: 24px; color: #999; margin-top: 30px; letter-spacing: 2px;">JORNADA DE SOBERANIA</div>
     </div>
 
     <!-- TELA 1: FOCO -->
@@ -210,7 +252,10 @@
         </div>
 
         <div class="share-container">
-            <button class="share-btn" onclick="generateShareImage()">PARTILHAR EVOLUÇÃO</button>
+            <button class="share-btn" onclick="generateShareImage()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                PARTILHAR EVOLUÇÃO
+            </button>
         </div>
 
         <div class="btn-stack">
@@ -261,7 +306,7 @@
     <div id="screen-log" class="screen">
         <div class="logo" style="margin-bottom: 10px;">ANÁLISE DE DADOS</div>
         
-        <!-- NOVO: GRÁFICO DE CLAREZA MENTAL -->
+        <!-- CORRIGIDO: GRÁFICO DE CLAREZA MENTAL -->
         <div class="section-title">ÍNDICE DE CLAREZA MENTAL</div>
         <div class="white-card" style="padding: 15px 20px;">
             <div class="chart-wrapper">
@@ -269,7 +314,7 @@
                     <!-- Barras geradas via JS -->
                 </div>
             </div>
-            <div style="text-align:center; font-size:0.6rem; color:#AAA; margin-top:15px;">BASEADO NA SUA CONSISTÊNCIA</div>
+            <div style="text-align:center; font-size:0.6rem; color:#AAA; margin-top:15px; letter-spacing: 1px;">BASEADO NA SUA CONSISTÊNCIA</div>
         </div>
 
         <div class="section-title">HISTÓRICO RECENTE</div>
@@ -387,33 +432,41 @@
                     }
                 });
                 loadLogs(user.uid);
-                renderChart();
+                // Render chart only once or when needed, but here we init
                 updateCommunityCount();
                 setInterval(updateTimer, 1000); 
             }
 
             function updateCommunityCount() {
-                // Simula um número ao vivo
                 const base = 300 + Math.floor(Math.random() * 50);
                 document.getElementById('liveUsers').innerText = base;
             }
 
+            // CORRIGIDO: RENDERIZAÇÃO DO GRÁFICO
             function renderChart() {
                 const chart = document.getElementById('chartContainer');
+                if(!chart) return;
                 chart.innerHTML = "";
-                // Simula evolução de clareza nos últimos 7 dias
-                const heights = [20, 35, 40, 30, 55, 70, 85]; 
+                // Simula dados (pode ser substituído por dados reais do firebase se tiver)
+                const heights = [20, 35, 45, 30, 60, 75, 90]; 
+                
+                let html = '';
                 heights.forEach((h, i) => {
-                    chart.innerHTML += `
+                    html += `
                     <div class="chart-col">
-                        <div class="chart-bar ${i === 6 ? 'active' : ''}" style="height:0%"></div>
+                        <div class="chart-bar ${i === 6 ? 'active' : ''}" style="height: 0%" data-height="${h}"></div>
                         <div class="chart-label">D${i+1}</div>
                     </div>`;
-                    // Animar após renderizar
-                    setTimeout(() => {
-                        chart.children[i].querySelector('.chart-bar').style.height = h + '%';
-                    }, 100 + (i * 100));
                 });
+                chart.innerHTML = html;
+
+                // Animação com pequeno delay para garantir que o DOM renderizou
+                setTimeout(() => {
+                    const bars = chart.querySelectorAll('.chart-bar');
+                    bars.forEach(bar => {
+                        bar.style.height = bar.getAttribute('data-height') + '%';
+                    });
+                }, 100);
             }
 
             function updateTimer() {
@@ -496,20 +549,80 @@
                 else audio.pause() || btn.classList.remove('active');
             }
 
+            // MELHORADO: PARTILHA DE IMAGEM
             async function generateShareImage() {
-                const diff = new Date() - lastReset;
-                document.getElementById('share-days').innerText = Math.floor(diff / 86400000).toString().padStart(2,'0');
-                document.getElementById('share-hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2,'0');
-                const canvas = await html2canvas(document.getElementById('share-template'));
-                const a = document.createElement('a'); a.download='focus.png'; a.href=canvas.toDataURL(); a.click();
+                const btn = document.querySelector('.share-btn');
+                const originalText = btn.innerHTML; // Salva o ícone e texto
+                btn.innerText = "GERANDO...";
+                btn.disabled = true;
+
+                try {
+                    const diff = new Date() - lastReset;
+                    const days = Math.floor(diff / 86400000);
+                    const hours = Math.floor((diff % 86400000) / 3600000);
+                    
+                    const template = document.getElementById('share-template');
+
+                    document.getElementById('share-days').innerText = days.toString().padStart(2,'0');
+                    document.getElementById('share-hours').innerText = hours.toString().padStart(2,'0');
+                    if(currentBattle) document.getElementById('share-battle').innerText = "LIVRE DE: " + currentBattle;
+
+                    // Melhora a qualidade da imagem
+                    const canvas = await html2canvas(template, {
+                        scale: 2, // Retina quality
+                        backgroundColor: '#F2F0E9',
+                        useCORS: true // Permite carregar recursos externos se necessário
+                    });
+
+                    canvas.toBlob(async (blob) => {
+                        const file = new File([blob], "focus-evolution.png", { type: "image/png" });
+                        
+                        // Tenta partilha nativa (iOS/Android)
+                        if (navigator.share && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: 'Minha Evolução no FOCUS',
+                                    text: `Estou há ${days} dias focado. Junte-se a mim.`
+                                });
+                            } catch (err) {
+                                console.log('Share failed or cancelled', err);
+                                downloadImage(canvas); // Fallback se cancelar ou falhar
+                            }
+                        } else {
+                            downloadImage(canvas); // Fallback para PC
+                        }
+                        
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    });
+                } catch (e) {
+                    alert("Erro ao gerar imagem: " + e.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            function downloadImage(canvas) {
+                const a = document.createElement('a');
+                a.download = 'focus.png';
+                a.href = canvas.toDataURL();
+                a.click();
             }
 
             function nav(id, el) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active') || (s.style.display = 'none'));
                 document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
-                document.getElementById('screen-'+id).style.display = 'block';
-                setTimeout(() => document.getElementById('screen-'+id).classList.add('active'), 10); 
+                
+                const screen = document.getElementById('screen-'+id);
+                screen.style.display = 'block';
+                setTimeout(() => screen.classList.add('active'), 10); 
                 el.classList.add('active');
+
+                // Se for para a aba de log, renderiza o gráfico
+                if(id === 'log') {
+                    renderChart();
+                }
             }
 
             window.openJournal = () => document.getElementById('modalJournal').style.display='flex';
